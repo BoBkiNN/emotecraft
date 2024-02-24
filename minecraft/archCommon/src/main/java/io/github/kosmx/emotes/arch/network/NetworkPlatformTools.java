@@ -6,6 +6,7 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerConfigurationPacketListenerImpl;
 import org.jetbrains.annotations.Contract;
@@ -35,6 +36,11 @@ public final class NetworkPlatformTools {
         assert (buf.hasRemaining()); // don't send empty packets
 
         return new ClientboundCustomPayloadPacket(new EmotePacketPayload(id, buf));
+    }
+
+    @ExpectPlatform
+    public static MinecraftServer getServer() {
+        throw new AssertionError();
     }
 
     public static @NotNull Packet<?> playPacket(@NotNull ByteBuffer buf) {

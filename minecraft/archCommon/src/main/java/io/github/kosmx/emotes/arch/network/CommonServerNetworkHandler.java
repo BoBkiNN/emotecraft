@@ -7,14 +7,12 @@ import io.github.kosmx.emotes.common.network.objects.NetData;
 import io.github.kosmx.emotes.executor.EmoteInstance;
 import io.github.kosmx.emotes.server.network.AbstractServerEmotePlay;
 import io.github.kosmx.emotes.server.network.IServerNetworkInstance;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -28,18 +26,7 @@ import java.util.stream.Collectors;
 public final class CommonServerNetworkHandler extends AbstractServerEmotePlay<Player> {
     public static CommonServerNetworkHandler instance = new CommonServerNetworkHandler();
 
-    private static MinecraftServer server;
-
-    public static void setServer(@NotNull MinecraftServer server) {
-        CommonServerNetworkHandler.server = server;
-    }
-
     private CommonServerNetworkHandler() {} // make ctor private for singleton class
-
-    @NotNull
-    public static MinecraftServer getServer() {
-        return server;
-    }
 
     public void init() {
     }
@@ -86,8 +73,8 @@ public final class CommonServerNetworkHandler extends AbstractServerEmotePlay<Pl
     }
 
     @Override
-    protected ServerPlayer getPlayerFromUUID(UUID player) {
-        return server.getPlayerList().getPlayer(player);
+    protected Player getPlayerFromUUID(UUID player) {
+        return NetworkPlatformTools.getServer().getPlayerList().getPlayer(player);
     }
 
     @Override
@@ -148,7 +135,7 @@ public final class CommonServerNetworkHandler extends AbstractServerEmotePlay<Pl
     @Override
     protected void sendForPlayer(NetData data, Player ignore, UUID target) {
         try {
-            ServerPlayer player = getPlayerFromUUID(target);
+            Player player = getPlayerFromUUID(target);
             IServerNetworkInstance playerNetwork = getPlayerNetworkInstance(player);
 
             EmotePacket.Builder packetBuilder = new EmotePacket.Builder(data);
