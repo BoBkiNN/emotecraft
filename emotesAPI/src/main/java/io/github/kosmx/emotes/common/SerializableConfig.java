@@ -108,11 +108,14 @@ public class SerializableConfig {
         }
     }
 
+    @SuppressWarnings("unused")
     public static class FloatConfigEntry extends ConfigEntry<Float> {
-        final private String formatKey;
+        private final String formatKey;
         public final float min, max, step;
+
         public FloatConfigEntry(String name, String oldconfig, Float defVal, boolean hasTooltip, List<ConfigEntry<?>> collection, String formatKey, float min, float max, float step) {
             super(name, oldconfig, defVal, hasTooltip, collection);
+
             this.formatKey = formatKey;
             this.min = min;
             this.max = max;
@@ -121,21 +124,37 @@ public class SerializableConfig {
 
         public FloatConfigEntry(String name, Float defVal, boolean hasTooltip, List<ConfigEntry<?>> collection, String formatKey, float min, float step, float max) {
             this(name, null, defVal, hasTooltip, collection, formatKey, min, max, step);
-
         }
 
         public String getFormatKey() {
             return formatKey;
         }
 
-        public double getConfigVal(){
+        public double getConfigVal() {
             return Math.sqrt(this.get());
         }
-        public void setConfigVal(double newVal){
+
+        public void setConfigVal(double newVal) {
             this.set((float) Math.pow(newVal, 2));
         }
-        public double getTextVal(){
+
+        public double getTextVal() {
             return get();
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public static class ListConfigEntry<T> extends ConfigEntry<List<T>> {
+        public ListConfigEntry(String name, List<T> defVal, boolean hasTooltip, List<ConfigEntry<?>> collection, boolean hidden) {
+            super(name, null, defVal, hasTooltip, collection, hidden);
+        }
+
+        public ListConfigEntry(String name, List<T> defVal, boolean hasTooltip, List<ConfigEntry<?>> collection) {
+            super(name, defVal, hasTooltip, collection);
+        }
+
+        public ListConfigEntry(String name, List<T> defVal, List<ConfigEntry<?>> collection, boolean hidden) {
+            super(name, defVal, collection, hidden);
         }
     }
 }
