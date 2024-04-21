@@ -20,29 +20,29 @@ public class SerializableConfig {
 
     public int configVersion; //this has a different job... not a config
 
-    public final BooleanConfigEntry showDebug = new BooleanConfigEntry("debug", "showDebug", true, false, expert);
-    public final BooleanConfigEntry validateEmote = new BooleanConfigEntry("validate", false, true, expert);
+    public final ConfigEntry<Boolean> showDebug = new ConfigEntry<>("debug", "showDebug", true, false, expert);
+    public final ConfigEntry<Boolean> validateEmote = new ConfigEntry<>("validate", false, true, expert);
 
-    public final FloatConfigEntry validThreshold = new FloatConfigEntry("validationThreshold", "validThreshold", 8f, true, expert, "options.generic_value", 0.2f, 16f, 0f);
+    public final ConfigEntry<Float> validThreshold = new FloatConfigEntry("validationThreshold", "validThreshold", 8f, true, expert, "options.generic_value", 0.2f, 16f, 0f);
 
-    public final ConfigEntry<Boolean> loadBuiltinEmotes = new BooleanConfigEntry("loadbuiltin", "loadBuiltin", true, true, basics);
-    public final BooleanConfigEntry loadEmotesServerSide = new BooleanConfigEntry("emotesFolderOnLogicalServer", false, true, expert, true);
-    public final ConfigEntry<Boolean> enableQuark = new BooleanConfigEntry("quark", "enablequark", false, true, basics);
+    public final ConfigEntry<Boolean> loadBuiltinEmotes = new ConfigEntry<>("loadbuiltin", "loadBuiltin", true, true, basics);
+    public final ConfigEntry<Boolean> loadEmotesServerSide = new ConfigEntry<>("emotesFolderOnLogicalServer", false, true, expert, true);
+    public final ConfigEntry<Boolean> enableQuark = new ConfigEntry<>("quark", "enablequark", false, true, basics);
 
-    public final StringConfigEntry emotesDir = new StringConfigEntry("emotesDirectory", "emotes", false, expert, true);
+    public final ConfigEntry<String> emotesDir = new ConfigEntry<>("emotesDirectory", "emotes", false, expert, true);
 
-    public final BooleanConfigEntry autoFixEmoteStop = new BooleanConfigEntry("autoFixEmoteStop", true, true, expert, false);
+    public final ConfigEntry<Boolean> autoFixEmoteStop = new ConfigEntry<>("autoFixEmoteStop", true, true, expert, false);
 
-    public void iterate(Consumer<ConfigEntry<?>> consumer){
+    public void iterate(Consumer<ConfigEntry<?>> consumer) {
         basics.forEach(consumer);
         expert.forEach(consumer);
     }
 
-    public void iterateGeneral(Consumer<ConfigEntry<?>> consumer){
+    public void iterateGeneral(Consumer<ConfigEntry<?>> consumer) {
         basics.forEach(consumer);
     }
 
-    public void iterateExpert(Consumer<ConfigEntry<?>> consumer){
+    public void iterateExpert(Consumer<ConfigEntry<?>> consumer) {
         expert.forEach(consumer);
     }
 
@@ -50,14 +50,14 @@ public class SerializableConfig {
         loadEmotesServerSide.set(true);
     }
 
-    public static abstract class ConfigEntry<T>{
+    public static class ConfigEntry<T> {
         final String name, oldConfig; //oldconfig for the old config name
         T value;
         final T defaultValue;
         final public boolean hasTooltip;
         final boolean isHidden;
 
-        public ConfigEntry(String name, String oldconfig, T defVal, boolean hasTooltip, List<ConfigEntry<?>> collection, boolean hidden){
+        public ConfigEntry(String name, String oldconfig, T defVal, boolean hasTooltip, List<ConfigEntry<?>> collection, boolean hidden) {
             this.name = name;
             this.oldConfig = oldconfig;
             this.hasTooltip = hasTooltip;
@@ -67,59 +67,44 @@ public class SerializableConfig {
             isHidden = hidden;
         }
 
-        public ConfigEntry(String name, String oldconfig, T defVal, boolean hasTooltip, List<ConfigEntry<?>> collection){
+        public ConfigEntry(String name, String oldconfig, T defVal, boolean hasTooltip, List<ConfigEntry<?>> collection) {
             this(name, oldconfig, defVal, hasTooltip, collection, false);
         }
-        public ConfigEntry(String name, T defVal, boolean hasTooltip, List<ConfigEntry<?>> collection){
+
+        public ConfigEntry(String name, T defVal, boolean hasTooltip, List<ConfigEntry<?>> collection) {
             this(name, null, defVal, hasTooltip, collection);
         }
-        public ConfigEntry(String name, T defVal, List<ConfigEntry<?>> collection, boolean hidden){
+
+        public ConfigEntry(String name, T defVal, List<ConfigEntry<?>> collection, boolean hidden) {
             this(name, null, defVal, false, collection, hidden);
         }
 
-        public T get(){
+        public ConfigEntry(String name, T defVal, boolean hasTooltip, List<ConfigEntry<?>> collection, boolean hidden) {
+            this(name, null, defVal, hasTooltip, collection, hidden);
+        }
+
+        public T get() {
             return value;
         }
 
-        public void set(T newValue){
+        public void set(T newValue) {
             this.value = newValue;
         }
 
-        public String getName(){
+        public String getName() {
             return name;
         }
-        public String getOldConfigName(){
+
+        public String getOldConfigName() {
             return oldConfig;
         }
 
-        public void resetToDefault(){
+        public void resetToDefault() {
             this.value = this.defaultValue;
         }
 
-        public boolean showEntry(){
+        public boolean showEntry() {
             return !isHidden;
-        }
-
-    }
-
-    public static class BooleanConfigEntry extends ConfigEntry<Boolean>{
-
-        public BooleanConfigEntry(String name, String oldconfig, Boolean defVal, boolean hasTooltip, List<ConfigEntry<?>> collection, boolean hidden) {
-            super(name, oldconfig, defVal, hasTooltip, collection, hidden);
-        }
-        public BooleanConfigEntry(String name, String oldconfig, Boolean defVal, boolean hasTooltip, List<ConfigEntry<?>> collection) {
-            super(name, oldconfig, defVal, hasTooltip, collection);
-        }
-
-        public BooleanConfigEntry(String name, Boolean defVal, boolean hasTooltip, List<ConfigEntry<?>> collection, boolean hidden) {
-            super(name, null, defVal, hasTooltip, collection, hidden);
-        }
-
-        public BooleanConfigEntry(String name, Boolean defVal, boolean hasTooltip, List<ConfigEntry<?>> collection) {
-            super(name, defVal, hasTooltip, collection);
-        }
-        public BooleanConfigEntry(String name, Boolean defVal, List<ConfigEntry<?>> collection, boolean hidden) {
-            super(name, defVal, collection, hidden);
         }
     }
 
@@ -151,20 +136,6 @@ public class SerializableConfig {
         }
         public double getTextVal(){
             return get();
-        }
-    }
-
-    public static class StringConfigEntry extends ConfigEntry<String> {
-        public StringConfigEntry(String name, String defVal, boolean hasTooltip, List<ConfigEntry<?>> collection, boolean hidden) {
-            super(name, null, defVal, hasTooltip, collection, hidden);
-        }
-
-        public StringConfigEntry(String name, String defVal, boolean hasTooltip, List<ConfigEntry<?>> collection) {
-            super(name, defVal, hasTooltip, collection);
-        }
-
-        public StringConfigEntry(String name, String defVal, List<ConfigEntry<?>> collection, boolean hidden) {
-            super(name, defVal, collection, hidden);
         }
     }
 }

@@ -78,20 +78,14 @@ public class ConfigScreen extends OptionsSubScreen {
         this.addWidget(options);
     }
 
-    private void addConfigEntry(SerializableConfig.ConfigEntry<?> entry, OptionsList options) {
+    private <T> void addConfigEntry(SerializableConfig.ConfigEntry<T> entry, OptionsList options) {
         if (entry.showEntry() || ((ClientConfig) EmoteInstance.config).showHiddenConfig.get()) {
-            if (entry instanceof SerializableConfig.BooleanConfigEntry) {
-                if (entry.hasTooltip) {
-                    options.addBig(OptionInstance.createBoolean("emotecraft.otherconfig." + entry.getName(),
-                            aBoolean -> Tooltip.create(Component.translatable("emotecraft.otherconfig." + entry.getName() + ".tooltip")), ((SerializableConfig.BooleanConfigEntry) entry).get(),
-                            (aBoolean) -> ((SerializableConfig.BooleanConfigEntry) entry).set(aBoolean)
-                    ));
-                } else {
-                    options.addBig(OptionInstance.createBoolean("emotecraft.otherconfig." + entry.getName(),
-                            OptionInstance.noTooltip(), ((SerializableConfig.BooleanConfigEntry) entry).get(),
-                            (aBoolean) -> ((SerializableConfig.BooleanConfigEntry) entry).set(aBoolean)
-                    ));
-                }
+            if (entry.get() instanceof Boolean b) {
+                options.addBig(OptionInstance.createBoolean("emotecraft.otherconfig." + entry.getName(),
+                        entry.hasTooltip ? aBoolean -> Tooltip.create(Component.translatable("emotecraft.otherconfig." + entry.getName() + ".tooltip")) : OptionInstance.noTooltip(),
+                        b, (aBoolean) -> entry.set((T) aBoolean)
+                ));
+
             } else if (entry instanceof SerializableConfig.FloatConfigEntry floatEntry) {
                 /*options.addBig(new ProgressOption(
                         EmoteInstance.config.validThreshold.getName(), floatEntry.min, floatEntry.max, floatEntry.step,
