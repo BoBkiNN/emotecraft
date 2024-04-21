@@ -145,8 +145,12 @@ public class SerializableConfig {
 
     @SuppressWarnings("unused")
     public static class ListConfigEntry<T> extends ConfigEntry<List<T>> {
-        public ListConfigEntry(String name, List<T> defVal, boolean hasTooltip, List<ConfigEntry<?>> collection, boolean hidden) {
-            super(name, null, defVal, hasTooltip, collection, hidden);
+        public ListConfigEntry(String name, String oldconfig, List<T> defVal, boolean hasTooltip, List<ConfigEntry<?>> collection, boolean hidden) {
+            super(name, oldconfig, defVal, hasTooltip, collection, hidden);
+        }
+
+        public ListConfigEntry(String name, String oldconfig, List<T> defVal, boolean hasTooltip, List<ConfigEntry<?>> collection) {
+            super(name, oldconfig, defVal, hasTooltip, collection);
         }
 
         public ListConfigEntry(String name, List<T> defVal, boolean hasTooltip, List<ConfigEntry<?>> collection) {
@@ -155,6 +159,10 @@ public class SerializableConfig {
 
         public ListConfigEntry(String name, List<T> defVal, List<ConfigEntry<?>> collection, boolean hidden) {
             super(name, defVal, collection, hidden);
+        }
+
+        public ListConfigEntry(String name, List<T> defVal, boolean hasTooltip, List<ConfigEntry<?>> collection, boolean hidden) {
+            super(name, defVal, hasTooltip, collection, hidden);
         }
     }
 }
