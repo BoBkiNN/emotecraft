@@ -3,8 +3,6 @@ package io.github.kosmx.emotes.fabric.network;
 import io.github.kosmx.emotes.arch.network.NetworkPlatformTools;
 import io.github.kosmx.emotes.arch.network.client.ClientNetwork;
 import io.github.kosmx.emotes.executor.EmoteInstance;
-import io.github.kosmx.emotes.fabric.FabricWrapper;
-import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientConfigurationNetworking;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -17,20 +15,21 @@ public class ClientNetworkInstance {
     private static final ClientNetwork network = ClientNetwork.INSTANCE;
 
     public static void init(){
+        FabricIsBestYouAreRightKosmX.init(true);
 
         // Configuration
 
-        ClientConfigurationNetworking.registerGlobalReceiver(NetworkPlatformTools.EMOTE_CHANNEL_ID, (client, handler, buf, responseSender) -> {
+        ClientConfigurationNetworking.registerGlobalReceiver(NetworkPlatformTools.EMOTE_CHANNEL_ID, (buf, context) -> {
             try {
-                network.receiveConfigMessage(buf, responseSender::sendPacket);
+                network.receiveConfigMessage(buf.bytes(), context.responseSender()::sendPacket);
             } catch (IOException e) {
                 EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
             }
         });
 
-        ClientConfigurationNetworking.registerGlobalReceiver(NetworkPlatformTools.STREAM_CHANNEL_ID, (client, handler, buf, responseSender) -> {
+        ClientConfigurationNetworking.registerGlobalReceiver(NetworkPlatformTools.STREAM_CHANNEL_ID, (buf, context) -> {
             try {
-                network.receiveStreamMessage(buf, responseSender::sendPacket);
+                network.receiveStreamMessage(buf.bytes(), context.responseSender()::sendPacket);
             } catch (IOException e) {
                 EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
             }
@@ -40,11 +39,13 @@ public class ClientNetworkInstance {
 
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> network.disconnect());
 
-        ClientPlayNetworking.registerGlobalReceiver(NetworkPlatformTools.EMOTE_CHANNEL_ID, (client, handler, buf, responseSender) -> network.receiveMessage(buf));
+        ClientPlayNetworking.registerGlobalReceiver(NetworkPlatformTools.EMOTE_CHANNEL_ID,
+                (buf, context) -> network.receiveMessage(buf.unwrapBytes())
+        );
 
-        ClientPlayNetworking.registerGlobalReceiver(NetworkPlatformTools.STREAM_CHANNEL_ID, (client, handler, buf, responseSender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(NetworkPlatformTools.STREAM_CHANNEL_ID, (buf, context) -> {
             try {
-                network.receiveStreamMessage(buf, null);
+                network.receiveStreamMessage(buf.bytes(), null);
             } catch (IOException e) {
                 EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
             }

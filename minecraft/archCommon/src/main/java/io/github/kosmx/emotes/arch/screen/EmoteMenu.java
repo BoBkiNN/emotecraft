@@ -64,7 +64,7 @@ public class EmoteMenu extends EmoteConfigScreen {
 
     private ChangeListener watcher = null;
 
-    public EmoteMenu(@org.jetbrains.annotations.Nullable Screen parent) {
+    public EmoteMenu(Screen parent) {
         super(Component.translatable("emotecraft.menu"), parent);
     }
 
@@ -203,11 +203,6 @@ public class EmoteMenu extends EmoteConfigScreen {
 
     private void countEmotesWithKeyBind(){
         keyBoundEmotes = ((ClientConfig)EmoteInstance.config).emoteKeyMap.size();
-    }
-
-    @Override
-    public void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
-        renderDirtBackground(guiGraphics);
     }
 
     @Override

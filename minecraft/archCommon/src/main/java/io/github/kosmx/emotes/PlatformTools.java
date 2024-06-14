@@ -11,10 +11,9 @@ import io.github.kosmx.emotes.executor.EmoteInstance;
 import io.github.kosmx.emotes.executor.emotePlayer.IEmotePlayerEntity;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -45,7 +44,7 @@ public final class PlatformTools {
             return Component.literal("");
         }
         try {
-            return Component.Serializer.fromJson(JsonParser.parseString(json));
+            return Component.Serializer.fromJson(JsonParser.parseString(json), RegistryAccess.EMPTY);
         }catch (JsonParseException e){
             return Component.literal(json);
         }
@@ -55,22 +54,11 @@ public final class PlatformTools {
         if (obj == null || obj instanceof String) {
             return fromJson((String) obj);
         } else if (obj instanceof JsonElement) {
-            return Component.Serializer.fromJson((JsonElement) obj);
+            return Component.Serializer.fromJson((JsonElement) obj, RegistryAccess.EMPTY);
         } else throw new IllegalArgumentException("Can not create Text from " + obj.getClass().getName());
     }
 
     public static ResourceLocation newIdentifier(String id){
-        return new ResourceLocation(CommonData.MOD_ID, id);
-    }
-
-
-    public static byte[] unwrap(@NotNull FriendlyByteBuf buf) {
-        if (buf.isDirect() || buf.isReadOnly()) {
-            byte[] bytes = new byte[buf.readableBytes()];
-            buf.readBytes(bytes);
-            return bytes;
-        } else {
-            return buf.array();
-        }
+        return ResourceLocation.fromNamespaceAndPath(CommonData.MOD_ID, id);
     }
 }

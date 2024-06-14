@@ -66,11 +66,6 @@ public class FullMenuScreenHelper extends EmoteConfigScreen {
     }
 
     @Override
-    public void renderBackground(@NotNull GuiGraphics guiGraphics, int i, int j, float f) {
-        renderDirtBackground(guiGraphics);
-    }
-
-    @Override
     public void render(@NotNull GuiGraphics matrices, int mouseX, int mouseY, float delta){
         super.render(matrices, mouseX, mouseY, delta);
         this.emoteList.renderThis(matrices, mouseX, mouseY, delta);

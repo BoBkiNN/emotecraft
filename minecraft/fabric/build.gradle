@@ -14,7 +14,6 @@ architectury{
 
 loom{
     accessWidenerPath = project(":${project.module_name}:archCommon").loom.accessWidenerPath
-    silentMojangMappingsLicense()
 }
 
 

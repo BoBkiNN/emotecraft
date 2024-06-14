@@ -18,8 +18,8 @@ import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.ConfirmScreen;
-import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -42,41 +42,36 @@ import java.util.function.Function;
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class ConfigScreen extends OptionsSubScreen {
-    private OptionsList options;
 
 
     public ConfigScreen(Screen parent) {
-        super(parent, Minecraft.getInstance().options, Component.literal("emotecraft.otherconfig"));
+        super(parent, Minecraft.getInstance().options, Component.translatable("emotecraft.otherconfig"));
     }
 
     @Override
-    protected void init() {
-        super.init();
-        options = new OptionsList(this.minecraft, this.width, this.height-25, 32, 25); // 25?
-        options.setHeight(height-64);
-        //I just copy these values from VideoOptionsScreen...
-        options.addBig(DummyEntry.of("emotecraft.otherconfig.category.general"));
+    protected void addOptions() {
+        list.addBig(DummyEntry.of("emotecraft.otherconfig.category.general"));
 
-        EmoteInstance.config.iterateGeneral(entry -> addConfigEntry(entry, options));
+        EmoteInstance.config.iterateGeneral(entry -> addConfigEntry(entry, list));
 
-        options.addBig(DummyEntry.of("emotecraft.otherconfig.category.expert"));
-        options.addBig(DummyEntry.of(""));
+        list.addBig(DummyEntry.of("emotecraft.otherconfig.category.expert"));
+        list.addBig(DummyEntry.of(""));
 
-        EmoteInstance.config.iterateExpert(entry -> addConfigEntry(entry, options));
+        EmoteInstance.config.iterateExpert(entry -> addConfigEntry(entry, list));
+    }
 
+    @Override
+    protected void addFooter() {
         this.addRenderableWidget(new Button.Builder(Component.translatable("controls.reset"), (button) -> {
             this.minecraft.setScreen(new ConfirmScreen(
                     this::resetAll,
                     Component.translatable("emotecraft.resetConfig.title"),
                     Component.translatable("emotecraft.resetConfig.message")));
         }).pos(this.width / 2 - 155, this.height - 27).width(150).build());
-
         this.addRenderableWidget(new Button.Builder(CommonComponents.GUI_DONE, (button -> {
             ClientSerializer.saveConfig();
-            this.minecraft.setScreen(this.lastScreen);
+            this.onClose();
         })).pos(this.width / 2 - 155 + 160, this.height - 27).width(150).build());
-
-        this.addWidget(options);
     }
 
     private void addConfigEntry(SerializableConfig.ConfigEntry<?> entry, OptionsList options) {
@@ -135,15 +130,6 @@ public class ConfigScreen extends OptionsSubScreen {
         }
         this.minecraft.setScreen(this);
     }
-
-    public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        super.render(graphics, mouseX, mouseY, delta);
-        this.options.render(graphics, mouseX, mouseY, delta);
-        graphics.drawCenteredString(this.font, this.title, this.width / 2, 5, 16777215);
-        //super.render(graphics, mouseX, mouseY, delta);
-    }
-
-
 
     protected static List<FormattedCharSequence> splitTooltip(Component component) {
         return Minecraft.getInstance().font.split(component, 200);

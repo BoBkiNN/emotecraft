@@ -1,8 +1,8 @@
 package io.github.kosmx.emotes.arch.network.client;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import io.github.kosmx.emotes.PlatformTools;
 import io.github.kosmx.emotes.api.proxy.AbstractNetworkInstance;
+import io.github.kosmx.emotes.arch.network.EmotePacketPayload;
 import io.github.kosmx.emotes.arch.network.NetworkPlatformTools;
 import io.github.kosmx.emotes.common.network.EmotePacket;
 import io.github.kosmx.emotes.common.network.EmoteStreamHelper;
@@ -11,7 +11,6 @@ import io.github.kosmx.emotes.executor.EmoteInstance;
 import io.github.kosmx.emotes.inline.TmpGetters;
 import io.github.kosmx.emotes.main.EmoteHolder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
@@ -57,7 +56,7 @@ public final class ClientNetwork extends AbstractNetworkInstance {
 
     @Override
     public boolean isActive() {
-        return isServerChannelOpen(NetworkPlatformTools.EMOTE_CHANNEL_ID);
+        return isServerChannelOpen(NetworkPlatformTools.EMOTE_CHANNEL_ID.id());
     }
 
     @Override
@@ -97,21 +96,6 @@ public final class ClientNetwork extends AbstractNetworkInstance {
         Objects.requireNonNull(Minecraft.getInstance().getConnection()).send(packet);
     }
 
-    public void receiveMessage(FriendlyByteBuf buf) {
-        receiveMessage(PlatformTools.unwrap(buf)); // This will invoke EmotesProxy and handle the message
-    }
-
-    public void receiveStreamMessage(FriendlyByteBuf buf, @Nullable Consumer<Packet<?>> configPacketConsumer) throws IOException {
-        @Nullable ByteBuffer buffer = streamHelper.receiveStream(ByteBuffer.wrap(PlatformTools.unwrap(buf)));
-        if (buffer != null) {
-            if (configPacketConsumer != null) {
-                receiveConfigMessage(buffer, configPacketConsumer);
-            } else {
-                receiveMessage(buffer, null);
-            }
-        }
-    }
-
     /**
      *
      * @param buff received data
@@ -126,10 +110,6 @@ public final class ClientNetwork extends AbstractNetworkInstance {
                 receiveMessage(buffer, null);
             }
         }
-    }
-
-    public void receiveConfigMessage(@NotNull FriendlyByteBuf buf, @NotNull Consumer<Packet<?>> consumer) throws IOException {
-        receiveConfigMessage(ByteBuffer.wrap(PlatformTools.unwrap(buf)), consumer);
     }
 
     public void receiveConfigMessage(@NotNull ByteBuffer buf, @NotNull Consumer<Packet<?>> consumer) throws IOException {
@@ -168,20 +148,10 @@ public final class ClientNetwork extends AbstractNetworkInstance {
         // this way we have 3 byte error
     }
 
-    @ExpectPlatform
-    public static @NotNull Packet<?> createServerboundPacket(@NotNull ResourceLocation id, @NotNull ByteBuffer buf) {
-        assert (buf.hasRemaining());
-        return new ServerboundCustomPayloadPacket(new CustomPacketPayload() {
-            @Override
-            public void write(@NotNull FriendlyByteBuf friendlyByteBuf) {
-                friendlyByteBuf.writeBytes(buf.duplicate());
-            }
+    public static @NotNull Packet<?> createServerboundPacket(@NotNull final CustomPacketPayload.Type<EmotePacketPayload> id, @NotNull ByteBuffer buf) {
+        assert buf.hasRemaining();
 
-            @Override
-            public @NotNull ResourceLocation id() {
-                return id;
-            }
-        });
+        return new ServerboundCustomPayloadPacket(EmotePacketPayload.createPacket(id, buf));
     }
 
     public static @NotNull Packet<?> playPacket(@NotNull ByteBuffer buf) {
