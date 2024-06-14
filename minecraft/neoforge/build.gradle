@@ -58,8 +58,8 @@ dependencies {
 
     neoForge "net.neoforged:neoforge:${project.neoforge_version}"
 
-    modRuntimeOnly("io.github.kosmx.bendy-lib:bendy-lib-forge:${project.bendylib_version}")
-    modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${project.player_anim}")
+    include modImplementation("io.github.kosmx.bendy-lib:bendy-lib-forge:${project.bendylib_version}")
+    include modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${project.player_anim}")
 }
 
 processResources {
