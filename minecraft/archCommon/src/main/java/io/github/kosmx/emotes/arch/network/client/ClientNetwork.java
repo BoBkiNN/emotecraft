@@ -148,10 +148,9 @@ public final class ClientNetwork extends AbstractNetworkInstance {
         // this way we have 3 byte error
     }
 
+    @ExpectPlatform
     public static @NotNull Packet<?> createServerboundPacket(@NotNull final CustomPacketPayload.Type<EmotePacketPayload> id, @NotNull ByteBuffer buf) {
-        assert buf.hasRemaining();
-
-        return new ServerboundCustomPayloadPacket(EmotePacketPayload.createPacket(id, buf));
+        throw new AssertionError();
     }
 
     public static @NotNull Packet<?> playPacket(@NotNull ByteBuffer buf) {
