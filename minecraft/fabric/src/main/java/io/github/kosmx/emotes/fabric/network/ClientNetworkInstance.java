@@ -12,8 +12,6 @@ import java.util.logging.Level;
 
 public class ClientNetworkInstance {
 
-    private static final ClientNetwork network = ClientNetwork.INSTANCE;
-
     public static void init(){
         FabricIsBestYouAreRightKosmX.init(true);
 
@@ -21,7 +19,7 @@ public class ClientNetworkInstance {
 
         ClientConfigurationNetworking.registerGlobalReceiver(NetworkPlatformTools.EMOTE_CHANNEL_ID, (buf, context) -> {
             try {
-                network.receiveConfigMessage(buf.bytes(), context.responseSender()::sendPacket);
+                ClientNetwork.INSTANCE.receiveConfigMessage(buf.bytes(), context.responseSender()::sendPacket);
             } catch (IOException e) {
                 EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
             }
@@ -29,7 +27,7 @@ public class ClientNetworkInstance {
 
         ClientConfigurationNetworking.registerGlobalReceiver(NetworkPlatformTools.STREAM_CHANNEL_ID, (buf, context) -> {
             try {
-                network.receiveStreamMessage(buf.bytes(), context.responseSender()::sendPacket);
+                ClientNetwork.INSTANCE.receiveStreamMessage(buf.bytes(), context.responseSender()::sendPacket);
             } catch (IOException e) {
                 EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
             }
@@ -37,20 +35,18 @@ public class ClientNetworkInstance {
 
         // Play
 
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> network.disconnect());
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> ClientNetwork.INSTANCE.disconnect());
 
         ClientPlayNetworking.registerGlobalReceiver(NetworkPlatformTools.EMOTE_CHANNEL_ID,
-                (buf, context) -> network.receiveMessage(buf.unwrapBytes())
+                (buf, context) -> ClientNetwork.INSTANCE.receiveMessage(buf.unwrapBytes())
         );
 
         ClientPlayNetworking.registerGlobalReceiver(NetworkPlatformTools.STREAM_CHANNEL_ID, (buf, context) -> {
             try {
-                network.receiveStreamMessage(buf.bytes(), null);
+                ClientNetwork.INSTANCE.receiveStreamMessage(buf.bytes(), null);
             } catch (IOException e) {
                 EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
             }
         });
-
     }
-
 }

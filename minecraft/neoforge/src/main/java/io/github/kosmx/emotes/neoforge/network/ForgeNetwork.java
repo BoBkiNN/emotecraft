@@ -6,7 +6,6 @@ import io.github.kosmx.emotes.common.network.EmotePacket;
 import io.github.kosmx.emotes.common.network.EmoteStreamHelper;
 import io.github.kosmx.emotes.common.network.PacketTask;
 import io.github.kosmx.emotes.executor.EmoteInstance;
-import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
@@ -21,12 +20,11 @@ import java.util.logging.Level;
 public class ForgeNetwork {
     @SubscribeEvent
     public static void registerPlay(final RegisterPayloadHandlersEvent event) {
-        // Play networking
-        event.registrar("emotecraft")
+        event.registrar("emotecraft") // Play networking
                 .optional()
                 .playBidirectional(NetworkPlatformTools.EMOTE_CHANNEL_ID, EmotePacketPayload.EMOTE_CHANNEL_READER, new DirectionalPayloadHandler<>(
-                        (arg, playPayloadContext) -> ClientNetwork.INSTANCE.receiveMessage(arg.bytes(), null),
-                        (arg, playPayloadContext) -> CommonServerNetworkHandler.instance.receiveMessage(arg.bytes().array(), playPayloadContext.player())
+                        (arg, playPayloadContext) -> ClientNetwork.INSTANCE.receiveMessage(arg.unwrapBytes()),
+                        (arg, playPayloadContext) -> CommonServerNetworkHandler.instance.receiveMessage(arg.unwrapBytes(), playPayloadContext.player())
                 ))
 
                 .optional()
@@ -35,19 +33,19 @@ public class ForgeNetwork {
                             try {
                                 ClientNetwork.INSTANCE.receiveStreamMessage(arg.bytes(), null);
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
                             }
                         },
-                        (arg, playPayloadContext) -> CommonServerNetworkHandler.instance.receiveStreamMessage(arg.bytes().array(), playPayloadContext.player())
+                        (arg, playPayloadContext) -> CommonServerNetworkHandler.instance.receiveStreamMessage(arg.unwrapBytes(), playPayloadContext.player())
                 ))
 
                 .optional()
                 .configurationBidirectional(NetworkPlatformTools.EMOTE_CHANNEL_ID, EmotePacketPayload.EMOTE_CHANNEL_READER, new DirectionalPayloadHandler<>(
                         (arg, configurationPayloadContext) -> {
                             try {
-                                ClientNetwork.INSTANCE.receiveConfigMessage(arg.bytes(), p -> configurationPayloadContext.reply(((ServerboundCustomPayloadPacket) p).payload()));
+                                ClientNetwork.INSTANCE.receiveConfigMessage(arg.bytes(), p -> configurationPayloadContext.listener().send(p));
                             } catch (IOException e) {
-                                throw new RuntimeException(e);
+                                EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
                             }
                         },
                         (arg, configurationPayloadContext) -> {
@@ -86,22 +84,24 @@ public class ForgeNetwork {
                 .optional()
                 .configurationToClient(NetworkPlatformTools.STREAM_CHANNEL_ID, EmotePacketPayload.STREAM_CHANNEL_READER, (arg, configurationPayloadContext) -> {
                     try {
-                        ClientNetwork.INSTANCE.receiveStreamMessage(arg.bytes(), p -> configurationPayloadContext.reply(((ServerboundCustomPayloadPacket)p).payload()));
+                        ClientNetwork.INSTANCE.receiveStreamMessage(arg.bytes(), p -> configurationPayloadContext.listener().send(p));
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
                     }
                 });
 
         event.registrar("geyser")
                 .optional()
                 .playToServer(NetworkPlatformTools.GEYSER_CHANNEL_ID, EmotePacketPayload.GEYSER_CHANNEL_READER,
-                        (arg, playPayloadContext) -> CommonServerNetworkHandler.instance.receiveGeyserMessage(playPayloadContext.player(), arg.bytes().array())
+                        (arg, playPayloadContext) -> CommonServerNetworkHandler.instance.receiveGeyserMessage(playPayloadContext.player(), arg.unwrapBytes())
                 );
     }
 
     @SubscribeEvent
     public static void registerNetworkConfigTask(final RegisterConfigurationTasksEvent event) {
-        if (event.getListener().hasChannel(NetworkPlatformTools.EMOTE_CHANNEL_ID)) {
+        if (event.getListener().hasChannel(NetworkPlatformTools.EMOTE_CHANNEL_ID) ||
+                event.getListener().hasChannel(NetworkPlatformTools.STREAM_CHANNEL_ID)) {
+
             event.register(new ConfigTask());
         } else {
             EmoteInstance.instance.getLogger().log(Level.FINE, "Client doesn't support emotes, ignoring");

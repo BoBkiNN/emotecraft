@@ -2,6 +2,7 @@ package io.github.kosmx.emotes.neoforge;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.kosmx.emotes.arch.executor.ClientMethods;
+import io.github.kosmx.emotes.arch.network.client.ClientNetwork;
 import io.github.kosmx.emotes.arch.screen.EmoteMenu;
 import io.github.kosmx.emotes.arch.screen.ingame.FastMenuScreen;
 import io.github.kosmx.emotes.executor.EmoteInstance;
@@ -17,6 +18,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
@@ -50,6 +52,11 @@ public class ClientInit {
     @SubscribeEvent
     public static void keyListenerEvent(InputEvent.Key event){
         keyBindingFunction.accept(null);
+    }
+
+    @SubscribeEvent
+    public static void onDisconnect(ClientPlayerNetworkEvent.LoggingOut event) {
+        ClientNetwork.INSTANCE.disconnect();
     }
 
     public static void keyBindingRegister(RegisterKeyMappingsEvent event) {
