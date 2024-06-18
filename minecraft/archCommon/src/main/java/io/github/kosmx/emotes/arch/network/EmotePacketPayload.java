@@ -1,5 +1,6 @@
 package io.github.kosmx.emotes.arch.network;
 
+import io.github.kosmx.emotes.PlatformTools;
 import io.github.kosmx.emotes.api.proxy.INetworkInstance;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -39,14 +40,7 @@ public record EmotePacketPayload(@NotNull CustomPacketPayload.Type<?> id, @NotNu
         return new StreamCodec<>() {
             @Override
             public @NotNull EmotePacketPayload decode(@NotNull FriendlyByteBuf buf) {
-                if (buf.isDirect() || buf.isReadOnly()) {
-                    byte[] bytes = new byte[buf.readableBytes()];
-                    buf.readBytes(bytes);
-
-                    return new EmotePacketPayload(channel, ByteBuffer.wrap(bytes));
-                } else {
-                    return new EmotePacketPayload(channel, ByteBuffer.wrap(buf.array()));
-                }
+                return new EmotePacketPayload(channel, PlatformTools.rewrap(buf));
             }
 
             @Override
