@@ -19,6 +19,6 @@ public class ClientNetworkImpl {
     public static @NotNull Packet<?> createServerboundPacket(@NotNull final CustomPacketPayload.Type<EmotePacketPayload> id, @NotNull ByteBuffer buf) {
         assert buf.hasRemaining();
 
-        return new ServerboundCustomPayloadPacket(EmotePacketPayload.createPacket(id, buf));
+        return new ServerboundCustomPayloadPacket(new EmotePacketPayload(id, buf));
     }
 }

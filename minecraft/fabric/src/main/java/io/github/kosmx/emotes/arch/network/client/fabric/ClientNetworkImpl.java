@@ -17,6 +17,6 @@ public class ClientNetworkImpl {
     public static @NotNull Packet<?> createServerboundPacket(@NotNull final CustomPacketPayload.Type<EmotePacketPayload> id, @NotNull ByteBuffer buf) {
         assert buf.hasRemaining();
 
-        return ClientPlayNetworking.createC2SPacket(EmotePacketPayload.createPacket(id, buf));
+        return ClientPlayNetworking.createC2SPacket(new EmotePacketPayload(id, buf));
     }
 }

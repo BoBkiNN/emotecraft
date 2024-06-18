@@ -12,13 +12,10 @@ import io.github.kosmx.emotes.executor.emotePlayer.IEmotePlayerEntity;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.ByteBuffer;
 import java.util.UUID;
 
 public final class PlatformTools {
@@ -63,15 +60,5 @@ public final class PlatformTools {
 
     public static ResourceLocation newIdentifier(String id){
         return ResourceLocation.fromNamespaceAndPath(CommonData.MOD_ID, id);
-    }
-
-    public static ByteBuffer rewrap(@NotNull FriendlyByteBuf buf) {
-        if (buf.isDirect() || buf.isReadOnly()) {
-            byte[] bytes = new byte[buf.readableBytes()];
-            buf.readBytes(bytes);
-            return ByteBuffer.wrap(bytes);
-        } else {
-            return ByteBuffer.wrap(buf.array());
-        }
     }
 }
