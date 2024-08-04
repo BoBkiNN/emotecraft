@@ -1,7 +1,8 @@
 {
+  "emotecraft.menu": "Configure suas Reações",
   "emotecraft.options.options": "Opções do mod",
-  "emotecraft.options.keybind": "Definir atalho para executar o emote selecionado",
-  "emotecraft.options.fastmenu": "Selecione um emote então clique para",
+  "emotecraft.options.keybind": "Escolha uma tecla para realizar o emote escolhido.",
+  "emotecraft.options.fastmenu": "Selecione um emote, então clique para",
   "emotecraft.options.fastmenu2": "na roda de emotes para adicioná-lo.",
   "emotecraft.options.fastmenu3": "Clique direito em um emote na roda para limpá-lo.",
   "emotecraft.sure": "Sobrescrição de atalho",
