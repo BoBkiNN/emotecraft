@@ -1,4 +1,5 @@
 {
+  "emotecraft.menu": "Emote Einstellungen",
   "emotecraft.options.options": "Mod-Optionen",
   "emotecraft.options.keybind": "Wähle einen Hotkey für diesen Emote",
   "emotecraft.options.fastmenu": "Wähle einen Emote und dann klicke auf das zu belegende Feld,",
@@ -37,6 +38,7 @@
   "emotecraft.otherconfig.hideWarning": "Verstecke Warnung \"kein Server\"",
   "emotecraft.otherconfig.emotesFolderOnLogicalServer": "NICHT AKTIVIEREN Lade Emotes auf logischem Server",
   "emotecraft.otherconfig.emotesFolderOnLogicalServer.tooltip": "LASS ES DEAKTIVIERT\nDer interne Server lädt die Benutzer-Emotes anstatt der Benutzer\nwenn du es anschaltest, werden Emotes nur im Einzelspieler Modus funktionieren",
+  "emotecraft.otherconfig.oldChooseWheel": "Alten Emote-Rad-Stil verwenden",
   "emotecraft.emotelist": "Alle Emotes",
   "emotecraft.no_server": "Server hat kein Emotecraft-Plugin installiert, andere werden deine Emotes nicht sehen können",
   "emotecraft.different_server": "Server hat eine andere Emotecraft-Version installiert, es können Fehler bei der Anzeige auftreten",
