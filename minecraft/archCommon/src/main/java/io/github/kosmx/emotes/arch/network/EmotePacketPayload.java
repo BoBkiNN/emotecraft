@@ -32,20 +32,12 @@ public record EmotePacketPayload(@NotNull CustomPacketPayload.Type<?> id, @NotNu
 
     @NotNull
     public static StreamCodec<FriendlyByteBuf, EmotePacketPayload> reader(@NotNull CustomPacketPayload.Type<?> channel) {
-        return new StreamCodec<>() {
-            @Override
-            public @NotNull EmotePacketPayload decode(@NotNull FriendlyByteBuf buf) {
-                byte[] bytes = new byte[buf.readableBytes()];
-                buf.readBytes(bytes);
+        return CustomPacketPayload.codec((payload, buf) -> buf.writeBytes(payload.unwrapBytes()), buf -> {
+            byte[] bytes = new byte[buf.readableBytes()];
+            buf.readBytes(bytes);
 
-                return new EmotePacketPayload(channel, ByteBuffer.wrap(bytes));
-            }
-
-            @Override
-            public void encode(@NotNull FriendlyByteBuf buf, @NotNull EmotePacketPayload payload) {
-                buf.writeBytes(payload.unwrapBytes());
-            }
-        };
+            return new EmotePacketPayload(channel, ByteBuffer.wrap(bytes));
+        });
     }
 
     public static final StreamCodec<FriendlyByteBuf, EmotePacketPayload> EMOTE_CHANNEL_READER = reader(NetworkPlatformTools.EMOTE_CHANNEL_ID);
