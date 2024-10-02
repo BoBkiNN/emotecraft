@@ -16,6 +16,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.OptionsList;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -62,16 +63,19 @@ public class ConfigScreen extends OptionsSubScreen {
 
     @Override
     protected void addFooter() {
-        this.addRenderableWidget(new Button.Builder(Component.translatable("controls.reset"), (button) -> {
+        LinearLayout linearLayout = this.layout.addToFooter(LinearLayout.horizontal().spacing(8));
+
+        linearLayout.addChild(new Button.Builder(Component.translatable("controls.reset"), (button) -> {
             this.minecraft.setScreen(new ConfirmScreen(
                     this::resetAll,
                     Component.translatable("emotecraft.resetConfig.title"),
                     Component.translatable("emotecraft.resetConfig.message")));
-        }).pos(this.width / 2 - 155, this.height - 27).width(150).build());
-        this.addRenderableWidget(new Button.Builder(CommonComponents.GUI_DONE, (button -> {
+        }).width(150).build());
+
+        linearLayout.addChild(new Button.Builder(CommonComponents.GUI_DONE, (button -> {
             ClientSerializer.saveConfig();
             this.onClose();
-        })).pos(this.width / 2 - 155 + 160, this.height - 27).width(150).build());
+        })).width(150).build());
     }
 
     private void addConfigEntry(SerializableConfig.ConfigEntry<?> entry, OptionsList options) {
