@@ -25,7 +25,7 @@ test {
 }
 
 compileJava {
-    options.release.set 8 //Build on JDK 1.8
+    options.release.set 21 //Build on JDK 1.8
 }
 
 artifacts {
