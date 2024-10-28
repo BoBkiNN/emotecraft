@@ -59,7 +59,7 @@ dependencies {
     neoForge "net.neoforged:neoforge:${project.neoforge_version}"
 
     include modImplementation("io.github.kosmx.bendy-lib:bendy-lib-forge:${project.bendylib_version}")
-    include modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${project.player_anim}")
+    modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${project.player_anim}")
 }
 
 processResources {
