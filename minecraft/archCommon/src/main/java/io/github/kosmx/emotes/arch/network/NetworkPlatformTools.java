@@ -48,10 +48,10 @@ public final class NetworkPlatformTools {
     }
 
     public static @NotNull Packet<?> streamPacket(@NotNull ByteBuffer buf) {
-        return createClientboundPacket(EMOTE_CHANNEL_ID, buf);
+        return createClientboundPacket(STREAM_CHANNEL_ID, buf);
     }
 
     public static @NotNull Packet<?> geyserPacket(@NotNull ByteBuffer buf) {
-        return createClientboundPacket(EMOTE_CHANNEL_ID, buf);
+        return createClientboundPacket(GEYSER_CHANNEL_ID, buf);
     }
 }
