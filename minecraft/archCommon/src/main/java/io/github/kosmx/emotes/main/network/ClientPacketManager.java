@@ -79,7 +79,6 @@ public final class ClientPacketManager extends EmotesProxyManager {
             if(data == null){
                 throw new IOException("no valid data");
             }
-            networkInstance.setVersions(data.versions);  // Fix for old plugins
             if(!networkInstance.trustReceivedPlayer()){
                 data.player = null;
             }

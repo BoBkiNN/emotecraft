@@ -59,6 +59,11 @@ public class ClientInit {
         ClientNetwork.INSTANCE.disconnect();
     }
 
+    @SubscribeEvent
+    public static void onConnect(ClientPlayerNetworkEvent.LoggingIn event) {
+        ClientNetwork.INSTANCE.configureOnPlay(event.getConnection()::send);
+    }
+
     public static void keyBindingRegister(RegisterKeyMappingsEvent event) {
         event.register(openMenuKey);
         event.register(stopEmote);

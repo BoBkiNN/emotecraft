@@ -53,6 +53,8 @@ public final class ClientNetwork extends AbstractNetworkInstance {
         }
     };
 
+    private boolean isConfiguredNormally;
+
     @Override
     public boolean isActive() {
         return isServerChannelOpen(NetworkPlatformTools.EMOTE_CHANNEL_ID.id());
@@ -112,7 +114,6 @@ public final class ClientNetwork extends AbstractNetworkInstance {
     }
 
     public void receiveConfigMessage(@NotNull ByteBuffer buf, @NotNull Consumer<Packet<?>> consumer) throws IOException {
-
         var packet = new EmotePacket.Builder().build().read(buf);
         if (packet != null) {
             if (packet.purpose == PacketTask.CONFIG) {
@@ -124,6 +125,7 @@ public final class ClientNetwork extends AbstractNetworkInstance {
                         throw new RuntimeException(e);
                     }
                 });
+                this.isConfiguredNormally = true;
             } else if (packet.purpose == PacketTask.FILE) {
                 EmoteHolder.addEmoteToList(packet.emoteData).fromInstance = this;
             } else {
@@ -136,9 +138,28 @@ public final class ClientNetwork extends AbstractNetworkInstance {
         }
     }
 
+    /**
+     * Used if the server has an outdated emotecraft that does not support the correct configuration
+     * @deprecated Don't play on such servers
+     */
+    public void configureOnPlay(@NotNull Consumer<Packet<?>> consumer) {
+        if (!this.isConfiguredNormally && isActive()) {
+            EmoteInstance.instance.getLogger().log(Level.WARNING, "The server failed to configure the client, attempting to configure...");
+
+            sendC2SConfig(p -> {
+                try {
+                    consumer.accept(ClientNetwork.playPacket(p.build().write()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+    }
+
     @Override
     public void disconnect() {
         super.disconnect();
+        this.isConfiguredNormally = false;
     }
 
     @Override
@@ -155,8 +176,9 @@ public final class ClientNetwork extends AbstractNetworkInstance {
     public static @NotNull Packet<?> playPacket(@NotNull ByteBuffer buf) {
         return createServerboundPacket(NetworkPlatformTools.EMOTE_CHANNEL_ID, buf);
     }
+
     public static @NotNull Packet<?> streamPacket(@NotNull ByteBuffer buf) {
-        return createServerboundPacket(NetworkPlatformTools.EMOTE_CHANNEL_ID, buf);
+        return createServerboundPacket(NetworkPlatformTools.STREAM_CHANNEL_ID, buf);
     }
     // no geyser packet from client. That is geyser plugin only feature
 }
