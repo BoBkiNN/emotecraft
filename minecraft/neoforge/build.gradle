@@ -126,14 +126,14 @@ if(keysExists) {
         versionNumber = "${project.mod_version}+${project.minecraft_version}-forge"
         versionName = "${project.mod_version}"
 
-        gameVersions = ["1.20", "1.20.1"]
+        gameVersions = ["1.21.1"]
         changelog = changes
-        loaders = ["forge"]
+        loaders = ["neoforge"]
         failSilently = false
 
         dependencies {
-            optional.project "bendy-lib"
-            required.project "playeranimator"
+            embedded.project "bendy-lib"
+            embedded.project "playeranimator"
         }
     }
 }

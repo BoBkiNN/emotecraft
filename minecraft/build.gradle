@@ -67,7 +67,7 @@ if(keysExists) {
             //changelog = '[See on Github](https://github.com/KosmX/emotes/commits/master)'
             changelog = changes
             releaseType = project.cfType
-            addGameVersion "1.20.4"
+            addGameVersion "1.21.1"
             addGameVersion "Fabric"
             addGameVersion "Quilt"
 
@@ -95,13 +95,12 @@ if(keysExists) {
             //changelog = '[See on Github](https://github.com/KosmX/emotes/commits/master)'
             changelog = changes
             releaseType = project.cfType
-            addGameVersion "1.20.4"
+            addGameVersion "1.21.1"
             addGameVersion "NeoForge"
 
-
             relations {
-                requiredDependency 'playeranimator'
-                optionalDependency 'bendy-lib'
+                embeddedLibrary 'playeranimator'
+                embeddedLibrary 'bendy-lib'
             }
 
             options {

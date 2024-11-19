@@ -130,7 +130,7 @@ if (keysExists) {
         versionNumber = "${project.mod_version}+${project.minecraft_version}-fabric"
         versionName = "${project.mod_version}"
 
-        gameVersions = ["1.20", "1.20.1"]
+        gameVersions = ["1.21.1"]
         changelog = changes
         loaders = ["fabric", "quilt"]
         failSilently = false
