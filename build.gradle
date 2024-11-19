@@ -15,14 +15,12 @@ allprojects {
     group = rootProject.maven_group
 
     repositories {
-        mavenLocal()
         maven{
             name = "TerraformersMC maven"
             url = 'https://maven.terraformersmc.com/'
         }
         maven {
-            name "KosmX's maven"
-            url 'https://maven.kosmx.dev/'
+            url 'https://repo.redlance.org/public'
         }
         maven {
             url "https://libraries.minecraft.net"
