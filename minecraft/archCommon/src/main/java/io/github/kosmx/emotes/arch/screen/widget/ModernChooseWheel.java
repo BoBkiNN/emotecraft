@@ -1,8 +1,8 @@
 package io.github.kosmx.emotes.arch.screen.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import dev.kosmx.playerAnim.core.util.MathHelper;
 import io.github.kosmx.emotes.PlatformTools;
-import io.github.kosmx.emotes.common.SerializableConfig;
 import io.github.kosmx.emotes.executor.EmoteInstance;
 import io.github.kosmx.emotes.main.EmoteHolder;
 import io.github.kosmx.emotes.main.config.ClientConfig;
@@ -10,13 +10,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.logging.Level;
-
-import static io.github.kosmx.emotes.common.SerializableConfig.Icon.*;
 
 /**
  * Stuff fo override
@@ -49,13 +48,13 @@ public class ModernChooseWheel implements IChooseWheel {
 
     @Nullable
     protected FastChooseElement getActivePart(int mouseX, int mouseY) {
-        int x = mouseX - widget.x - widget.size / 2;
-        int y = mouseY - widget.y - widget.size / 2;
+        int x = mouseX - widget.getX() - widget.getWidth() / 2;
+        int y = mouseY - widget.getY() - widget.getHeight() / 2;
         int i = 0;
         double pi = Math.PI;
 
         double distanceFromCenter = Math.sqrt(x * x + y * y);
-        if (distanceFromCenter < widget.size * 0.17 || distanceFromCenter > widget.size / 2.0) {
+        if (distanceFromCenter < widget.getWidth() * 0.17 || distanceFromCenter > widget.getWidth() / 2.0) {
             return null;
         }
 
@@ -81,10 +80,10 @@ public class ModernChooseWheel implements IChooseWheel {
     }
 
     private int getPageButton(int mouseX, int mouseY) {
-        int x = mouseX - widget.x - widget.size / 2;
-        int y = mouseY - widget.y - widget.size / 2;
+        int x = mouseX - widget.getX() - widget.getWidth() / 2;
+        int y = mouseY - widget.getY() - widget.getHeight() / 2;
         double distanceFromCenter = Math.sqrt(x * x + y * y);
-        if (distanceFromCenter < widget.size * 0.17 || distanceFromCenter > widget.size / 2.0) {
+        if (distanceFromCenter < widget.getWidth() * 0.17 || distanceFromCenter > widget.getWidth() / 2.0) {
             if (x > 1) {
                 return 1;
             } else if (x < 1) {
@@ -95,7 +94,7 @@ public class ModernChooseWheel implements IChooseWheel {
     }
 
     @Override
-    public void render(GuiGraphics matrices, int mouseX, int mouseY, float delta){
+    public void render(@NotNull GuiGraphics matrices, int mouseX, int mouseY, float delta) {
         checkHovered(mouseX, mouseY);
         //widget.renderBindTexture(TEXTURE);
         RenderSystem.setShaderColor((float) 1, (float) 1, (float) 1, (float) 1);
@@ -113,7 +112,7 @@ public class ModernChooseWheel implements IChooseWheel {
             if(f.hasEmote()) f.render(matrices);
         }
         Component text = Component.literal(String.valueOf(fastMenuPage + 1));
-        matrices.drawString(Minecraft.getInstance().font, text, (int) (widget.x + widget.size / 2f - 2), (int) (widget.y + widget.size / 2f - 3), -1);
+        matrices.drawString(Minecraft.getInstance().font, text, (int) (widget.getX() + widget.getWidth() / 2f - 2), (int) (widget.getY() + widget.getHeight() / 2f - 3), -1);
     }
 
 
@@ -126,14 +125,14 @@ public class ModernChooseWheel implements IChooseWheel {
      * @param s        used texture part size !NOT THE WHOLE TEXTURE IMAGE SIZE!
      */
     private void drawTexture(GuiGraphics matrices, ResourceLocation t, int x, int y, int u, int v, int s){
-        matrices.blit(t, widget.x + x * widget.size / 256, widget.y + y * widget.size / 256, s * widget.size / 2, s * widget.size / 2, (float) u, (float) v, s * 128, s * 128, 512, 512);
+        matrices.blit(t, widget.getX() + x * widget.getWidth() / 256, widget.getY() + y * widget.getHeight() / 256, s * widget.getWidth() / 2, s * widget.getHeight() / 2, (float) u, (float) v, s * 128, s * 128, 512, 512);
     }
     private void drawTexture_select(GuiGraphics matrices, ResourceLocation t, int x, int y, int u, int v, int w, int h){
-        matrices.blit(t, widget.x + x * widget.size / 512, widget.y + y * widget.size / 512, w * widget.size / 2, h * widget.size / 2, (float) u, (float) v, w * 128, h * 128, 512, 512);
+        matrices.blit(t, widget.getX() + x * widget.getWidth() / 512, widget.getY() + y * widget.getHeight() / 512, w * widget.getWidth() / 2, h * widget.getHeight() / 2, (float) u, (float) v, w * 128, h * 128, 512, 512);
     }
 
     private void checkHovered(int mouseX, int mouseY){
-        this.hovered = mouseX >= widget.x && mouseY >= widget.y && mouseX <= widget.x + widget.size && mouseY <= widget.y + widget.size;
+        this.hovered = mouseX >= widget.getX() && mouseY >= widget.getY() && mouseX <= widget.getX() + widget.getWidth() && mouseY <= widget.getY() + widget.getHeight();
     }
 
     @Override
@@ -164,9 +163,9 @@ public class ModernChooseWheel implements IChooseWheel {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         checkHovered((int) mouseX, (int) mouseY);
-        if (amount < 0) {
+        if (verticalAmount < 0) {
             if (fastMenuPage < 9) {
                 fastMenuPage++;
                 return true;
@@ -231,35 +230,29 @@ public class ModernChooseWheel implements IChooseWheel {
         public void render(GuiGraphics matrices){
             UUID emoteID = ((ClientConfig)EmoteInstance.config).fastMenuEmotes[fastMenuPage][id] != null ? ((ClientConfig)EmoteInstance.config).fastMenuEmotes[fastMenuPage][id] : null;
             ResourceLocation identifier = emoteID != null && EmoteHolder.list.get(emoteID) != null ? EmoteHolder.list.get(emoteID).getIconIdentifier() : null;
-            if (identifier != null) {//TODO ADD ICON & TEXT RENDER
-                switch ((SerializableConfig.Icon) ((ClientConfig) EmoteInstance.config).showIcons.get()) {
-                    case ICON -> renderIcon(matrices,identifier);
-                    case ICON_TEXT -> {
-                        renderIcon(matrices,identifier);
-                        renderText(matrices, fastMenuPage,1.6);
-                    }
-                    case TEXT -> renderText(matrices, fastMenuPage,2.0);
-                }
-            } else {
-                if(!renderText(matrices, fastMenuPage,2.0)) {
+            if(identifier != null && ((ClientConfig)EmoteInstance.config).showIcons.get()){
+                int s = widget.getWidth() / 10;
+                int iconX = (int) (((float) (widget.getX() + widget.getWidth() / 2)) + widget.getWidth() * 0.36 * Math.sin(this.angle * 0.0174533)) - s;
+                int iconY = (int) (((float) (widget.getY() + widget.getHeight() / 2)) + widget.getHeight() * 0.36 * Math.cos(this.angle * 0.0174533)) - s;
+                //widget.renderBindTexture(identifier);
+                matrices.blit(identifier, iconX, iconY, s * 2, s * 2, (float) 0, (float) 0, 256, 256, 256, 256);
+            }else{
+                if(((ClientConfig)EmoteInstance.config).fastMenuEmotes[fastMenuPage][id] != null){
+                    drawCenteredText(matrices, EmoteHolder.getNonNull(((ClientConfig)EmoteInstance.config).fastMenuEmotes[fastMenuPage][id]).name, this.angle);
+                }else{
                     EmoteInstance.instance.getLogger().log(Level.WARNING, "Tried to render non-existing name", true);
                 }
             }
         }
 
-        private boolean renderText(GuiGraphics matrices, int fastMenuPage, double offset) {
-            if (((ClientConfig) EmoteInstance.config).fastMenuEmotes[fastMenuPage][id] != null) {
-                widget.drawCenteredText(matrices, EmoteHolder.getNonNull(((ClientConfig) EmoteInstance.config).fastMenuEmotes[fastMenuPage][id]).name, this.angle,offset);
-            }
-            return false;
+        public void drawCenteredText(GuiGraphics matrixStack, Component stringRenderable, float deg){
+            drawCenteredText(matrixStack, stringRenderable, (float) (((float) (widget.getX() + widget.getWidth() / 2)) + widget.getWidth() * 0.4 * Math.sin(deg * 0.0174533)), (float) (((float) (widget.getY() + widget.getHeight() / 2)) + widget.getHeight() * 0.4 * Math.cos(deg * 0.0174533)));
         }
 
-        private void renderIcon(GuiGraphics matrices, ResourceLocation identifier) {
-            int s = widget.size / 10;
-            int iconX = (int) (((float) (widget.x + widget.size / 2)) + widget.size * 0.4 * Math.sin(this.angle * 0.0174533)) - s;
-            int iconY = (int) (((float) (widget.y + widget.size / 2)) + widget.size * 0.4 * Math.cos(this.angle * 0.0174533)) - s;
-            //widget.renderBindTexture(identifier);
-            matrices.blit(identifier, iconX, iconY, s * 2, s * 2, (float) 0, (float) 0, 256, 256, 256, 256);
+        public void drawCenteredText(GuiGraphics matrices, Component stringRenderable, float x, float y){
+            int c = ((ClientConfig) EmoteInstance.config).dark.get() ? 255 : 0; //:D
+            float x1 = x - (float) Minecraft.getInstance().font.width(stringRenderable) / 2;
+            matrices.drawString(Minecraft.getInstance().font, stringRenderable, (int) x1, (int) (y - 2), MathHelper.colorHelper(c, c, c, 1));
         }
 
         public void renderHover(GuiGraphics matrices, ResourceLocation t){

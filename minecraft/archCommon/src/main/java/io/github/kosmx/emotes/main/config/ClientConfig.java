@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import io.github.kosmx.emotes.common.SerializableConfig;
 import io.github.kosmx.emotes.common.tools.BiMap;
 
-import java.util.List;
 import java.util.UUID;
 
 public class ClientConfig extends SerializableConfig {
@@ -16,7 +15,6 @@ public class ClientConfig extends SerializableConfig {
     public final ConfigEntry<Boolean> frontAsTPPerspective = new ConfigEntry<>("default3rdPersonFront", false, false, basics);
     public final ConfigEntry<Boolean> showIcons = new ConfigEntry<>("showicon", "showIcon", true, false, basics);
     public final ConfigEntry<Boolean> enableNSFW = new ConfigEntry<>("enableNSFW", false, true, basics);
-
 
     public final ConfigEntry<Boolean> alwaysOpenEmoteScreen = new ConfigEntry<>("alwaysOpenScreen", false, true, basics);
     //expert

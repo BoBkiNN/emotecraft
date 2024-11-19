@@ -41,10 +41,11 @@ public class ConfigSerializer implements JsonDeserializer<SerializableConfig>, J
         } else if (node.has(entry.getOldConfigName())) {
             id = entry.getOldConfigName();
         }
+
         if (id == null)
             return;
 
-        entry.set((T) Serializer.serializer.fromJson(node.get(id), entry.get().getClass())); // TODO enums
+        entry.set((T) Serializer.serializer.fromJson(node.get(id), entry.get().getClass()));
     }
 
     @Override

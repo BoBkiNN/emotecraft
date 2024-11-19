@@ -1,6 +1,6 @@
 plugins{
     id 'java'
-    id 'dev.architectury.loom' version '1.5.+' apply false //Forge loom :D
+    id 'dev.architectury.loom' version '1.7.+' apply false //Forge loom :D
     id "architectury-plugin" version "3.4-SNAPSHOT" apply true
     id "com.github.johnrengelman.shadow" version "8.1.1" apply false
     //id "com.dorongold.task-tree" version "1.5" Current version doesn't support gradle 6.8
@@ -16,6 +16,7 @@ allprojects {
     group = rootProject.maven_group
 
     repositories {
+        mavenLocal()
         maven{
             name = "TerraformersMC maven"
             url = 'https://maven.terraformersmc.com/'
@@ -54,6 +55,9 @@ allprojects {
         options.encoding = 'UTF-8'
     }
 
+    java {
+        withSourcesJar()
+    }
 }
 
 //---------------- Publishing ----------------

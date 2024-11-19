@@ -1,8 +1,8 @@
 package io.github.kosmx.emotes.arch.network.client;
 
 import dev.architectury.injectables.annotations.ExpectPlatform;
-import io.github.kosmx.emotes.PlatformTools;
 import io.github.kosmx.emotes.api.proxy.AbstractNetworkInstance;
+import io.github.kosmx.emotes.arch.network.EmotePacketPayload;
 import io.github.kosmx.emotes.arch.network.NetworkPlatformTools;
 import io.github.kosmx.emotes.common.network.EmotePacket;
 import io.github.kosmx.emotes.common.network.EmoteStreamHelper;
@@ -11,10 +11,8 @@ import io.github.kosmx.emotes.executor.EmoteInstance;
 import io.github.kosmx.emotes.inline.TmpGetters;
 import io.github.kosmx.emotes.main.EmoteHolder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Contract;
@@ -55,9 +53,11 @@ public final class ClientNetwork extends AbstractNetworkInstance {
         }
     };
 
+    private boolean isConfiguredNormally;
+
     @Override
     public boolean isActive() {
-        return isServerChannelOpen(NetworkPlatformTools.EMOTE_CHANNEL_ID);
+        return isServerChannelOpen(NetworkPlatformTools.EMOTE_CHANNEL_ID.id());
     }
 
     @Override
@@ -97,21 +97,6 @@ public final class ClientNetwork extends AbstractNetworkInstance {
         Objects.requireNonNull(Minecraft.getInstance().getConnection()).send(packet);
     }
 
-    public void receiveMessage(FriendlyByteBuf buf) {
-        receiveMessage(PlatformTools.unwrap(buf)); // This will invoke EmotesProxy and handle the message
-    }
-
-    public void receiveStreamMessage(FriendlyByteBuf buf, @Nullable Consumer<Packet<?>> configPacketConsumer) throws IOException {
-        @Nullable ByteBuffer buffer = streamHelper.receiveStream(ByteBuffer.wrap(PlatformTools.unwrap(buf)));
-        if (buffer != null) {
-            if (configPacketConsumer != null) {
-                receiveConfigMessage(buffer, configPacketConsumer);
-            } else {
-                receiveMessage(buffer, null);
-            }
-        }
-    }
-
     /**
      *
      * @param buff received data
@@ -128,12 +113,7 @@ public final class ClientNetwork extends AbstractNetworkInstance {
         }
     }
 
-    public void receiveConfigMessage(@NotNull FriendlyByteBuf buf, @NotNull Consumer<Packet<?>> consumer) throws IOException {
-        receiveConfigMessage(ByteBuffer.wrap(PlatformTools.unwrap(buf)), consumer);
-    }
-
     public void receiveConfigMessage(@NotNull ByteBuffer buf, @NotNull Consumer<Packet<?>> consumer) throws IOException {
-
         var packet = new EmotePacket.Builder().build().read(buf);
         if (packet != null) {
             if (packet.purpose == PacketTask.CONFIG) {
@@ -145,6 +125,7 @@ public final class ClientNetwork extends AbstractNetworkInstance {
                         throw new RuntimeException(e);
                     }
                 });
+                this.isConfiguredNormally = true;
             } else if (packet.purpose == PacketTask.FILE) {
                 EmoteHolder.addEmoteToList(packet.emoteData).fromInstance = this;
             } else {
@@ -157,9 +138,28 @@ public final class ClientNetwork extends AbstractNetworkInstance {
         }
     }
 
+    /**
+     * Used if the server has an outdated emotecraft that does not support the correct configuration
+     * @deprecated Don't play on such servers
+     */
+    public void configureOnPlay(@NotNull Consumer<Packet<?>> consumer) {
+        if (!this.isConfiguredNormally && isActive()) {
+            EmoteInstance.instance.getLogger().log(Level.WARNING, "The server failed to configure the client, attempting to configure...");
+
+            sendC2SConfig(p -> {
+                try {
+                    consumer.accept(ClientNetwork.playPacket(p.build().write()));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
+    }
+
     @Override
     public void disconnect() {
         super.disconnect();
+        this.isConfiguredNormally = false;
     }
 
     @Override
@@ -169,26 +169,16 @@ public final class ClientNetwork extends AbstractNetworkInstance {
     }
 
     @ExpectPlatform
-    public static @NotNull Packet<?> createServerboundPacket(@NotNull ResourceLocation id, @NotNull ByteBuffer buf) {
-        assert (buf.hasRemaining());
-        return new ServerboundCustomPayloadPacket(new CustomPacketPayload() {
-            @Override
-            public void write(@NotNull FriendlyByteBuf friendlyByteBuf) {
-                friendlyByteBuf.writeBytes(buf.duplicate());
-            }
-
-            @Override
-            public @NotNull ResourceLocation id() {
-                return id;
-            }
-        });
+    public static @NotNull Packet<?> createServerboundPacket(@NotNull final CustomPacketPayload.Type<EmotePacketPayload> id, @NotNull ByteBuffer buf) {
+        throw new AssertionError();
     }
 
     public static @NotNull Packet<?> playPacket(@NotNull ByteBuffer buf) {
         return createServerboundPacket(NetworkPlatformTools.EMOTE_CHANNEL_ID, buf);
     }
+
     public static @NotNull Packet<?> streamPacket(@NotNull ByteBuffer buf) {
-        return createServerboundPacket(NetworkPlatformTools.EMOTE_CHANNEL_ID, buf);
+        return createServerboundPacket(NetworkPlatformTools.STREAM_CHANNEL_ID, buf);
     }
     // no geyser packet from client. That is geyser plugin only feature
 }

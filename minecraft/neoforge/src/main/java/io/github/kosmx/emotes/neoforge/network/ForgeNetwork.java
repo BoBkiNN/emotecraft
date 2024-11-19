@@ -1,149 +1,110 @@
 package io.github.kosmx.emotes.neoforge.network;
 
-import dev.kosmx.playerAnim.core.util.Pair;
-import io.github.kosmx.emotes.arch.mixin.ConnectionHandlerMixin;
-import io.github.kosmx.emotes.arch.mixin.ServerCommonPacketListenerAccessor;
 import io.github.kosmx.emotes.arch.network.*;
 import io.github.kosmx.emotes.arch.network.client.ClientNetwork;
 import io.github.kosmx.emotes.common.network.EmotePacket;
 import io.github.kosmx.emotes.common.network.EmoteStreamHelper;
 import io.github.kosmx.emotes.common.network.PacketTask;
 import io.github.kosmx.emotes.executor.EmoteInstance;
-import io.github.kosmx.emotes.neoforge.fixingbadsoftware.PacketListenerExtractor;
-import io.github.kosmx.emotes.neoforge.fixingbadsoftware.UnNeoForgifierConfigurationTaskWrapper;
-import io.github.kosmx.emotes.server.network.IServerNetworkInstance;
-import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.network.event.OnGameConfigurationEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.handling.ConfigurationPayloadContext;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.logging.Level;
 
-/**
- * Networking hell
- */
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class ForgeNetwork {
-
     @SubscribeEvent
-    public static void registerPlay(final RegisterPayloadHandlerEvent event) {
+    public static void registerPlay(final RegisterPayloadHandlersEvent event) {
+        event.registrar("emotecraft") // Play networking
+                .optional()
+                .playBidirectional(NetworkPlatformTools.EMOTE_CHANNEL_ID, EmotePacketPayload.EMOTE_CHANNEL_READER, new DirectionalPayloadHandler<>(
+                        (arg, playPayloadContext) -> ClientNetwork.INSTANCE.receiveMessage(arg.unwrapBytes()),
+                        (arg, playPayloadContext) -> CommonServerNetworkHandler.instance.receiveMessage(arg.unwrapBytes(), playPayloadContext.player())
+                ))
 
-        // Play networking
-
-        var emotes = event.registrar("emotecraft");
-        emotes.optional().play(NetworkPlatformTools.EMOTE_CHANNEL_ID, EmotePacketPayload.EMOTE_CHANNEL_READER, handler -> {
-            handler.client((arg, playPayloadContext) -> ClientNetwork.INSTANCE.receiveMessage(arg.bytes(), null));
-
-            // Why can't forge simply create a networking module that doesn't suck?
-            handler.server((arg, playPayloadContext) -> {
-                var data = extractComponents(playPayloadContext);
-                try {
-                    CommonServerNetworkHandler.instance.receiveMessage(arg.bytes().array(), data.getRight(), data.getLeft());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        });
-
-        emotes.optional().play(NetworkPlatformTools.STREAM_CHANNEL_ID, EmotePacketPayload.STREAM_CHANNEL_READER, handler -> {
-            handler.client((arg, playPayloadContext) -> {
-                try {
-                    ClientNetwork.INSTANCE.receiveStreamMessage(arg.bytes(), null);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-            handler.server((arg, playPayloadContext) -> {
-                var data = extractComponents(playPayloadContext);
-                CommonServerNetworkHandler.instance.receiveStreamMessage(data.getRight(), data.getLeft(), arg.bytes());
-            });
-        });
-
-
-        event.registrar("geyser").optional().play(NetworkPlatformTools.GEYSER_CHANNEL_ID, EmotePacketPayload.GEYSER_CHANNEL_READER, handler -> {
-            handler.server((arg, playPayloadContext) -> CommonServerNetworkHandler.instance.receiveGeyserMessage((ServerPlayer) playPayloadContext.player().get(), arg.bytes().array()));
-        }); // I may hack forge later
-
-        // Config networking
-
-        emotes.optional().configuration(NetworkPlatformTools.EMOTE_CHANNEL_ID, EmotePacketPayload.EMOTE_CHANNEL_READER, handler -> {
-            handler.server((arg, configurationPayloadContext) -> {
-
-                try {
-                    var message = new EmotePacket.Builder().build().read(arg.bytes());
-
-                    if (message == null || message.purpose != PacketTask.CONFIG)
-                        throw new IOException("Wrong packet type for config task");
-
-                    var connection = PacketListenerExtractor.extract(configurationPayloadContext).getConnection();
-                    ((EmotesMixinConnection)connection).emotecraft$setVersions(message.versions);
-                    CommonServerNetworkHandler.instance.getServerEmotes(message.versions).forEach(buffer ->
-                            new EmoteStreamHelper() {
-
-                                @Override
-                                protected int getMaxPacketSize() {
-                                    return Short.MAX_VALUE - 16;
-                                }
-
-                                @Override
-                                protected void sendPlayPacket(ByteBuffer buffer) {
-                                    configurationPayloadContext.replyHandler().send(EmotePacketPayload.playPacket(buffer));
-                                }
-
-                                @Override
-                                protected void sendStreamChunk(ByteBuffer buffer) {
-                                    configurationPayloadContext.replyHandler().send(EmotePacketPayload.streamPacket(buffer));
-                                }
+                .optional()
+                .playBidirectional(NetworkPlatformTools.STREAM_CHANNEL_ID, EmotePacketPayload.STREAM_CHANNEL_READER, new DirectionalPayloadHandler<>(
+                        (arg, playPayloadContext) -> {
+                            try {
+                                ClientNetwork.INSTANCE.receiveStreamMessage(arg.bytes(), null);
+                            } catch (IOException e) {
+                                EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
                             }
-                    );
+                        },
+                        (arg, playPayloadContext) -> CommonServerNetworkHandler.instance.receiveStreamMessage(arg.unwrapBytes(), playPayloadContext.player())
+                ))
 
-                    configurationPayloadContext.taskCompletedHandler().onTaskCompleted(ConfigTask.TYPE);
+                .optional()
+                .configurationBidirectional(NetworkPlatformTools.EMOTE_CHANNEL_ID, EmotePacketPayload.EMOTE_CHANNEL_READER, new DirectionalPayloadHandler<>(
+                        (arg, configurationPayloadContext) -> {
+                            try {
+                                ClientNetwork.INSTANCE.receiveConfigMessage(arg.bytes(), p -> configurationPayloadContext.listener().send(p));
+                            } catch (IOException e) {
+                                EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
+                            }
+                        },
+                        (arg, configurationPayloadContext) -> {
+                            try {
+                                var message = new EmotePacket.Builder().build().read(arg.bytes());
+                                if (message == null || message.purpose != PacketTask.CONFIG) {
+                                    throw new IOException("Wrong packet type for config task");
+                                }
 
-                } catch (IOException e) {
-                    EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
-                    configurationPayloadContext.channelHandlerContext().disconnect();
-                }
-            });
-            handler.client((arg, configurationPayloadContext) -> {
-                try {
-                    ClientNetwork.INSTANCE.receiveConfigMessage(arg.bytes(), p -> configurationPayloadContext.replyHandler().send(((ServerboundCustomPayloadPacket)p).payload()));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        });
+                                ((EmotesMixinConnection) configurationPayloadContext.connection()).emotecraft$setVersions(message.versions);
 
+                                CommonServerNetworkHandler.instance.getServerEmotes(message.versions).forEach(buffer -> new EmoteStreamHelper() {
+                                    @Override
+                                    protected int getMaxPacketSize() {
+                                        return Short.MAX_VALUE - 16;
+                                    }
 
-        emotes.optional().configuration(NetworkPlatformTools.STREAM_CHANNEL_ID, EmotePacketPayload.STREAM_CHANNEL_READER, handler -> {
-            handler.client((arg, configurationPayloadContext) -> {
-                try {
-                    ClientNetwork.INSTANCE.receiveStreamMessage(arg.bytes(), p -> configurationPayloadContext.replyHandler().send(((ServerboundCustomPayloadPacket)p).payload()));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        });
+                                    @Override
+                                    protected void sendPlayPacket(ByteBuffer buffer) {
+                                        configurationPayloadContext.reply(EmotePacketPayload.playPacket(buffer));
+                                    }
 
+                                    @Override
+                                    protected void sendStreamChunk(ByteBuffer buffer) {
+                                        configurationPayloadContext.reply(EmotePacketPayload.streamPacket(buffer));
+                                    }
+                                });
+                                configurationPayloadContext.finishCurrentTask(ConfigTask.TYPE);
+                            } catch (IOException e) {
+                                EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
+                                configurationPayloadContext.channelHandlerContext().disconnect();
+                            }
+                        }
+                ))
+
+                .optional()
+                .configurationToClient(NetworkPlatformTools.STREAM_CHANNEL_ID, EmotePacketPayload.STREAM_CHANNEL_READER, (arg, configurationPayloadContext) -> {
+                    try {
+                        ClientNetwork.INSTANCE.receiveStreamMessage(arg.bytes(), p -> configurationPayloadContext.listener().send(p));
+                    } catch (IOException e) {
+                        EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
+                    }
+                });
+
+        event.registrar("geyser")
+                .optional()
+                .playToServer(NetworkPlatformTools.GEYSER_CHANNEL_ID, EmotePacketPayload.GEYSER_CHANNEL_READER,
+                        (arg, playPayloadContext) -> CommonServerNetworkHandler.instance.receiveGeyserMessage(playPayloadContext.player(), arg.unwrapBytes())
+                );
     }
 
     @SubscribeEvent
-    public static void registerNetworkConfigTask(final OnGameConfigurationEvent event) {
-        if (event.getListener().isConnected(NetworkPlatformTools.EMOTE_CHANNEL_ID)) {
-            event.register(UnNeoForgifierConfigurationTaskWrapper.wrap(new ConfigTask()));
+    public static void registerNetworkConfigTask(final RegisterConfigurationTasksEvent event) {
+        if (event.getListener().hasChannel(NetworkPlatformTools.EMOTE_CHANNEL_ID) ||
+                event.getListener().hasChannel(NetworkPlatformTools.STREAM_CHANNEL_ID)) {
+
+            event.register(new ConfigTask());
         } else {
             EmoteInstance.instance.getLogger().log(Level.FINE, "Client doesn't support emotes, ignoring");
         }
-    }
-
-
-    private static Pair<IServerNetworkInstance, ServerPlayer> extractComponents(PlayPayloadContext haystack) {
-        ServerPlayer player = (ServerPlayer) haystack.player().orElseThrow(() -> new IllegalArgumentException("forge networking is still retard"));
-        return new Pair<>(CommonServerNetworkHandler.getHandler(player.connection), player);
     }
 }

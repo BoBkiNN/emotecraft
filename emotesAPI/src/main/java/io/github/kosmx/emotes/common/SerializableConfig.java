@@ -91,7 +91,7 @@ public class SerializableConfig {
             this.value = newValue;
         }
 
-        public String getName(){
+        public String getName() {
             return name;
         }
 
@@ -164,23 +164,5 @@ public class SerializableConfig {
         public ListConfigEntry(String name, List<T> defVal, boolean hasTooltip, List<ConfigEntry<?>> collection, boolean hidden) {
             super(name, defVal, hasTooltip, collection, hidden);
         }
-    }
-
-    public static class EnumConfigEntry extends ConfigEntry<Enum<?>> {//TODO ADD ICON & TEXT RENDER
-        T[] values;
-      
-        public EnumConfigEntry(String name, Enum<?> defVal, Enum<?>[] values, boolean hasTooltip, List<ConfigEntry<?>> collection, boolean hidden) {
-            super(name, defVal, values, hasTooltip, collection, hidden);
-        }
-      
-        public T[] getValues(){
-            return values;
-        }
-    }
-
-    public enum Icon {
-        ICON,
-        ICON_TEXT,
-        TEXT
     }
 }

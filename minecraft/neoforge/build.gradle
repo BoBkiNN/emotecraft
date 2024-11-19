@@ -30,15 +30,6 @@ version = rootProject.mod_version
 
 loom{
     accessWidenerPath = project(":${project.module_name}:archCommon").loom.accessWidenerPath
-
-    silentMojangMappingsLicense()
-    /*
-    neoForge {
-        mixinConfig "emotecraft.mixins.json"
-        mixinConfig "emotecraft-arch.mixins.json"
-        convertAccessWideners = true
-        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
-    }*/
 }
 
 configurations {
@@ -51,7 +42,7 @@ configurations {
 
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
-    developmentForge.extendsFrom common
+    developmentNeoForge.extendsFrom common
 }
 
 dependencies {
@@ -67,7 +58,7 @@ dependencies {
 
     neoForge "net.neoforged:neoforge:${project.neoforge_version}"
 
-    modRuntimeOnly("io.github.kosmx.bendy-lib:bendy-lib-forge:${project.bendylib_version}")
+    include modImplementation("io.github.kosmx.bendy-lib:bendy-lib-forge:${project.bendylib_version}")
     modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${project.player_anim}")
 }
 
@@ -75,7 +66,7 @@ processResources {
     inputs.property "version", project.version
     inputs.property "description", rootProject.mod_description
 
-    filesMatching("META-INF/mods.toml") {
+    filesMatching("META-INF/neoforge.mods.toml") {
         expand "version": project.version, "description": rootProject.mod_description
     }
 }

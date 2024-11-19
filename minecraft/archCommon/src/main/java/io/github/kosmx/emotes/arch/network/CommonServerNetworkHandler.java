@@ -7,14 +7,12 @@ import io.github.kosmx.emotes.common.network.objects.NetData;
 import io.github.kosmx.emotes.executor.EmoteInstance;
 import io.github.kosmx.emotes.server.network.AbstractServerEmotePlay;
 import io.github.kosmx.emotes.server.network.IServerNetworkInstance;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.server.network.ServerPlayerConnection;
 import net.minecraft.world.entity.Entity;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -25,33 +23,21 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-public final class CommonServerNetworkHandler extends AbstractServerEmotePlay<ServerPlayer> {
+public final class CommonServerNetworkHandler extends AbstractServerEmotePlay<Player> {
     public static CommonServerNetworkHandler instance = new CommonServerNetworkHandler();
 
-    private static MinecraftServer server;
-
-    public static void setServer(@NotNull MinecraftServer server) {
-        CommonServerNetworkHandler.server = server;
-    }
-
     private CommonServerNetworkHandler() {} // make ctor private for singleton class
-
-    @NotNull
-    public static MinecraftServer getServer() {
-        return server;
-    }
 
     public void init() {
     }
 
-    private byte[] unwrapBuffer(FriendlyByteBuf buf) {
-        if(buf.isDirect()){
-            byte[] bytes = new byte[buf.readableBytes()];
-            buf.getBytes(buf.readerIndex(), bytes);
-            return bytes;
-        }
-        else {
-            return buf.array();
+    public void receiveMessage(byte[] bytes, Player player) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            try {
+                receiveMessage(bytes, player, getHandler(serverPlayer.connection));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -59,16 +45,10 @@ public final class CommonServerNetworkHandler extends AbstractServerEmotePlay<Se
         return ((EmotesMixinNetwork)handler).emotecraft$getServerNetworkInstance();
     }
 
-    public void receiveMessage(ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf) {
-        try
-        {
-            receiveMessage(unwrapBuffer(buf), player, getHandler(handler));
-        } catch (IOException e) {
-            EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
+    public void receiveStreamMessage(byte[] bytes, Player player) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            receiveStreamMessage(serverPlayer, getHandler(serverPlayer.connection), ByteBuffer.wrap(bytes));
         }
-    }
-    public void receiveStreamMessage(ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf) {
-        receiveStreamMessage(player, getHandler(handler), ByteBuffer.wrap(unwrapBuffer(buf)));
     }
 
     public void receiveStreamMessage(ServerPlayer player, IServerNetworkInstance handler, ByteBuffer buf) {
@@ -87,44 +67,44 @@ public final class CommonServerNetworkHandler extends AbstractServerEmotePlay<Se
         }
     }
 
-    public void receiveGeyserMessage(ServerPlayer player, FriendlyByteBuf buf) {
-        receiveGeyserMessage(player, unwrapBuffer(buf));
-    }
-
     @Override
-    protected UUID getUUIDFromPlayer(ServerPlayer player) {
+    protected UUID getUUIDFromPlayer(Player player) {
         return player.getUUID();
     }
 
     @Override
-    protected ServerPlayer getPlayerFromUUID(UUID player) {
-        return server.getPlayerList().getPlayer(player);
+    protected Player getPlayerFromUUID(UUID player) {
+        return NetworkPlatformTools.getServer().getPlayerList().getPlayer(player);
     }
 
     @Override
-    protected long getRuntimePlayerID(ServerPlayer player) {
+    protected long getRuntimePlayerID(Player player) {
         return player.getId();
     }
 
     @Override
-    protected IServerNetworkInstance getPlayerNetworkInstance(ServerPlayer player) {
+    protected IServerNetworkInstance getPlayerNetworkInstance(Player sourcePlayer) {
+        if (!(sourcePlayer instanceof ServerPlayer player)) {
+            return null;
+        }
+
         return ((EmotesMixinNetwork)player.connection).emotecraft$getServerNetworkInstance();
     }
 
     @Override
-    protected void sendForEveryoneElse(GeyserEmotePacket packet, ServerPlayer player) {
+    protected void sendForEveryoneElse(GeyserEmotePacket packet, Player player) {
         sendForEveryoneElse(null, packet, player); // don't make things complicated
     }
 
     @Override
-    protected void sendForEveryoneElse(@Nullable NetData data, @Nullable GeyserEmotePacket geyserPacket, ServerPlayer player) {
+    protected void sendForEveryoneElse(@Nullable NetData data, @Nullable GeyserEmotePacket geyserPacket, Player player) {
         getTrackedPlayers(player).forEach(target -> {
             if (target != player) {
                 try {
-                    if (data != null && NetworkPlatformTools.canSendPlay(target, NetworkPlatformTools.EMOTE_CHANNEL_ID)) {
+                    if (data != null && NetworkPlatformTools.canSendPlay(target, NetworkPlatformTools.EMOTE_CHANNEL_ID.id())) {
                         IServerNetworkInstance playerNetwork = getPlayerNetworkInstance(target);
                         playerNetwork.sendMessage(new EmotePacket.Builder(data), null);
-                    } else if (geyserPacket != null && NetworkPlatformTools.canSendPlay(target, NetworkPlatformTools.GEYSER_CHANNEL_ID)) {
+                    } else if (geyserPacket != null && NetworkPlatformTools.canSendPlay(target, NetworkPlatformTools.GEYSER_CHANNEL_ID.id())) {
                         IServerNetworkInstance playerNetwork = getPlayerNetworkInstance(target);
                         playerNetwork.sendGeyserPacket(ByteBuffer.wrap(geyserPacket.write()));
                     }
@@ -136,7 +116,11 @@ public final class CommonServerNetworkHandler extends AbstractServerEmotePlay<Se
     }
 
     @Override
-    protected void sendForPlayerInRange(NetData data, ServerPlayer sourcePlayer, UUID target) {
+    protected void sendForPlayerInRange(NetData data, Player player, UUID target) {
+        if (!(player instanceof ServerPlayer sourcePlayer)) {
+            return;
+        }
+
         try {
             var targetPlayer = sourcePlayer.server.getPlayerList().getPlayer(target);
             if (targetPlayer != null && targetPlayer.getChunkTrackingView().contains(sourcePlayer.chunkPosition())) {
@@ -149,9 +133,9 @@ public final class CommonServerNetworkHandler extends AbstractServerEmotePlay<Se
     }
 
     @Override
-    protected void sendForPlayer(NetData data, ServerPlayer ignore, UUID target) {
+    protected void sendForPlayer(NetData data, Player ignore, UUID target) {
         try {
-            ServerPlayer player = getPlayerFromUUID(target);
+            Player player = getPlayerFromUUID(target);
             IServerNetworkInstance playerNetwork = getPlayerNetworkInstance(player);
 
             EmotePacket.Builder packetBuilder = new EmotePacket.Builder(data);

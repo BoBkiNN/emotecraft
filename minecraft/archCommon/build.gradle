@@ -9,7 +9,6 @@ architectury{
 
 loom{
     accessWidenerPath = file("src/main/resources/emotes.accesswidener")
-    silentMojangMappingsLicense()
 }
 
 version = rootProject.mod_version

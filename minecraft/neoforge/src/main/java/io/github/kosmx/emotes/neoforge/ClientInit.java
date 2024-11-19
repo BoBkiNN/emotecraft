@@ -2,6 +2,7 @@ package io.github.kosmx.emotes.neoforge;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import io.github.kosmx.emotes.arch.executor.ClientMethods;
+import io.github.kosmx.emotes.arch.network.client.ClientNetwork;
 import io.github.kosmx.emotes.arch.screen.EmoteMenu;
 import io.github.kosmx.emotes.arch.screen.ingame.FastMenuScreen;
 import io.github.kosmx.emotes.executor.EmoteInstance;
@@ -13,18 +14,20 @@ import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModLoadingContext;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLLoader;
-import net.neoforged.neoforge.client.ConfigScreenHandler;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.function.Consumer;
 
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class ClientInit {
 
     static KeyMapping openMenuKey;
@@ -32,25 +35,33 @@ public class ClientInit {
     static KeyMapping debugKey = null;
     static Consumer<Minecraft> keyBindingFunction;
 
-    static void initClient(IEventBus modEventBus) {
+    static void initClient(ModContainer container, IEventBus modEventBus) {
         initKeyBinding();
         //modEventBus.register(new ClientInit());
         modEventBus.addListener(ClientInit::keyBindingRegister);
-    }
-
-    static void setupClient() {
-
-        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory((minecraft, screen) -> new EmoteMenu(screen)));
+        container.registerExtensionPoint(IConfigScreenFactory.class,
+                (minecraft, screen) -> new EmoteMenu(screen)
+        );
     }
 
     @SubscribeEvent
-    public static void endClientTick(TickEvent.ClientTickEvent event){
+    public static void endClientTick(ClientTickEvent.Post event){
         ClientMethods.tick++;
     }
 
     @SubscribeEvent
     public static void keyListenerEvent(InputEvent.Key event){
         keyBindingFunction.accept(null);
+    }
+
+    @SubscribeEvent
+    public static void onDisconnect(ClientPlayerNetworkEvent.LoggingOut event) {
+        ClientNetwork.INSTANCE.disconnect();
+    }
+
+    @SubscribeEvent
+    public static void onConnect(ClientPlayerNetworkEvent.LoggingIn event) {
+        ClientNetwork.INSTANCE.configureOnPlay(event.getConnection()::send);
     }
 
     public static void keyBindingRegister(RegisterKeyMappingsEvent event) {

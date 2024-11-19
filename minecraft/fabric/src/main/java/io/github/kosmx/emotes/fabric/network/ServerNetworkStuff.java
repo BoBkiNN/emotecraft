@@ -1,6 +1,5 @@
 package io.github.kosmx.emotes.fabric.network;
 
-import io.github.kosmx.emotes.PlatformTools;
 import io.github.kosmx.emotes.arch.mixin.ServerCommonPacketListenerAccessor;
 import io.github.kosmx.emotes.arch.network.*;
 import io.github.kosmx.emotes.arch.network.client.ClientNetwork;
@@ -20,6 +19,7 @@ import java.util.logging.Level;
 
 public final class ServerNetworkStuff {
     public static void init() {
+        FabricIsBestYouAreRightKosmX.init(false);
 
         // Config networking
 
@@ -35,47 +35,46 @@ public final class ServerNetworkStuff {
             // No disconnect, vanilla clients can connect
         });
 
-        ServerConfigurationNetworking.registerGlobalReceiver(NetworkPlatformTools.EMOTE_CHANNEL_ID, (server, handler, buf, responseSender) -> {
-
+        ServerConfigurationNetworking.registerGlobalReceiver(NetworkPlatformTools.EMOTE_CHANNEL_ID, (buf, context) -> {
             try {
-                var message = new EmotePacket.Builder().build().read(ByteBuffer.wrap(PlatformTools.unwrap(buf)));
-
-                if (message == null || message.purpose != PacketTask.CONFIG)
+                var message = new EmotePacket.Builder().build().read(buf.bytes());
+                if (message == null || message.purpose != PacketTask.CONFIG) {
                     throw new IOException("Wrong packet type for config task");
-                ((EmotesMixinConnection) ((ServerCommonPacketListenerAccessor) handler).getConnection()).emotecraft$setVersions(message.versions);
-                CommonServerNetworkHandler.instance.getServerEmotes(message.versions).forEach(buffer ->
-                        new EmoteStreamHelper() {
+                }
 
-                            @Override
-                            protected int getMaxPacketSize() {
-                                return Short.MAX_VALUE - 16;
-                            }
+                ((EmotesMixinConnection) ((ServerCommonPacketListenerAccessor) context.networkHandler()).getConnection()).emotecraft$setVersions(message.versions);
+                CommonServerNetworkHandler.instance.getServerEmotes(message.versions).forEach(buffer -> new EmoteStreamHelper() {
+                    @Override
+                    protected int getMaxPacketSize() {
+                        return Short.MAX_VALUE - 16;
+                    }
 
-                            @Override
-                            protected void sendPlayPacket(ByteBuffer buffer) {
-                                responseSender.sendPacket(ClientNetwork.playPacket(buffer));
-                            }
+                    @Override
+                    protected void sendPlayPacket(ByteBuffer buffer) {
+                        context.responseSender().sendPacket(ClientNetwork.playPacket(buffer));
+                    }
 
-                            @Override
-                            protected void sendStreamChunk(ByteBuffer buffer) {
-                                responseSender.sendPacket(ClientNetwork.streamPacket(buffer));
-                            }
-                        }
-                );
-
-                handler.completeTask(ConfigTask.TYPE); // And, we're done here
-
+                    @Override
+                    protected void sendStreamChunk(ByteBuffer buffer) {
+                        context.responseSender().sendPacket(ClientNetwork.streamPacket(buffer));
+                    }
+                });
+                context.networkHandler().completeTask(ConfigTask.TYPE); // And, we're done here
             } catch (IOException e) {
                 EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
-                handler.disconnect(Component.literal(CommonData.MOD_ID + ": " + e.getMessage()));
+                context.networkHandler().disconnect(Component.literal(CommonData.MOD_ID + ": " + e.getMessage()));
             }
         });
 
         // Play networking
-        ServerPlayNetworking.registerGlobalReceiver(NetworkPlatformTools.EMOTE_CHANNEL_ID, (server, player, handler, buf, responseSender) -> CommonServerNetworkHandler.instance.receiveMessage(player, handler, buf));
-
-        ServerPlayNetworking.registerGlobalReceiver(NetworkPlatformTools.STREAM_CHANNEL_ID, (server, player, handler, buf, responseSender) -> CommonServerNetworkHandler.instance.receiveStreamMessage(player, handler, buf));
-
-        ServerPlayNetworking.registerGlobalReceiver(NetworkPlatformTools.GEYSER_CHANNEL_ID, (server, player, handler, buf, responseSender) -> CommonServerNetworkHandler.instance.receiveGeyserMessage(player, buf));
+        ServerPlayNetworking.registerGlobalReceiver(NetworkPlatformTools.EMOTE_CHANNEL_ID, (buf, context) ->
+                CommonServerNetworkHandler.instance.receiveMessage(buf.unwrapBytes(), context.player())
+        );
+        ServerPlayNetworking.registerGlobalReceiver(NetworkPlatformTools.STREAM_CHANNEL_ID, (buf, context) ->
+                CommonServerNetworkHandler.instance.receiveStreamMessage(buf.unwrapBytes(), context.player())
+        );
+        ServerPlayNetworking.registerGlobalReceiver(NetworkPlatformTools.GEYSER_CHANNEL_ID, (buf, context) ->
+                CommonServerNetworkHandler.instance.receiveGeyserMessage(context.player(), buf.unwrapBytes())
+        );
     }
 }

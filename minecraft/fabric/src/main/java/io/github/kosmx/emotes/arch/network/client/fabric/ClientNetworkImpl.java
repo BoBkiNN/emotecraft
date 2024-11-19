@@ -1,9 +1,9 @@
 package io.github.kosmx.emotes.arch.network.client.fabric;
 
-import io.netty.buffer.Unpooled;
+import io.github.kosmx.emotes.arch.network.EmotePacketPayload;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,11 +14,9 @@ public class ClientNetworkImpl {
         return ClientPlayNetworking.canSend(id);
     }
 
-    @NotNull
-    public static Packet<?> createServerboundPacket(@NotNull ResourceLocation id, @NotNull ByteBuffer buf) {
+    public static @NotNull Packet<?> createServerboundPacket(@NotNull final CustomPacketPayload.Type<EmotePacketPayload> id, @NotNull ByteBuffer buf) {
         assert buf.hasRemaining();
 
-        return ClientPlayNetworking.createC2SPacket(id, new FriendlyByteBuf(Unpooled.wrappedBuffer(buf)));
+        return ClientPlayNetworking.createC2SPacket(new EmotePacketPayload(id, buf));
     }
-
 }

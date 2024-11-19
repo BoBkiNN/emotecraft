@@ -8,8 +8,8 @@ import io.github.kosmx.emotes.main.MainLoader;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.common.NeoForge;
@@ -25,14 +25,14 @@ public class ForgeWrapper {
     public static final Logger logger = LoggerFactory.getLogger(CommonData.MOD_ID);
 
 
-    public ForgeWrapper(IEventBus modEventBus){
+    public ForgeWrapper(ModContainer container, IEventBus modEventBus){
         EmoteInstance.instance = new ForgeEmotesMain();
 
-        modEventBus.addListener(this::setup);
+        MainLoader.main(null);
 
         NeoForge.EVENT_BUS.register(this);
         if(FMLLoader.getDist() == Dist.CLIENT){
-            ClientInit.initClient(modEventBus);
+            ClientInit.initClient(container, modEventBus);
         }
     }
 
@@ -45,14 +45,6 @@ public class ForgeWrapper {
     @SubscribeEvent
     public void clientCommandRegister(RegisterClientCommandsEvent event) {
         ClientCommands.register(event.getDispatcher(), event.getBuildContext());
-    }
-
-    private void setup(final FMLCommonSetupEvent event){
-        MainLoader.main(new String[]{"FML"});
-        if(FMLLoader.getDist() == Dist.CLIENT){
-            ClientInit.setupClient();
-        }
-
     }
 
     public static void log(Level level, String msg){
