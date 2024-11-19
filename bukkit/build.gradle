@@ -68,7 +68,7 @@ task copyArtifacts{
     dependsOn('build')
     doLast {
         copy{
-            from "${project.layout.buildDirectory}/libs/${project.archives_base_name}-${rootProject.mod_version}-bukkit.jar"
+            from "${project.buildDir}/libs/${project.archives_base_name}-${rootProject.mod_version}-bukkit.jar"
             into "${rootProject.projectDir}/artifacts"
         }
     }
