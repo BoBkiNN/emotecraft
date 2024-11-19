@@ -55,7 +55,7 @@ if(keysExists) {
     task publishMod {
         finalizedBy(":minecraft:fabric:modrinth")
         finalizedBy(":minecraft:neoforge:modrinth")
-        finalizedBy(":minecraft:publishToCF")
+        // finalizedBy(":minecraft:publishToCF")
     }
 
     curseforge {
@@ -117,6 +117,6 @@ if(keysExists) {
 
     task publishToCF {
         dependsOn('buildAll')
-        finalizedBy(tasks.curseforge)
+        // finalizedBy(tasks.curseforge)
     }
 }
