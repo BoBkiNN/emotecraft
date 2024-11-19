@@ -1,35 +1,15 @@
 plugins {
-    //id 'fabric-loom' version '0.6-SNAPSHOT'
-    //id 'forgified-fabric-loom' version '0.6-SNAPSHOT' //Forge loom :D
-    //id "architectury-plugin" version "3.0-SNAPSHOT"
-    id 'maven-publish'
+    id "com.gradleup.shadow"
+    id "com.modrinth.minotaur"
 }
 
-
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'com.modrinth.minotaur'
-
-architectury{
+architectury {
     platformSetupLoomIde()
     neoForge()
 }
 
-//Import jfrog keys from file (not included in the git repo :D)
-//and well... serialize it
-repositories{
-    mavenLocal()
-    //jcenter()
-}
-
-project.java
-
-archivesBaseName = "${project.archives_base_name}-for-MC${project.minecraft_version}"
-
-version = rootProject.mod_version
-
-
-loom{
-    accessWidenerPath = project(":${project.module_name}:archCommon").loom.accessWidenerPath
+loom {
+    accessWidenerPath = project(":minecraft:archCommon").loom.accessWidenerPath
 }
 
 configurations {
@@ -46,20 +26,18 @@ configurations {
 }
 
 dependencies {
+    neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
+
     commonModule(project(':executor')) {transitive false}
     commonModule(project(':emotesAPI')) {transitive false}
     commonModule(project(':emotesServer')) {transitive false}
     commonModule(project(':emotesAssets')) {transitive false}
 
-    common(project(path: ":${project.module_name}:archCommon", configuration: 'namedElements')) {transitive false}
+    include modImplementation("io.github.kosmx.bendy-lib:bendy-lib-forge:${rootProject.bendylib_version}")
+    include modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${rootProject.player_animator_version}")
 
-    compileModule(project(path: ":${project.module_name}:archCommon", configuration: "transformProductionNeoForge")) { transitive false }
-
-
-    neoForge "net.neoforged:neoforge:${project.neoforge_version}"
-
-    include modImplementation("io.github.kosmx.bendy-lib:bendy-lib-forge:${project.bendylib_version}")
-    modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${project.player_anim}")
+    common(project(path: ":minecraft:archCommon", configuration: "namedElements")) { transitive false }
+    compileModule(project(path: ":minecraft:archCommon", configuration: "transformProductionNeoForge")) { transitive = false }
 }
 
 processResources {

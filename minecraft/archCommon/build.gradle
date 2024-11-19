@@ -1,42 +1,20 @@
-plugins {
-    id 'java'
-}
-
 architectury{
     common("fabric", "neoforge")
-    //minecraft = project.minecraft_version
 }
 
-loom{
+loom {
     accessWidenerPath = file("src/main/resources/emotes.accesswidener")
 }
 
-version = rootProject.mod_version
-
 dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+
     implementation project(':emotesAssets')
     implementation project(':emotesAPI')
     implementation project(':executor')
     implementation project(':emotesServer')
 
-
-    //compileOnly "com.google.code.gson:gson:2.8.0"//That package is compiled into MC
-    modImplementation "io.github.kosmx.bendy-lib:bendy-lib:${project.bendylib_version}"
-    modImplementation "dev.kosmx.player-anim:player-animation-lib-fabric:${project.player_anim}"
-
-    modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
-}
-
-compileJava {
-    dependsOn(":emotesAssets:publicationJar")
-}
-
-tasks.withType(Copy).configureEach {
-    eachFile {
-        rename {
-            String filename -> filename = filename.toLowerCase()
-        }
-        //Rename every file to lowercase. This is essential for the translations to work
-        //Possibly creates other problems on other operating systems
-    }
+    modImplementation "io.github.kosmx.bendy-lib:bendy-lib:${rootProject.bendylib_version}"
+    modImplementation "dev.kosmx.player-anim:player-animation-lib:${rootProject.player_animator_version}"
+    modImplementation "dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}"
 }

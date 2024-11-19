@@ -15,7 +15,7 @@ configurations {
 
 dependencies {
     implementation project(':emotesAPI')
-    implementation "dev.kosmx.player-anim:anim-core:${project.player_anim_core}"
+    implementation "dev.kosmx.player-anim:anim-core:${project.rootProject.player_animator_version}"
     compileOnly "com.google.code.gson:gson:2.8.0"
 }
 

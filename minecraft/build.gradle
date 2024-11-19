@@ -1,55 +1,61 @@
-plugins{
-    id 'java'
+plugins {
+    id "architectury-plugin"
+    id "com.matthewprenger.cursegradle"
+}
+
+architectury {
+    minecraft = rootProject.minecraft_version
 }
 
 subprojects {
-    apply plugin: 'dev.architectury.loom'
+    apply plugin: "dev.architectury.loom"
 
-    loom{
+    loom {
         silentMojangMappingsLicense()
     }
 
     dependencies {
-        minecraft "com.mojang:minecraft:${project.minecraft_version}"
-        mappings loom.officialMojangMappings()
+        minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
+        mappings loom.layered() {
+            officialMojangMappings()
+            parchment("org.parchmentmc.data:parchment-${rootProject.minecraft_version}:${rootProject.parchment_version}@zip")
+        }
     }
 }
 
 allprojects {
-    apply plugin: 'architectury-plugin'
-}
+    apply plugin: "architectury-plugin"
+    apply plugin: "maven-publish"
 
-architectury{
-    minecraft = project.minecraft_version
+    archivesBaseName = "${project.archives_base_name}-for-MC${project.minecraft_version}"
+    version = rootProject.mod_version
 }
-
-apply plugin: 'com.matthewprenger.cursegradle'
 
 task buildAll{
-    dependsOn(":${project.module_name}:fabric:build")
-    dependsOn(":${project.module_name}:neoforge:build")
+    dependsOn(":minecraft:fabric:build")
+    dependsOn(":minecraft:neoforge:build")
 }
 
 task copyArtifacts{
     dependsOn("buildAll")
     doLast {
         copy{
-            from "${project.projectDir}/fabric/build/libs/${project.archives_base_name}-for-MC${project.minecraft_version}-${project.mod_version}-fabric.jar"
+            from "${project.projectDir}/fabric/build/libs/${project.archivesBaseName}-${project.version}-fabric.jar"
             into "${rootProject.projectDir}/artifacts"
         }
 
         copy{
-            from "${project.projectDir}/neoforge/build/libs/${project.archives_base_name}-for-MC${project.minecraft_version}-${project.mod_version}-neoforge.jar"
+            from "${project.projectDir}/neoforge/build/libs/${project.archivesBaseName}-${project.version}-neoforge.jar"
             into "${rootProject.projectDir}/artifacts"
-        }//*/
+        }
     }
 }
 
 if(keysExists) {
     task publishMod {
-        finalizedBy(":${project.module_name}:fabric:modrinth")
-        finalizedBy(":${project.module_name}:neoforge:modrinth")
-        finalizedBy(":${project.module_name}:publishToCF")
+        finalizedBy(":minecraft:fabric:modrinth")
+        finalizedBy(":minecraft:neoforge:modrinth")
+        finalizedBy(":minecraft:publishToCF")
     }
 
     curseforge {
@@ -78,7 +84,7 @@ if(keysExists) {
                 javaVersionAutoDetect = false // defaults to true
             }
 
-            mainArtifact("${project.getProjectDir()}/fabric/build/libs/${project.archives_base_name}-for-MC${project.minecraft_version}-${project.mod_version}-fabric.jar") {
+            mainArtifact("${project.getProjectDir()}/fabric/build/libs/${project.archivesBaseName}-${project.version}-fabric.jar") {
                 //displayName = archivesBaseName
             }
         }
@@ -103,19 +109,15 @@ if(keysExists) {
                 javaVersionAutoDetect = false // defaults to true
             }
 
-            mainArtifact("${project.getProjectDir()}/neoforge/build/libs/${project.archives_base_name}-for-MC${project.minecraft_version}-${project.mod_version}-neoforge.jar") {
+            mainArtifact("${project.getProjectDir()}/neoforge/build/libs/${project.archivesBaseName}-${project.version}-neoforge.jar") {
                 //displayName = archivesBaseName
             }
         }//*/
 
     }
 
-    task publishToCF{
+    task publishToCF {
         dependsOn('buildAll')
         finalizedBy(tasks.curseforge)
     }
-
-
-    //CurseGradle... That plugin should be updated
-
 }

@@ -33,20 +33,17 @@ configurations {
 }
 
 dependencies {
-    //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    //testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    implementation "org.spigotmc:spigot-api:${rootProject.spigot_version}"
+    implementation "com.comphenix.protocol:ProtocolLib:${rootProject.protocollib_version}"
 
-    implementation("org.spigotmc:spigot-api:${project.spigot_api}")
-    implementation group: "com.comphenix.protocol", name: "ProtocolLib", version: "5.0.0"
+    compileModule(project(':emotesAPI')) { transitive = false }
+    compileModule(project(':executor')) { transitive = false }
+    compileModule(project(':emotesServer')) { transitive = false }
+    compileModule(project(':emotesAssets')) { transitive = false }
 
-    compileModule(project(':emotesAPI')){ transitive = false }
-    compileModule(project(':executor')){ transitive = false }
-    compileModule(project(':emotesServer')){ transitive = false }
-
-    // Only for built-in resources, code is not used from here.
-    compileModule(project(':emotesAssets')){ transitive = false }
-
-    compileModule("dev.kosmx.player-anim:anim-core:${project.player_anim_core}"){ transitive = false }
+    compileModule("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}") {
+        transitive false
+    }
 }
 
 processResources{
@@ -58,15 +55,6 @@ processResources{
         expand version: project.version, description: rootProject.mod_description
     }
 
-}
-
-//shadowJar{
-//    configurations = [project.configurations.compileModule]
-//   archiveClassifier.set("bukkit")
-//}
-
-compileJava {
-    dependsOn(':emotesAssets:publicationJar')
 }
 
 jar{
