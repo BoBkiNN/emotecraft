@@ -15,7 +15,6 @@ import io.github.kosmx.emotes.server.serializer.UniversalEmoteSerializer;
 import io.github.kosmx.emotes.velocity.executor.VelocityInstance;
 import io.github.kosmx.emotes.velocity.network.ServerSideEmotePlay;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Plugin(
@@ -50,17 +49,7 @@ public class VelocityWrapper {
         } else {
             CommonData.isLoaded = true;
         }
-        EmoteInstance.instance = new VelocityInstance(new io.github.kosmx.emotes.executor.Logger() {
-            @Override
-            public void writeLog(Level level, String msg, Throwable throwable) {
-                logger.log(level, msg, throwable);
-            }
-
-            @Override
-            public void writeLog(Level level, String msg) {
-                logger.log(level, msg);
-            }
-        });
+        EmoteInstance.instance = new VelocityInstance(this.logger);
         Serializer.INSTANCE = new Serializer(); // it does register itself
         EmoteInstance.config = Serializer.getConfig();
         UniversalEmoteSerializer.loadEmotes();
