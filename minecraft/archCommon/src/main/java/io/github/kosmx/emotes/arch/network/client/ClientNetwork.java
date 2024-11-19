@@ -142,6 +142,7 @@ public final class ClientNetwork extends AbstractNetworkInstance {
      * Used if the server has an outdated emotecraft that does not support the correct configuration
      * @deprecated Don't play on such servers
      */
+    @Deprecated
     public void configureOnPlay(@NotNull Consumer<Packet<?>> consumer) {
         if (!this.isConfiguredNormally && isActive()) {
             EmoteInstance.instance.getLogger().log(Level.WARNING, "The server failed to configure the client, attempting to configure...");

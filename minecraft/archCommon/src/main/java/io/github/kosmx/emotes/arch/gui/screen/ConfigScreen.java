@@ -69,7 +69,8 @@ public class ConfigScreen extends OptionsSubScreen {
         );
     }
 
-    private void addConfigEntry(SerializableConfig.ConfigEntry<?> entry, OptionsList options) {
+    @SuppressWarnings("unchecked")
+    private <T> void addConfigEntry(SerializableConfig.ConfigEntry<T> entry, OptionsList options) {
         if (entry.showEntry() || ((ClientConfig) EmoteInstance.config).showHiddenConfig.get()) {
             OptionInstance.TooltipSupplier<?> tooltip;
             if (entry.hasTooltip) {
@@ -80,9 +81,9 @@ public class ConfigScreen extends OptionsSubScreen {
                 tooltip = OptionInstance.noTooltip();
             }
 
-            if (entry instanceof SerializableConfig.BooleanConfigEntry booleanEntry) {
+            if (entry.get() instanceof Boolean b) {
                 options.addBig(OptionInstance.createBoolean("emotecraft.otherconfig." + entry.getName(),
-                        (OptionInstance.TooltipSupplier<Boolean>) tooltip, booleanEntry.get(), booleanEntry::set
+                        (OptionInstance.TooltipSupplier<Boolean>) tooltip, b, (aBoolean) -> entry.set((T) aBoolean)
                 ));
             } else if (entry instanceof SerializableConfig.FloatConfigEntry floatEntry) {
                 int mapSize = 1024; //whatever
