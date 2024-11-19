@@ -39,6 +39,10 @@
   "emotecraft.otherconfig.emotesFolderOnLogicalServer": "NICHT AKTIVIEREN Lade Emotes auf logischem Server",
   "emotecraft.otherconfig.emotesFolderOnLogicalServer.tooltip": "LASS ES DEAKTIVIERT\nDer interne Server lädt die Benutzer-Emotes anstatt der Benutzer\nwenn du es anschaltest, werden Emotes nur im Einzelspieler Modus funktionieren",
   "emotecraft.otherconfig.oldChooseWheel": "Alten Emote-Rad-Stil verwenden",
+  "emotecraft.otherconfig.autoFixEmoteStop": "Emotes automatisch patchen um reibungslos zu stoppen",
+  "emotecraft.otherconfig.autoFixEmoteStop.tooltip": "Wenn der StoppTick standardmäßig zurückgelassen wurde, wird Emotecraft es zum letzten Keyframe ändern \nÜberprüft nur JSON Emotes",
+  "emotecraft.otherconfig.alwaysOpenScreen": "Emote-Bildschirm auch dann öffnen, wenn Kamera getrennt ist",
+  "emotecraft.otherconfig.alwaysOpenScreen.tooltip": "Einige Mods (Freecam) können den Player kontrollieren, auch wenn die Kamera getrennt ist, wird diese Konfiguration Emote Bildschirm Zustand überschreiben",
   "emotecraft.emotelist": "Alle Emotes",
   "emotecraft.no_server": "Server hat kein Emotecraft-Plugin installiert, andere werden deine Emotes nicht sehen können",
   "emotecraft.different_server": "Server hat eine andere Emotecraft-Version installiert, es können Fehler bei der Anzeige auftreten",
@@ -64,5 +68,6 @@
   "emotecraft.export.error.emotecraft": "Export als .emotecraft fehlgeschlagen",
   "emotecraft.export.done.json": ".json-Export erfolgreich abgeschlossen",
   "emotecraft.export.done.emotecraft": ".Emotecraft-Export erfolgreich abgeschlossen",
-  "emotecraft.song_too_big_to_send": "Das Lied ist zu lang, um es zum Server zu senden. Sende nur Emote"
+  "emotecraft.song_too_big_to_send": "Das Lied ist zu lang, um es zum Server zu senden. Sende nur Emote",
+  "emotecraft.cant.override.forced": "Du musst das aktuelle Emote zu spielen, du kannst es jetzt nicht ändern."
 }
