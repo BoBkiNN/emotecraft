@@ -246,6 +246,7 @@ public class EmoteMenu extends EmoteSubScreen {
 
     @Override
     public void removed() {
+        this.watcher.blockWhileLoading();
         super.removed();
         ClientSerializer.saveConfig();
         try {
@@ -253,14 +254,6 @@ public class EmoteMenu extends EmoteSubScreen {
         } catch (Throwable th) {
             EmoteInstance.instance.getLogger().log(Level.WARNING, "Failed to close watcher!", th);
         }
-    }
-
-    @Override
-    public void onClose() {
-        if (this.watcher.isLoading()) {
-            return;
-        }
-        super.onClose();
     }
 
     @Override

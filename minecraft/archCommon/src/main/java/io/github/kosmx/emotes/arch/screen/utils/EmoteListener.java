@@ -10,12 +10,12 @@ import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 public class EmoteListener implements Closeable {
     private WatchService watcher;
-    private Future<?> loader;
+    private CompletableFuture<?> loader;
 
     public EmoteListener(Path path) {
         try {
@@ -36,10 +36,8 @@ public class EmoteListener implements Closeable {
             this.loader.cancel(true);
         }
 
-        this.loader = Util.ioPool().submit(() -> {
-            MainClientInit.loadEmotes();
-            onComplete.run();
-        });
+        this.loader = CompletableFuture.runAsync(MainClientInit::loadEmotes, Util.ioPool())
+                .thenRun(onComplete);
     }
 
     public boolean isLoading() {
@@ -75,5 +73,11 @@ public class EmoteListener implements Closeable {
 
     public boolean isWatcherClosed() {
         return this.watcher == null;
+    }
+
+    public void blockWhileLoading() {
+        if (this.loader != null && !this.loader.isDone() && !this.loader.isCompletedExceptionally()) {
+            this.loader.join();
+        }
     }
 }
