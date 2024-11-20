@@ -4,6 +4,8 @@ import io.github.kosmx.emotes.arch.gui.widgets.EmoteListWidget;
 import io.github.kosmx.emotes.arch.screen.EmoteMenu;
 import io.github.kosmx.emotes.arch.screen.components.EmoteSubScreen;
 import io.github.kosmx.emotes.main.EmoteHolder;
+import io.github.kosmx.emotes.main.emotePlay.EmotePlayer;
+import io.github.kosmx.emotes.main.mixinFunctions.IPlayerEntity;
 import io.github.kosmx.emotes.main.network.ClientEmotePlay;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -46,7 +48,9 @@ public class FullMenuScreen extends EmoteSubScreen {
 
     @Override
     protected void renderBlurredBackground(float f) {
-        if (this.list != null && this.list.getSelected() != null) {
+        if (this.minecraft.player instanceof IPlayerEntity entity &&
+                EmotePlayer.isRunningEmote(entity.emotecraft$getEmote())
+        ) {
             return;
         }
 
