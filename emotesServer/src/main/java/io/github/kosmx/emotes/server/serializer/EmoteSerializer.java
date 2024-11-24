@@ -38,6 +38,11 @@ public class EmoteSerializer {
 
                     return FileVisitResult.CONTINUE;
                 }
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                    return dir.equals(externalEmotes) ? FileVisitResult.CONTINUE : FileVisitResult.SKIP_SUBTREE;
+                }
             });
         } catch (Throwable e) {
             EmoteInstance.instance.getLogger().log(Level.WARNING, "Failed to walk emotes!", e);
