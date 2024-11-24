@@ -19,7 +19,7 @@ import java.util.Objects;
 public abstract class EmoteSubScreen extends Screen {
     private static final Component SEARCH = Component.translatable("gui.recipebook.search_hint");
 
-    protected final Screen lastScreen;
+    protected Screen lastScreen;
 
     @Nullable
     protected EmoteListWidget list;

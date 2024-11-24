@@ -42,7 +42,10 @@ public class FullMenuScreen extends EmoteSubScreen {
     protected void onPressed(EmoteListWidget.EmoteEntry selected) {
         if (selected != null) {
             ClientEmotePlay.clientStartLocalEmote(selected.getEmote());
-            // this.minecraft.setScreen(null); In my opinion, it's inconvenient
+
+            if (this.lastScreen instanceof FastMenuScreen fast) {
+                this.lastScreen = fast.parent;
+            }
         }
     }
 

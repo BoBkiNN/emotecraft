@@ -102,17 +102,19 @@ public class EmoteListWidget extends ObjectSelectionList<EmoteListWidget.EmoteEn
 
         @Override
         public void render(@NotNull GuiGraphics matrices, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            int maxX = x + entryWidth - 3 - (compactMode && scrollbarVisible() ? 7 : 0);
+            matrices.enableScissor(x - 1, y - 1, maxX, y + entryHeight + 1);
             if (hovered) {
-                matrices.fill(x - 2, y - 1, x + entryWidth - 4, y + entryHeight + 1, MathHelper.colorHelper(66, 66, 66, 128));
+                matrices.fill(x - 1, y - 1, maxX, y + entryHeight + 1, MathHelper.colorHelper(66, 66, 66, 128));
             }
-            matrices.drawString(minecraft.font, this.emote.name, x + 38, y + 1, 16777215);
-            matrices.drawString(minecraft.font, this.emote.description, x + 38, y + 12, 8421504);
+            renderScrollingString(matrices, minecraft.font, this.emote.name, x + 34, x + 34, y + 1, maxX, y + 1 + minecraft.font.lineHeight, 16777215);
+            matrices.drawString(minecraft.font, this.emote.description, x + 34, y + 12, 8421504);
             if(!this.emote.author.getString().isEmpty()) {
                 Component text = Component.translatable("emotecraft.emote.author")
                         .withStyle(ChatFormatting.GOLD)
                         .append(this.emote.author);
 
-                matrices.drawString(minecraft.font, text, x + 38, y + 23, 8421504);
+                matrices.drawString(minecraft.font, text, x + 34, y + 23, 8421504);
             }
 
             ResourceLocation texture = this.emote.getIconIdentifier();
@@ -121,6 +123,7 @@ public class EmoteListWidget extends ObjectSelectionList<EmoteListWidget.EmoteEn
                 matrices.blit(texture, x, y, 32, 32, 0, 0, 256, 256, 256, 256);
                 RenderSystem.disableBlend();
             }
+            matrices.disableScissor();
         }
 
         public EmoteHolder getEmote() {
