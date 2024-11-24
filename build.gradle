@@ -136,6 +136,9 @@ if(keysExists) {
         finalizedBy(':emotesAssets:publish')
         finalizedBy(':bukkit:publish')
 
+        finalizedBy(":bukkit:modrinth")
+        finalizedBy(":bungee:modrinth")
+        finalizedBy(":velocity:modrinth")
     }
 }
 else {

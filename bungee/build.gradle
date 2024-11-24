@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    //id "com.github.johnrengelman.shadow" version "6.1.0"
+    id "com.modrinth.minotaur"
 }
 
 version 'unspecified'
@@ -65,3 +65,19 @@ task copyArtifacts{
     }
 }
 
+if (keysExists) {
+    modrinth {
+        versionType = project.cfType
+        uploadFile = jar
+
+        token = project.keys.modrinth_token
+        projectId = "pZ2wrerK"
+        versionNumber = "${project.mod_version}+${project.minecraft_version}-bungee"
+        versionName = "${project.mod_version}"
+
+        gameVersions = ["1.21.1"]
+        changelog = changes
+        loaders = ["waterfall", "bungeecord"]
+        failSilently = false
+    }
+}
