@@ -14,8 +14,6 @@ import java.util.logging.Level;
 public class ClientNetworkInstance {
 
     public static void init(){
-        FabricIsBestYouAreRightKosmX.init(true);
-
         // Configuration
 
         ClientConfigurationNetworking.registerGlobalReceiver(NetworkPlatformTools.EMOTE_CHANNEL_ID, (buf, context) -> {
