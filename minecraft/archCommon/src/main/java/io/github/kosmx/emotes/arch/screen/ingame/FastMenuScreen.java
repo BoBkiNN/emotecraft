@@ -28,13 +28,13 @@ public class FastMenuScreen extends Screen {
 
     @Override
     public void init() {
-        if (!ClientPacketManager.isRemoteAvailable()) {
-            this.layout.addTitleHeader(FastMenuScreen.WARN_NO_EMOTECRAFT, this.font);
+        if (ClientPacketManager.isRemoteAvailable()) {
+            //this.layout.addTitleHeader(getTitle(), this.font); TODO Do we want this?
         } else if (ClientPacketManager.isAvailableProxy()) {
             this.layout.addTitleHeader(FastMenuScreen.WARN_ONLY_PROXY, this.font);
-        } /*else {
-            this.layout.addTitleHeader(getTitle(), this.font);
-        }*/
+        } else {
+            this.layout.addTitleHeader(FastMenuScreen.WARN_NO_EMOTECRAFT, this.font);
+        }
 
         this.fastMenu = this.layout.addToContents(new FastMenuWidget(0, 0, 0));
 
