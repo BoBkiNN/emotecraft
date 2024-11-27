@@ -8,6 +8,7 @@ import dev.kosmx.playerAnim.core.util.UUIDMap;
 import io.github.kosmx.emotes.executor.EmoteInstance;
 
 import java.io.DataInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.FileVisitResult;
@@ -40,8 +41,8 @@ public class EmoteSerializer {
                 }
 
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                    return dir.equals(externalEmotes) ? FileVisitResult.CONTINUE : FileVisitResult.SKIP_SUBTREE;
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    return Files.isSameFile(externalEmotes, dir) ? FileVisitResult.CONTINUE : FileVisitResult.SKIP_SUBTREE;
                 }
             });
         } catch (Throwable e) {
