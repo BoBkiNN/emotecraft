@@ -8,43 +8,29 @@ import dev.kosmx.playerAnim.core.util.UUIDMap;
 import io.github.kosmx.emotes.executor.EmoteInstance;
 
 import java.io.DataInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 /**
  * Serializing emotes.
  */
 public class EmoteSerializer {
     public static void serializeEmotes(UUIDMap<KeyframeAnimation> emotes, Path externalEmotes) {
-        try {
-            if (!Files.isDirectory(externalEmotes)) {
-                return; // Just skip
-            }
+        if (!Files.isDirectory(externalEmotes)) {
+            return; // Just skip
+        }
 
-            Files.walkFileTree(externalEmotes, new SimpleFileVisitor<>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    if (AnimationFormat.byFileName(file.getFileName().toString()).getExtension() != null) {
-                        emotes.addAll(serializeExternalEmote(file));
-                    }
-
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    return Files.isSameFile(externalEmotes, dir) ? FileVisitResult.CONTINUE : FileVisitResult.SKIP_SUBTREE;
-                }
-            });
+        try (Stream<Path> paths = Files.walk(externalEmotes, 1, FileVisitOption.FOLLOW_LINKS)) {
+            paths.filter(
+                    file -> AnimationFormat.byFileName(file.getFileName().toString()).getExtension() != null
+            ).parallel().forEach(file -> emotes.addAll(serializeExternalEmote(file)));
         } catch (Throwable e) {
             EmoteInstance.instance.getLogger().log(Level.WARNING, "Failed to walk emotes!", e);
         }
