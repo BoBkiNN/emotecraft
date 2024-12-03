@@ -61,6 +61,12 @@ public class FullMenuScreen extends EmoteSubScreen {
     }
 
     @Override
+    protected void repositionElements() {
+        addOptions();
+        super.repositionElements();
+    }
+
+    @Override
     public boolean isPauseScreen() {
         return false;
     }
