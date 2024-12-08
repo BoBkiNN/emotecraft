@@ -37,7 +37,7 @@
     "fabricloader": ">=0.14.11",
     "fabric-api": "*",
     "minecraft": ">=1.19.3",
-    "player-animator": "*"
+    "playeranimator": ">=2.0.0-alpha4+1.21.1"
   },
   "custom": {
     "modmenu": {

@@ -30,6 +30,6 @@ config = "emotecraft-arch.mixins.json"
 modId="playeranimator"
 mandatory=true
 type = "required"
-versionRange="[1.0.0,)"
+versionRange="[2.0.0-alpha4,)"
 ordering="NONE"
 side="BOTH"
