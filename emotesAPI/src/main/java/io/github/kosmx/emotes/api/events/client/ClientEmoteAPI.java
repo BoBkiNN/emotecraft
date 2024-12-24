@@ -6,6 +6,12 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 public abstract class ClientEmoteAPI {
+    /**
+     * Stop play an emote.
+     */
+    public static boolean stopEmote() {
+        return ClientEmoteAPI.playEmote(null);
+    }
 
     /**
      * Start playing an emote.
@@ -13,7 +19,17 @@ public abstract class ClientEmoteAPI {
      * @return          Can the emote be played: this doesn't check server-side verification
      */
     public static boolean playEmote(@Nullable KeyframeAnimation animation) {
-        return INSTANCE.playEmoteImpl(animation);
+        return ClientEmoteAPI.playEmote(animation, 0);
+    }
+
+    /**
+     * Start playing an emote.
+     * @param animation animation, <code>null</code> to stop playing.
+     * @param tick First tick
+     * @return          Can the emote be played: this doesn't check server-side verification
+     */
+    public static boolean playEmote(@Nullable KeyframeAnimation animation, int tick) {
+        return INSTANCE.playEmoteImpl(animation, tick);
     }
 
     /**
@@ -29,7 +45,7 @@ public abstract class ClientEmoteAPI {
 
     protected static ClientEmoteAPI INSTANCE;
 
-    protected abstract boolean playEmoteImpl(KeyframeAnimation animation);
+    protected abstract boolean playEmoteImpl(KeyframeAnimation animation, int tick);
 
     protected abstract Collection<KeyframeAnimation> clientEmoteListImpl();
 }
