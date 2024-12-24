@@ -1,7 +1,8 @@
-package io.github.kosmx.emotes.fabric;
+package io.github.kosmx.emotes.arch;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
@@ -12,9 +13,8 @@ import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.core.util.UUIDMap;
 import io.github.kosmx.emotes.main.EmoteHolder;
 import io.github.kosmx.emotes.main.network.ClientEmotePlay;
-import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 
@@ -23,22 +23,23 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+import static net.minecraft.commands.Commands.argument;
+import static net.minecraft.commands.Commands.literal;
 
 /**
  * Client-side commands, no permission verification, we're on the client
  */
-public class ClientCommands implements ClientCommandRegistrationCallback {
+public class ClientCommands {
+    public static final Component FORCED = Component.translatable("emotecraft.cant.override.forced");
 
-    @Override
-    public void register(CommandDispatcher<FabricClientCommandSource> dispatcher, CommandBuildContext registryAccess) {
-        dispatcher.register(literal("emotes-client")
+    @SuppressWarnings("unchecked")
+    public static <T> void register(CommandDispatcher<T> dispatcher, CommandBuildContext registryAccess) {
+        dispatcher.register((LiteralArgumentBuilder<T>) literal("emotes-client")
                 .then(literal("play")
                         .then(argument("emote", StringArgumentType.string()).suggests(new EmoteArgumentHelper())
                                 .executes(ctx -> {
                                     if (!ClientEmotePlay.clientStartLocalEmote(EmoteArgumentHelper.getEmote(ctx, "emote"))) {
-                                        throw new SimpleCommandExceptionType(Component.translatable("emotecraft.cant.override.forced")).create();
+                                        throw new SimpleCommandExceptionType(FORCED).create();
                                     }
                                     return 0;
                                 })
@@ -47,7 +48,7 @@ public class ClientCommands implements ClientCommandRegistrationCallback {
                 .then(literal("stop")
                         .executes(ctx -> {
                                     if (ClientEmotePlay.isForcedEmote())
-                                        throw new SimpleCommandExceptionType(Component.translatable("emotecraft.cant.override.forced")).create();
+                                        throw new SimpleCommandExceptionType(FORCED).create();
                                     ClientEmotePlay.clientStopLocalEmote();
                                     return 0;
                                 }
@@ -56,15 +57,14 @@ public class ClientCommands implements ClientCommandRegistrationCallback {
         );
     }
 
-    private static class EmoteArgumentHelper implements SuggestionProvider<FabricClientCommandSource> {
-
+    private static class EmoteArgumentHelper implements SuggestionProvider<CommandSourceStack> {
         @Override
-        public CompletableFuture<Suggestions> getSuggestions(CommandContext<FabricClientCommandSource> context, SuggestionsBuilder builder) {
+        public CompletableFuture<Suggestions> getSuggestions(CommandContext<CommandSourceStack> context, SuggestionsBuilder builder) {
             UUIDMap<EmoteHolder> emotes = EmoteHolder.list;
 
             List<String> suggestions = new LinkedList<>();
             for (var emote : emotes.values()) {
-                if (!emote.name.getString().equals("")) {
+                if (!emote.name.getString().isEmpty()) {
                     String name = emote.name.getString();
                     if (name.contains(" ")) {
                         name = "\"" + name + "\"";
@@ -78,7 +78,7 @@ public class ClientCommands implements ClientCommandRegistrationCallback {
             return SharedSuggestionProvider.suggest(suggestions.toArray(String[]::new), builder);
         }
 
-        public static KeyframeAnimation getEmote(CommandContext<FabricClientCommandSource> context, String argumentName) throws CommandSyntaxException {
+        public static KeyframeAnimation getEmote(CommandContext<CommandSourceStack> context, String argumentName) throws CommandSyntaxException {
             String id = StringArgumentType.getString(context, argumentName);
             var emotes = EmoteHolder.list;
             try {

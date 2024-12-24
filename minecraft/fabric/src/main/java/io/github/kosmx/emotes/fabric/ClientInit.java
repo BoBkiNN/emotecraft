@@ -1,6 +1,7 @@
 package io.github.kosmx.emotes.fabric;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import io.github.kosmx.emotes.arch.ClientCommands;
 import io.github.kosmx.emotes.arch.executor.ClientMethods;
 import io.github.kosmx.emotes.arch.screen.ingame.FastMenuScreen;
 import io.github.kosmx.emotes.executor.EmoteInstance;
@@ -43,7 +44,7 @@ public class ClientInit implements ClientModInitializer {
             keyBindingFunction.accept(client);
         });
 
-        ClientCommandRegistrationCallback.EVENT.register(new ClientCommands());
+        ClientCommandRegistrationCallback.EVENT.register(ClientCommands::register);
     }
 
     private static void initKeyBinding(){
