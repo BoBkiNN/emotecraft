@@ -1,6 +1,8 @@
 package io.github.kosmx.emotes.main.network;
 
+import dev.kosmx.playerAnim.core.impl.event.EventResult;
 import io.github.kosmx.emotes.PlatformTools;
+import io.github.kosmx.emotes.api.events.client.ClientNetworkEvents;
 import io.github.kosmx.emotes.api.proxy.EmotesProxyManager;
 import io.github.kosmx.emotes.api.proxy.INetworkInstance;
 import io.github.kosmx.emotes.common.network.EmotePacket;
@@ -36,7 +38,11 @@ public final class ClientPacketManager extends EmotesProxyManager {
         return false;
     }
 
-    static void send(EmotePacket.Builder packetBuilder, UUID target){
+    public static void send(EmotePacket.Builder packetBuilder, UUID target){
+        if (ClientNetworkEvents.PACKET_SEND.invoker().onPacketSend(packetBuilder) == EventResult.FAIL) {
+            EmoteInstance.instance.getLogger().log(Level.INFO, "Sending the packet has been canceled by the event!");
+            return; // Deny
+        }
         if(!defaultNetwork.isActive() || useAlwaysAlt()){
             for(INetworkInstance network:networkInstances){
                 if(network.isActive()){
