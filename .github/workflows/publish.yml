@@ -41,7 +41,7 @@ jobs:
       - name: Do gradle release
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: autoPublish
+          arguments: autoPublish --stacktrace
         env:
           CI: true
           BUILD_NUMBER: ${{github.run_number}}
