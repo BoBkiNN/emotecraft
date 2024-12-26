@@ -30,16 +30,16 @@ jobs:
       if: ${{ runner.os != 'Windows' }}
       run: chmod +x gradlew
     - name: Test Gradle buildscript  #Test the full gradle buildscript before use it. Useful to catch publish errors.
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/gradle-build-action@v3
       with:
         arguments: autoPublish --dry-run
     - name: Build with Gradle
-      uses: gradle/gradle-build-action@v2
+      uses: gradle/gradle-build-action@v3
       with:
         arguments: collectArtifacts
     - name: capture build artifacts
       if: ${{ runner.os == 'Linux' && matrix.java == '17' }}
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: artifacts
         path: |

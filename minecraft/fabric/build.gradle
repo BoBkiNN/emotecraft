@@ -69,21 +69,17 @@ tasks.withType(JavaCompile) {
 
 shadowJar{
     configurations = [project.configurations.compileModule]
-   archiveClassifier.set("fabric-dev")
+    archiveClassifier.set("fabric-dev")
 }
 
 remapJar{
     injectAccessWidener = true
-    dependsOn shadowJar
-    input.set shadowJar.archiveFile
-   archiveClassifier.set("fabric")
+    inputFile.set shadowJar.archiveFile
+    archiveClassifier.set("fabric")
 }
 
 jar {
-    //from {
-    //    configurations.compileModule.collect { it.isDirectory() ? it : zipTree(it) }
-    //}
-    from "LICENSE"
+    archiveClassifier.set("dev")
 }
 
 components.java {

@@ -61,25 +61,20 @@ tasks.withType(JavaCompile) {
 // if it is present.
 // If you remove this task, sources will not be generated.
 
-shadowJar{
+shadowJar {
     configurations = [project.configurations.compileModule]
-   archiveClassifier.set("forge-dev")
+    archiveClassifier.set("forge-dev")
 }
 
-remapJar{
-    dependsOn shadowJar
-    input.set shadowJar.archiveFile
-   archiveClassifier.set("neoforge")
+remapJar {
+    atAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
+
+    inputFile.set shadowJar.archiveFile
+    archiveClassifier.set("neoforge")
 }
 
 jar {
-   archiveClassifier.set("dev")
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}"}
-    }
-    //from {
-    //    configurations.compileModule.collect { it.isDirectory() ? it : zipTree(it) }
-    //}
+    archiveClassifier.set("dev")
 }
 
 components.java {

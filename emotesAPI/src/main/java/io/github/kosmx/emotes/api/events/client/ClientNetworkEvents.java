@@ -6,7 +6,7 @@ import io.github.kosmx.emotes.common.network.EmotePacket;
 
 /**
  * Network-related events on the client
- * Can be used for compatibility with replaymod & flashback
+ * Can be used for compatibility with replaymod or flashback
  */
 public class ClientNetworkEvents {
     /**
