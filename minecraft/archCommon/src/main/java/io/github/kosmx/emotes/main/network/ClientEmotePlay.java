@@ -38,6 +38,10 @@ public class ClientEmotePlay extends ClientEmoteAPI {
     }
 
     public static boolean clientStartLocalEmote(KeyframeAnimation emote) {
+        return clientStartLocalEmote(emote, 0);
+    }
+
+    public static boolean clientStartLocalEmote(KeyframeAnimation emote, int tick) {
         IEmotePlayerEntity player = TmpGetters.getClientMethods().getMainPlayer();
         if (player.emotecraft$isForcedEmote()) {
             return false;
@@ -45,9 +49,10 @@ public class ClientEmotePlay extends ClientEmoteAPI {
 
         EmotePacket.Builder packetBuilder = new EmotePacket.Builder();
         packetBuilder.configureToStreamEmote(emote, player.emotes_getUUID());
+        packetBuilder.configureEmoteTick(tick);
         ClientPacketManager.send(packetBuilder, null);
-        ClientEmoteEvents.EMOTE_PLAY.invoker().onEmotePlay(emote, player.emotes_getUUID());
-        TmpGetters.getClientMethods().getMainPlayer().emotecraft$playEmote(emote, 0, false);
+        ClientEmoteEvents.EMOTE_PLAY.invoker().onEmotePlay(emote, player.emotes_getUUID()); // TODO pass tick
+        TmpGetters.getClientMethods().getMainPlayer().emotecraft$playEmote(emote, tick, false);
         return true;
     }
 
@@ -185,9 +190,9 @@ public class ClientEmotePlay extends ClientEmoteAPI {
     }
 
     @Override
-    protected boolean playEmoteImpl(KeyframeAnimation animation) {
+    protected boolean playEmoteImpl(KeyframeAnimation animation, int tick) {
         if (animation != null) {
-            return clientStartLocalEmote(animation);
+            return clientStartLocalEmote(animation, tick);
         } else {
             return clientStopLocalEmote();
         }

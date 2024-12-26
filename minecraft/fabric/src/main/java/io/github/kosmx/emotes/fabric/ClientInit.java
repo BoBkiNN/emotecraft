@@ -1,6 +1,7 @@
 package io.github.kosmx.emotes.fabric;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import io.github.kosmx.emotes.arch.ClientCommands;
 import io.github.kosmx.emotes.arch.executor.ClientMethods;
 import io.github.kosmx.emotes.arch.screen.ingame.FastMenuScreen;
 import io.github.kosmx.emotes.executor.EmoteInstance;
@@ -8,11 +9,12 @@ import io.github.kosmx.emotes.fabric.network.ClientNetworkInstance;
 import io.github.kosmx.emotes.main.MainClientInit;
 import io.github.kosmx.emotes.main.config.ClientConfig;
 import io.github.kosmx.emotes.main.network.ClientEmotePlay;
+import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -21,18 +23,20 @@ import org.lwjgl.glfw.GLFW;
 import java.util.function.Consumer;
 
 @Environment(EnvType.CLIENT)
-public class ClientInit {
+public class ClientInit implements ClientModInitializer {
 
     static KeyMapping openMenuKey;
     static KeyMapping stopEmote;
     static KeyMapping debugKey;
     static Consumer<Minecraft> keyBindingFunction;
 
-    static void initClient(){
+
+    @Override
+    public void onInitializeClient(){
 
         initKeyBinding();
 
-        ClientNetworkInstance.networkInstance.init(); //init network
+        ClientNetworkInstance.init(); //init network
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             ClientMethods.tick++;
@@ -40,20 +44,20 @@ public class ClientInit {
             keyBindingFunction.accept(client);
         });
 
-        ClientCommandRegistrationCallback.EVENT.register(new ClientCommands());
+        ClientCommandRegistrationCallback.EVENT.register(ClientCommands::register);
     }
 
     private static void initKeyBinding(){
         openMenuKey = new KeyMapping("key.emotecraft.fastchoose", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_B, "category.emotecraft.keybinding");
-        KeyBindingRegistryImpl.registerKeyBinding(openMenuKey);
+        KeyBindingHelper.registerKeyBinding(openMenuKey);
 
         stopEmote = new KeyMapping("key.emotecraft.stop", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_UNKNOWN, "category.emotecraft.keybinding");
-        KeyBindingRegistryImpl.registerKeyBinding(stopEmote);
+        KeyBindingHelper.registerKeyBinding(stopEmote);
 
         if(FabricLoader.getInstance().getGameDir().resolve("emote.json").toFile().isFile()){ //Secret feature//
             debugKey = new KeyMapping("key.emotecraft.debug", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_O,       //I don't know why... just
                     "category.emotecraft.keybinding");
-            KeyBindingRegistryImpl.registerKeyBinding(debugKey);
+            KeyBindingHelper.registerKeyBinding(debugKey);
         }
         keyBindingFunction = client -> {
 

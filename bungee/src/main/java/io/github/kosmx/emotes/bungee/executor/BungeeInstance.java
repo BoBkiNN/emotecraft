@@ -6,21 +6,29 @@ import io.github.kosmx.emotes.executor.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
-public class BungeeInstance extends EmoteInstance {
-    final java.util.logging.Logger logger;
-    final BungeeWrapper plugin;
+public class BungeeInstance extends EmoteInstance implements Logger {
+    protected final BungeeWrapper plugin;
 
     public BungeeInstance(BungeeWrapper plugin) {
-        this.logger = plugin.getLogger();
         this.plugin = plugin;
     }
 
     @Override
     public Logger getLogger() {
-        return this.logger::log;
+        return this;
     }
 
+    @Override
+    public void writeLog(Level level, String msg, Throwable throwable) {
+        this.plugin.getLogger().log(level, msg, throwable);
+    }
+
+    @Override
+    public void writeLog(Level level, String msg) {
+        this.plugin.getLogger().log(level, msg);
+    }
 
     @Override
     public boolean isClient() {

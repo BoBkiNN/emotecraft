@@ -5,11 +5,13 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import dev.architectury.injectables.annotations.ExpectPlatform;
 import io.github.kosmx.emotes.api.proxy.INetworkInstance;
+import io.github.kosmx.emotes.arch.network.client.ClientNetwork;
 import io.github.kosmx.emotes.common.CommonData;
 import io.github.kosmx.emotes.executor.EmoteInstance;
 import io.github.kosmx.emotes.executor.emotePlayer.IEmotePlayerEntity;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
@@ -23,9 +25,8 @@ public final class PlatformTools {
         throw new AssertionError();
     }
 
-    @ExpectPlatform
     public static INetworkInstance getClientNetworkController() {
-        throw new AssertionError();
+        return ClientNetwork.INSTANCE;
     }
 
 
@@ -43,7 +44,7 @@ public final class PlatformTools {
             return Component.literal("");
         }
         try {
-            return Component.Serializer.fromJson(JsonParser.parseString(json));
+            return Component.Serializer.fromJson(JsonParser.parseString(json), RegistryAccess.EMPTY);
         }catch (JsonParseException e){
             return Component.literal(json);
         }
@@ -53,11 +54,11 @@ public final class PlatformTools {
         if (obj == null || obj instanceof String) {
             return fromJson((String) obj);
         } else if (obj instanceof JsonElement) {
-            return Component.Serializer.fromJson((JsonElement) obj);
+            return Component.Serializer.fromJson((JsonElement) obj, RegistryAccess.EMPTY);
         } else throw new IllegalArgumentException("Can not create Text from " + obj.getClass().getName());
     }
 
     public static ResourceLocation newIdentifier(String id){
-        return new ResourceLocation(CommonData.MOD_ID, id);
+        return ResourceLocation.fromNamespaceAndPath(CommonData.MOD_ID, id);
     }
 }

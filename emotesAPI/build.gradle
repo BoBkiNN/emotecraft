@@ -15,7 +15,7 @@ configurations {
 }
 
 dependencies {
-    implementation "dev.kosmx.player-anim:anim-core:${project.player_anim_core}"
+    implementation "dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}"
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
@@ -25,7 +25,7 @@ test {
 }
 
 compileJava {
-    options.release.set 8 //Build on JDK 1.8
+    options.release.set 21 //Build on JDK 1.8
 }
 
 artifacts {
@@ -77,7 +77,7 @@ publishing {
                 def animatorNode = depsNode.appendNode("dependency")
                 animatorNode.appendNode("groupId", "dev.kosmx.player-anim")
                 animatorNode.appendNode("artifactId", "anim-core")
-                animatorNode.appendNode("version", project.player_anim_core)
+                animatorNode.appendNode("version", rootProject.player_animator_version)
                 animatorNode.appendNode("scope", "compile")
 
             }

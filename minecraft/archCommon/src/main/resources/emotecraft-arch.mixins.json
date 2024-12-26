@@ -5,7 +5,12 @@
   "compatibilityLevel": "JAVA_16",
   "plugin": "io.github.kosmx.emotes.mixin.EmotesMixinPlugin",
   "mixins": [
+    "ConnectionHandlerMixin",
+    "EntityTrackerAccessor",
+    "ServerChunkCacheAccessor",
+    "ServerCommonPacketListenerAccessor",
     "ServerPlayerMixin",
+    "ServerPlayNetworkMixin",
     "ServerPlayTrackerMixin"
   ],
   "client": [

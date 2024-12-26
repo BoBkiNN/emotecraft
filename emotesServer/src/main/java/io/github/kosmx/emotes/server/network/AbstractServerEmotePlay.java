@@ -48,7 +48,7 @@ public abstract class AbstractServerEmotePlay<P> extends ServerEmoteAPI {
             initMappings(EmoteInstance.instance.getConfigPath());
             ServerEmoteAPI.INSTANCE = this;
         }catch (IOException e){
-            e.printStackTrace();
+            EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
         }
     }
 
@@ -59,7 +59,7 @@ public abstract class AbstractServerEmotePlay<P> extends ServerEmoteAPI {
             try {
                 this.bedrockEmoteMap = new EmoteMappings(Serializer.serializer.fromJson(reader, new TypeToken<BiMap<UUID, UUID>>() {}.getType()));
             }catch (JsonParseException e){
-                e.printStackTrace();
+                EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
             }
             reader.close();
         }
@@ -205,7 +205,7 @@ public abstract class AbstractServerEmotePlay<P> extends ServerEmoteAPI {
             packet.setRuntimeEntityID(getRuntimePlayerID(player));
             receiveBEEmote(player, packet);
         }catch (Throwable t){
-            t.printStackTrace();
+            EmoteInstance.instance.getLogger().log(Level.WARNING, t.getMessage(), t);
         }
     }
 
@@ -236,6 +236,37 @@ public abstract class AbstractServerEmotePlay<P> extends ServerEmoteAPI {
         return getPlayerNetworkInstance(player).getEmoteTracker().isForced();
     }
 
+    public List<ByteBuffer> getServerEmotes(HashMap<Byte, Byte> compatibilityMap) {
+        try {
+
+            return UniversalEmoteSerializer.serverEmotes.values().stream().map(emote -> {
+                try {
+                    return new EmotePacket.Builder().configureToSaveEmote(emote).setVersion(compatibilityMap).setSizeLimit(0x100000).build().write(); //1 MB
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }).toList();
+
+
+        } catch (RuntimeException e) {
+            EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public EmotePacket.Builder getS2CConfigPacket(boolean trackPlayState) {
+        NetData configData = new EmotePacket.Builder().configureToConfigExchange(true).build().data;
+        if (trackPlayState) {
+            configData.versions.put((byte)0x80, (byte)0x01);
+        }
+        return new EmotePacket.Builder(configData);
+    }
+
+    /**
+     * Send message to everyone, except for the player. Only geyser packet
+     * @param packet Geyser packet
+     * @param player send around this player
+     */
     protected abstract void sendForEveryoneElse(GeyserEmotePacket packet, P player);
 
     /**

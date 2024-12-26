@@ -10,13 +10,15 @@ import io.github.kosmx.emotes.executor.EmoteInstance;
 import io.github.kosmx.emotes.server.serializer.type.*;
 
 import javax.annotation.Nullable;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class UniversalEmoteSerializer {
     public static List<IReader> readers = Arrays.asList(new JsonEmoteWrapper(), new QuarkReaderWrapper(), new BinaryFormat());
@@ -57,7 +59,7 @@ public class UniversalEmoteSerializer {
      * @throws EmoteSerializerException exception if something goes wrong
      */
     public static List<KeyframeAnimation> readData(InputStream inputStream, String filename) throws EmoteSerializerException{
-        if(filename == null || filename.equals(""))throw new IllegalArgumentException("filename can not be null if no format type was given");
+        if (filename == null || filename.isEmpty()) throw new IllegalArgumentException("filename can not be null if no format type was given");
         String format = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
         return readData(inputStream, filename, format);
     }
@@ -97,10 +99,10 @@ public class UniversalEmoteSerializer {
 
         if(! EmoteInstance.instance.getExternalEmoteDir().isDirectory()) EmoteInstance.instance.getExternalEmoteDir().mkdirs();
 
-        EmoteSerializer.serializeEmotes( EmoteInstance.config.loadEmotesServerSide.get() ? serverEmotes : hiddenServerEmotes, EmoteInstance.instance.getExternalEmoteDir());
+        EmoteSerializer.serializeEmotes( EmoteInstance.config.loadEmotesServerSide.get() ? serverEmotes : hiddenServerEmotes, EmoteInstance.instance.getExternalEmoteDir().toPath());
 
-        File serverEmotesDir = EmoteInstance.instance.getExternalEmoteDir().toPath().resolve("server").toFile();
-        if(serverEmotesDir.isDirectory()) {
+        Path serverEmotesDir = EmoteInstance.instance.getExternalEmoteDir().toPath().resolve("server");
+        if(Files.isDirectory(serverEmotesDir)) {
             EmoteSerializer.serializeEmotes(serverEmotes, serverEmotesDir);
         }
     }
@@ -109,10 +111,9 @@ public class UniversalEmoteSerializer {
         if(!(EmoteInstance.config).loadBuiltinEmotes.get()){
             return;
         }
-        try {
-            InputStream stream = UniversalEmoteSerializer.class.getResourceAsStream("/assets/" + CommonData.MOD_ID + "/emotes/" + name + ".json");
+        try (InputStream stream = UniversalEmoteSerializer.class.getResourceAsStream("/assets/" + CommonData.MOD_ID + "/emotes/" + name + ".json")) {
             List<KeyframeAnimation> emotes = UniversalEmoteSerializer.readData(stream, null, "json");
-            KeyframeAnimation emote = emotes.get(0);
+            KeyframeAnimation emote = emotes.getFirst();
             emote.extraData.put("isBuiltin", true);
             InputStream iconStream = UniversalEmoteSerializer.class.getResourceAsStream("/assets/" + CommonData.MOD_ID + "/emotes/" + name + ".png");
             if(iconStream != null) {
@@ -121,7 +122,7 @@ public class UniversalEmoteSerializer {
             }
             hiddenServerEmotes.addAll(emotes);
         }catch (EmoteSerializerException | IOException e){
-            e.printStackTrace();
+            EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
         }
     }
 

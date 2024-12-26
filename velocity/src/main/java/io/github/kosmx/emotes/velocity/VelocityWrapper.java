@@ -49,7 +49,7 @@ public class VelocityWrapper {
         } else {
             CommonData.isLoaded = true;
         }
-        EmoteInstance.instance = new VelocityInstance(logger::log);
+        EmoteInstance.instance = new VelocityInstance(this.logger);
         Serializer.INSTANCE = new Serializer(); // it does register itself
         EmoteInstance.config = Serializer.getConfig();
         UniversalEmoteSerializer.loadEmotes();

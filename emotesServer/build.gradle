@@ -16,7 +16,7 @@ configurations {
 dependencies {
     implementation project(':emotesAPI')
     implementation project(':executor')
-    implementation "dev.kosmx.player-anim:anim-core:${project.player_anim_core}"
+    implementation "dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}"
 
     compileOnly "com.google.code.gson:gson:2.8.0"
 }
@@ -48,7 +48,7 @@ publishing {
                 def animatorNode = depsNode.appendNode("dependency")
                 animatorNode.appendNode("groupId", "dev.kosmx.player-anim")
                 animatorNode.appendNode("artifactId", "anim-core")
-                animatorNode.appendNode("version", project.player_anim_core)
+                animatorNode.appendNode("version", rootProject.player_animator_version)
                 animatorNode.appendNode("scope", "compile")
 
 

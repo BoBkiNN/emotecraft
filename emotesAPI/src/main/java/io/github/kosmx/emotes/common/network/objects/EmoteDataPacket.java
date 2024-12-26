@@ -52,10 +52,11 @@ public class EmoteDataPacket extends AbstractNetworkPacket {
     /**
      * version 1: 2.1 features, extended parts, UUID emote ID
      * version 2: Animation library, dynamic parts
+     * version 3: Animation scale
      */
     @Override
     public byte getVer() {
-        return 2;
+        return (byte) AnimationBinary.getCurrentVersion();
     }
 
     protected int calculateVersion(NetData config) {

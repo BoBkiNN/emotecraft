@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.UUID;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 /**
@@ -160,12 +161,12 @@ public abstract class AbstractNetworkInstance implements INetworkInstance{
     public HashMap<Byte, Byte> getRemoteVersions() {
         HashMap<Byte, Byte> map = new HashMap<>();
         if(disableNBS){
-            map.put((byte)3, (byte) 0);
+            map.put(PacketConfig.NBS_CONFIG, (byte) 0);
         }
         if (doesServerTrackEmotePlay) {
             map.put(PacketConfig.SERVER_TRACK_EMOTE_PLAY, (byte)1);
         }
-        map.put((byte)0, (byte)this.animationFormat);
+        map.put(PacketConfig.ANIMATION_FORMAT, (byte)this.animationFormat);
         return map;
     }
 
@@ -175,13 +176,13 @@ public abstract class AbstractNetworkInstance implements INetworkInstance{
     }
 
     @Override
-    public void sendConfigCallback(){
+    public void sendC2SConfig(Consumer<EmotePacket.Builder> consumer){
         EmotePacket.Builder packetBuilder = new EmotePacket.Builder();
         //packetBuilder.setVersion(this.getVersions());
         packetBuilder.configureToConfigExchange(true);
 
         try {
-            this.sendMessage(packetBuilder, null);
+            consumer.accept(packetBuilder);
         }
         catch (Exception e){
             EmotesProxyManager.log(Level.WARNING, "Error while writing packet: " + e.getMessage());

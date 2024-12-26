@@ -2,6 +2,7 @@ plugins {
     id 'java'
     //id "com.github.johnrengelman.shadow" version "6.1.0"
     id 'maven-publish'
+    id "com.modrinth.minotaur"
 }
 
 
@@ -33,20 +34,17 @@ configurations {
 }
 
 dependencies {
-    //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
-    //testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    implementation "org.spigotmc:spigot-api:${rootProject.spigot_version}"
+    implementation "com.comphenix.protocol:ProtocolLib:${rootProject.protocollib_version}"
 
-    implementation("org.spigotmc:spigot-api:${project.spigot_api}")
-    implementation group: "com.comphenix.protocol", name: "ProtocolLib", version: "5.0.0"
+    compileModule(project(':emotesAPI')) { transitive = false }
+    compileModule(project(':executor')) { transitive = false }
+    compileModule(project(':emotesServer')) { transitive = false }
+    compileModule(project(':emotesAssets')) { transitive = false }
 
-    compileModule(project(':emotesAPI')){ transitive = false }
-    compileModule(project(':executor')){ transitive = false }
-    compileModule(project(':emotesServer')){ transitive = false }
-
-    // Only for built-in resources, code is not used from here.
-    compileModule(project(':emotesAssets')){ transitive = false }
-
-    compileModule("dev.kosmx.player-anim:anim-core:${project.player_anim_core}"){ transitive = false }
+    compileModule("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}") {
+        transitive false
+    }
 }
 
 processResources{
@@ -60,15 +58,6 @@ processResources{
 
 }
 
-//shadowJar{
-//    configurations = [project.configurations.compileModule]
-//   archiveClassifier.set("bukkit")
-//}
-
-compileJava {
-    dependsOn(':emotesAssets:publicationJar')
-}
-
 jar{
     from{
         configurations.compileModule.collect() {it.isDirectory() ? it : zipTree(it)}
@@ -80,7 +69,7 @@ task copyArtifacts{
     dependsOn('build')
     doLast {
         copy{
-            from "${project.layout.buildDirectory}/libs/${project.archives_base_name}-${rootProject.mod_version}-bukkit.jar"
+            from "${project.buildDir}/libs/${project.archives_base_name}-${rootProject.mod_version}-bukkit.jar"
             into "${rootProject.projectDir}/artifacts"
         }
     }
@@ -148,5 +137,22 @@ publishing {
         else {
             mavenLocal()
         }
+    }
+}
+
+if (keysExists) {
+    modrinth {
+        versionType = project.cfType
+        uploadFile = jar
+
+        token = project.keys.modrinth_token
+        projectId = "pZ2wrerK"
+        versionNumber = "${project.mod_version}+${project.minecraft_version}-bukkit"
+        versionName = "${project.mod_version}"
+
+        gameVersions = ["1.21.1"]
+        changelog = changes
+        loaders = ["bukkit", "folia", "paper", "purpur", "spigot"]
+        failSilently = false
     }
 }

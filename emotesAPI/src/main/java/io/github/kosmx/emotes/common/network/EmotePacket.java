@@ -11,7 +11,6 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -76,7 +75,9 @@ public class EmotePacket {
                 }
             }
         });
-        if(sizeSum.get() > data.sizeLimit)throw new IOException("Can't send emote, packet's size is bigger than max allowed");
+        if(sizeSum.get() > data.sizeLimit)throw new IOException(String.format(
+                "Can't send emote, packet's size (%s) is bigger than max allowed (%s)!", sizeSum.get(), data.sizeLimit
+        ));
         SongPacket songPacket = (SongPacket) subPackets.get((byte)3);
         int songSize = songPacket.calculateSize(this.data) + 6;
         if(songPacket.doWrite(this.data) && sizeSum.get() + songSize <= data.sizeLimit){
@@ -91,16 +92,16 @@ public class EmotePacket {
         buf.put(data.purpose.id);
         buf.put(partCount.get());
 
-        AtomicBoolean ex = new AtomicBoolean(false);
-        subPackets.forEach((aByte, packet) -> {
-            try {
+        try {
+            for (AbstractNetworkPacket packet : this.subPackets.values()) {
                 writeSubPacket(buf, packet);
-            } catch (IOException exception) {
-                exception.printStackTrace();
-                ex.set(true);
             }
-        });
-        if(ex.get())throw new IOException("Exception while writing sub-packages");
+        } catch (Throwable th) {
+            throw new IOException("Exception while writing sub-packages", th);
+        } finally {
+            ((Buffer)buf).flip(); // make it ready to read
+        }
+
         return buf;
     }
 
@@ -114,7 +115,9 @@ public class EmotePacket {
             int currentIndex = byteBuffer.position();
             packetSender.write(byteBuffer, this.data);
             if(byteBuffer.position() != currentIndex + len){
-                throw new IOException("Incorrect size calculator: " + packetSender.getClass());
+                throw new IOException(String.format("Incorrect size calculator: %s (calculated %s, real %s)",
+                        packetSender.getClass(), len, byteBuffer.position() - currentIndex
+                ));
             }
         }
     }

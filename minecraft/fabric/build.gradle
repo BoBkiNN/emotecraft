@@ -1,28 +1,16 @@
-
 plugins {
-    id 'maven-publish'
+    id "com.gradleup.shadow"
+    id "com.modrinth.minotaur"
 }
 
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'com.modrinth.minotaur'
-
-architectury{
+architectury {
     platformSetupLoomIde()
     fabric()
-    minecraft = project.minecraft_version
 }
 
-loom{
-    accessWidenerPath = project(":${project.module_name}:archCommon").loom.accessWidenerPath
-    silentMojangMappingsLicense()
+loom {
+    accessWidenerPath = project(":minecraft:archCommon").loom.accessWidenerPath
 }
-
-
-
-archivesBaseName = "${project.archives_base_name}-for-MC${project.minecraft_version}"
-
-version = rootProject.mod_version
-
 
 configurations {
     compileModule
@@ -38,26 +26,23 @@ configurations {
 }
 
 dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+
     commonModule(project(':executor')) {transitive false}
     commonModule(project(':emotesAPI')) {transitive false}
     commonModule(project(':emotesServer')) {transitive false}
     commonModule(project(':emotesAssets')) {transitive false}
 
-    common(project(path: ":${project.module_name}:archCommon", configuration: 'namedElements')) {transitive false}
-
-    compileModule(project(path: ":${project.module_name}:archCommon", configuration: "transformProductionFabric")) { transitive false }
-
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}"){
+    modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}") {
         exclude group: "net.fabricmc.fabric-api"
     }
-    //include "com.terraformersmc:modmenu:${project.modmenu_version}"
 
+    include modImplementation("io.github.kosmx.bendy-lib:bendy-lib-fabric:${rootProject.bendylib_version}")
+    include modImplementation("dev.kosmx.player-anim:player-animation-lib-fabric:${rootProject.player_animator_version}")
 
-    include modImplementation("io.github.kosmx.bendy-lib:bendy-lib-fabric:${project.bendylib_version}")
-    include modImplementation("dev.kosmx.player-anim:player-animation-lib-fabric:${project.player_anim}")
+    common(project(path: ":minecraft:archCommon", configuration: "namedElements")) { transitive false }
+    compileModule(project(path: ":minecraft:archCommon", configuration: "transformProductionFabric")) { transitive false }
 }
 
 
@@ -84,21 +69,17 @@ tasks.withType(JavaCompile) {
 
 shadowJar{
     configurations = [project.configurations.compileModule]
-   archiveClassifier.set("fabric-dev")
+    archiveClassifier.set("fabric-dev")
 }
 
 remapJar{
     injectAccessWidener = true
-    dependsOn shadowJar
-    input.set shadowJar.archiveFile
-   archiveClassifier.set("fabric")
+    inputFile.set shadowJar.archiveFile
+    archiveClassifier.set("fabric")
 }
 
 jar {
-    //from {
-    //    configurations.compileModule.collect { it.isDirectory() ? it : zipTree(it) }
-    //}
-    from "LICENSE"
+    archiveClassifier.set("dev")
 }
 
 components.java {
@@ -132,10 +113,7 @@ publishing {
     }
 }
 
-
-import com.modrinth.minotaur.dependencies.ModDependency
-
-if(keysExists) {
+if (keysExists) {
     modrinth {
         versionType = project.cfType
 
@@ -148,7 +126,7 @@ if(keysExists) {
         versionNumber = "${project.mod_version}+${project.minecraft_version}-fabric"
         versionName = "${project.mod_version}"
 
-        gameVersions = ["1.20", "1.20.1"]
+        gameVersions = ["1.21.1"]
         changelog = changes
         loaders = ["fabric", "quilt"]
         failSilently = false
