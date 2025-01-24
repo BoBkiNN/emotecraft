@@ -51,7 +51,7 @@ public abstract class AbstractNetworkInstance implements INetworkInstance{
      * @param byteBuffer buffer to send
      * @param target target to send message, if null, everyone in the view distance
      */
-    protected void sendMessage(ByteBuffer byteBuffer, @Nullable UUID target){
+    public void sendMessage(ByteBuffer byteBuffer, @Nullable UUID target){
         sendMessage(safeGetBytesFromBuffer(byteBuffer), target);
     }
 

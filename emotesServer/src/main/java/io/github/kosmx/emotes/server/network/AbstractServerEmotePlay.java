@@ -8,6 +8,7 @@ import dev.kosmx.playerAnim.core.util.Pair;
 import dev.kosmx.playerAnim.core.util.UUIDMap;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteAPI;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteEvents;
+import io.github.kosmx.emotes.api.proxy.AbstractNetworkInstance;
 import io.github.kosmx.emotes.api.proxy.INetworkInstance;
 import io.github.kosmx.emotes.common.network.EmotePacket;
 import io.github.kosmx.emotes.common.network.GeyserEmotePacket;
@@ -27,6 +28,7 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -250,7 +252,25 @@ public abstract class AbstractServerEmotePlay<P> extends ServerEmoteAPI {
 
         } catch (RuntimeException e) {
             EmoteInstance.instance.getLogger().log(Level.WARNING, e.getMessage(), e);
-            return null;
+            return Collections.emptyList();
+        }
+    }
+
+    @Deprecated
+    public void presenceResponse(AbstractNetworkInstance instance, boolean trackPlayState) {
+        try {
+            instance.sendMessage(getS2CConfigPacket(trackPlayState), null);
+        } catch(IOException e) {
+            EmoteInstance.instance.getLogger().log(Level.SEVERE, e.getMessage());
+        }
+        if(instance.getRemoteVersions().getOrDefault((byte)11, (byte)0) >= 0) {
+            for (ByteBuffer emote : getServerEmotes(instance.getRemoteVersions())) {
+                try{
+                    instance.sendMessage(emote, null);
+                }catch (Throwable e){
+                    EmoteInstance.instance.getLogger().log(Level.WARNING, "Failed to send save emote message", e);
+                }
+            }
         }
     }
 

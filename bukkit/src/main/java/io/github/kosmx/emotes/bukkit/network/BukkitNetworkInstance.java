@@ -59,8 +59,9 @@ public class BukkitNetworkInstance extends AbstractNetworkInstance implements IS
     }
 
     @Override
+    @SuppressWarnings({"deprecation", "unchecked"})
     public void presenceResponse() {
-        IServerNetworkInstance.super.presenceResponse();
+        ServerSideEmotePlay.getInstance().presenceResponse(this, trackPlayState());
         for (Player player :bukkitPlugin.getServer().getOnlinePlayers()) {
             if (this.player.canSee(player)) {
                 ServerSideEmotePlay.getInstance().playerStartTracking(player, this.player);
