@@ -82,7 +82,7 @@ public final class ClientNetwork extends AbstractNetworkInstance {
     }
 
     @Override
-    protected void sendMessage(ByteBuffer byteBuffer, @Nullable UUID target) {
+    public void sendMessage(ByteBuffer byteBuffer, @Nullable UUID target) {
         sendPlayPacket(playPacket(byteBuffer));
     }
 
