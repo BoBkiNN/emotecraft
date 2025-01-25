@@ -67,16 +67,13 @@ if(keysExists) {
             //changelog = '[See on Github](https://github.com/KosmX/emotes/commits/master)'
             changelog = changes
             releaseType = project.cfType
-            addGameVersion "1.21.1"
+            addGameVersion rootProject.minecraft_version
             addGameVersion "Fabric"
             addGameVersion "Quilt"
 
-
             relations {
                 requiredDependency 'fabric-api'
-                optionalDependency 'modmenu'
                 embeddedLibrary 'playeranimator'
-                embeddedLibrary 'bendy-lib'
             }
 
             options {
@@ -95,12 +92,11 @@ if(keysExists) {
             //changelog = '[See on Github](https://github.com/KosmX/emotes/commits/master)'
             changelog = changes
             releaseType = project.cfType
-            addGameVersion "1.21.1"
+            addGameVersion rootProject.minecraft_version
             addGameVersion "NeoForge"
 
             relations {
                 embeddedLibrary 'playeranimator'
-                embeddedLibrary 'bendy-lib'
             }
 
             options {

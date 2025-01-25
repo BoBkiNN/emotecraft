@@ -25,7 +25,7 @@ public interface IPlayerEntity extends IEmotePlayerEntity {
 
         Pair<KeyframeAnimation, Integer> p = ClientEmotePlay.getEmoteForUUID(this.emotes_getUUID());
         if(p != null){
-            ClientEmoteEvents.EMOTE_PLAY.invoker().onEmotePlay(p.getLeft(), this.emotes_getUUID());
+            ClientEmoteEvents.EMOTE_PLAY.invoker().onEmotePlay(p.getLeft(), p.getRight(), this.emotes_getUUID());
             this.emotecraft$playEmote(p.getLeft(), p.getRight(), false);
         }
         if(!this.isMainPlayer() && TmpGetters.getClientMethods().getMainPlayer() != null && TmpGetters.getClientMethods().getMainPlayer().isPlayingEmote()){

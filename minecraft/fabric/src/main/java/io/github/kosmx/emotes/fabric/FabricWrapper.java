@@ -37,7 +37,7 @@ public class FabricWrapper implements ModInitializer {
 
     public static void log(Level level, String msg){
         if (level.intValue() <= Level.INFO.intValue()) {
-            logger.debug(msg);
+            logger.info(msg);
         } else if (level.intValue() <= Level.WARNING.intValue()) {
             logger.warn(msg);
         } else {
@@ -47,7 +47,7 @@ public class FabricWrapper implements ModInitializer {
 
     public static void log(Level level, String msg, Throwable throwable){
         if (level.intValue() <= Level.INFO.intValue()) {
-            logger.debug(msg, throwable);
+            logger.info(msg, throwable);
         } else if (level.intValue() <= Level.WARNING.intValue()) {
             logger.warn(msg, throwable);
         } else {

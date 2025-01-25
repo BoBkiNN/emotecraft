@@ -51,7 +51,7 @@ public class ClientEmotePlay extends ClientEmoteAPI {
         packetBuilder.configureToStreamEmote(emote, player.emotes_getUUID());
         packetBuilder.configureEmoteTick(tick);
         ClientPacketManager.send(packetBuilder, null);
-        ClientEmoteEvents.EMOTE_PLAY.invoker().onEmotePlay(emote, player.emotes_getUUID()); // TODO pass tick
+        ClientEmoteEvents.EMOTE_PLAY.invoker().onEmotePlay(emote, tick, player.emotes_getUUID());
         TmpGetters.getClientMethods().getMainPlayer().emotecraft$playEmote(emote, tick, false);
         return true;
     }
@@ -118,9 +118,7 @@ public class ClientEmotePlay extends ClientEmoteAPI {
                 break;
             case CONFIG:
                 networkInstance.setVersions(Objects.requireNonNull(data.versions));
-                if (EmoteInstance.config.showDebug.get()) {
-                    EmoteInstance.instance.getLogger().log(Level.INFO, "Legacy versions was received: " + data.versions);
-                }
+                EmoteInstance.instance.getLogger().log(Level.INFO, "Legacy versions was received: " + data.versions, false);
                 break;
             case FILE:
                 EmoteHolder.addEmoteToList(data.emoteData).fromInstance = networkInstance;
@@ -138,7 +136,7 @@ public class ClientEmotePlay extends ClientEmoteAPI {
             EventResult result = ClientEmoteEvents.EMOTE_VERIFICATION.invoker().verify(emoteData, player);
             if (result == EventResult.FAIL) return;
             if (playerEntity != null) {
-                ClientEmoteEvents.EMOTE_PLAY.invoker().onEmotePlay(emoteData, player);
+                ClientEmoteEvents.EMOTE_PLAY.invoker().onEmotePlay(emoteData, tick, player);
                 playerEntity.emotecraft$playEmote(emoteData, tick, isForced);
             }
             else {

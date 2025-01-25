@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
+@SuppressWarnings({"deprecation","removal"})
 public class JsonEmoteWrapper implements ISerializer {
 
     @Override
@@ -82,6 +83,6 @@ public class JsonEmoteWrapper implements ISerializer {
     }
     private static int lastKeyPos(KeyframeAnimation.StateCollection.State part) {
         if (part.getKeyFrames().isEmpty()) return 0;
-        return part.getKeyFrames().get(part.getKeyFrames().size() - 1).tick;
+        return part.getKeyFrames().getLast().tick;
     }
 }
