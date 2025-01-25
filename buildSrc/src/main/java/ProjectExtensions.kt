@@ -50,6 +50,9 @@ val Project.version_base
 val Project.minecraft_version
     get() = properties["minecraft_version"] as String
 
+val Project.parchment_version
+    get() = properties["parchment_version"] as String
+
 val Project.player_animator_version
     get() = properties["player_animator_version"] as String
 

@@ -1,5 +1,7 @@
+@file:Suppress("UnstableApiUsage")
+
 plugins {
-    id "dev.architectury.loom"
+    id("dev.architectury.loom")
 }
 
 loom {
@@ -9,15 +11,15 @@ loom {
 version = rootProject.mod_version
 
 dependencies {
-    minecraft "com.mojang:minecraft:${rootProject.minecraft_version}"
-    mappings loom.layered() {
+    minecraft("com.mojang:minecraft:${rootProject.minecraft_version}")
+    mappings(loom.layered() {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-${rootProject.minecraft_version}:${rootProject.parchment_version}@zip")
-    }
+    })
 
-    implementation api(project(':emotesServer'))
+    api(project(":emotesServer"))
 }
 
-remapJar {
+tasks.remapJar {
     enabled = false
 }
