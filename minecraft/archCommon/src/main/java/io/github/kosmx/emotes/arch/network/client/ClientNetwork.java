@@ -84,6 +84,7 @@ public final class ClientNetwork extends AbstractNetworkInstance {
     @Override
     public void sendMessage(ByteBuffer byteBuffer, @Nullable UUID target) {
         sendPlayPacket(playPacket(byteBuffer));
+        EmoteInstance.instance.getLogger().log(Level.INFO, "Sent packet size is " + byteBuffer.remaining() + " byte(s).", false);
     }
 
     @ExpectPlatform

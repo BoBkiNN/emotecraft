@@ -118,9 +118,7 @@ public class ClientEmotePlay extends ClientEmoteAPI {
                 break;
             case CONFIG:
                 networkInstance.setVersions(Objects.requireNonNull(data.versions));
-                if (EmoteInstance.config.showDebug.get()) {
-                    EmoteInstance.instance.getLogger().log(Level.INFO, "Legacy versions was received: " + data.versions);
-                }
+                EmoteInstance.instance.getLogger().log(Level.INFO, "Legacy versions was received: " + data.versions, false);
                 break;
             case FILE:
                 EmoteHolder.addEmoteToList(data.emoteData).fromInstance = networkInstance;
