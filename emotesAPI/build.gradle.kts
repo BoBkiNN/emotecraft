@@ -13,7 +13,7 @@ val dev = configurations.register("dev")
 
 dependencies {
     api("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}")
-    compileOnlyApi("com.google.code.gson:gson:2.11.0")
+    implementation("com.google.code.gson:gson:2.11.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
