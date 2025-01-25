@@ -11,6 +11,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -37,9 +38,9 @@ public class EmoteListWidget extends ObjectSelectionList<EmoteListWidget.EmoteEn
     }
 
     @Override
-    protected int getScrollbarPosition() {
+    protected int scrollBarX() {
         if (!this.compactMode) {
-            return super.getScrollbarPosition();
+            return super.scrollBarX();
         }
 
         return getX() + getRowWidth() - SCROLLBAR_WIDTH;
@@ -120,7 +121,7 @@ public class EmoteListWidget extends ObjectSelectionList<EmoteListWidget.EmoteEn
             ResourceLocation texture = this.emote.getIconIdentifier();
             if (texture != null){
                 RenderSystem.enableBlend();
-                matrices.blit(texture, x, y, 32, 32, 0, 0, 256, 256, 256, 256);
+                matrices.blit(RenderType::guiTextured, texture, x, y, 0.0F, 0.0F, 32, 32, 256, 256, 256, 256);
                 RenderSystem.disableBlend();
             }
             matrices.disableScissor();

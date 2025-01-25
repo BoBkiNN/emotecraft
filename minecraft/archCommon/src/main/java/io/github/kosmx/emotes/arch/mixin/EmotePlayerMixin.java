@@ -50,7 +50,7 @@ public abstract class EmotePlayerMixin extends Player implements IPlayerEntity {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void init(ClientLevel clientLevel, GameProfile gameProfile, CallbackInfo ci) {
-        ((IPlayer)this).getAnimationStack().addAnimLayer(1000, emotecraftEmoteContainer);
+        ((IPlayer)this).playerAnimator$getAnimationStack().addAnimLayer(1000, emotecraftEmoteContainer);
     }
 
     @Override
@@ -136,9 +136,8 @@ public abstract class EmotePlayerMixin extends Player implements IPlayerEntity {
         this.yBodyRot = newYaw;
     }
 
-    @Override
-    public void tick() {
-        super.tick();
+    @Inject(method = "tick", at = @At(value = "TAIL"))
+    public void tick(CallbackInfo ci) {
         this.emoteTick();
     }
 

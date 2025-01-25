@@ -57,7 +57,7 @@ public class FastMenuScreen extends Screen {
     }
 
     @Override
-    protected void renderBlurredBackground(float f) {
+    protected void renderBlurredBackground() {
         // no-op
     }
 

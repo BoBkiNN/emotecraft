@@ -9,6 +9,7 @@ import io.github.kosmx.emotes.main.EmoteHolder;
 import io.github.kosmx.emotes.main.config.ClientConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -102,7 +103,7 @@ public class LegacyChooseWidget implements IChooseWheel {
      * @param s        used texture part size !NOT THE WHOLE TEXTURE IMAGE SIZE!
      */
     private void drawTexture(GuiGraphics matrices, ResourceLocation texture, int x, int y, int u, int v, int s) {
-        matrices.blit(texture, widget.getX() + x * widget.getWidth() / 256, widget.getY() + y * widget.getHeight() / 256, s * widget.getWidth() / 2, s * widget.getHeight() / 2, (float) u, (float) v, s * 128, s * 128, 512, 512);
+        matrices.blit(RenderType::guiTextured, texture, widget.getX() + x * widget.getWidth() / 256, widget.getY() + y * widget.getHeight() / 256, u, v, s * widget.getWidth() / 2, s * widget.getHeight() / 2, s * 128, s * 128, 512, 512);
     }
 
     private void checkHovered(int mouseX, int mouseY) {
@@ -181,7 +182,7 @@ public class LegacyChooseWidget implements IChooseWheel {
                 int iconX = (int) (((float) (widget.getX() + widget.getWidth() / 2)) + widget.getWidth() * 0.4 * Math.sin(this.angle * 0.0174533)) - s;
                 int iconY = (int) (((float) (widget.getY() + widget.getHeight() / 2)) + widget.getHeight() * 0.4 * Math.cos(this.angle * 0.0174533)) - s;
                 //widget.renderBindTexture(identifier);
-                matrices.blit(identifier, iconX, iconY, s * 2, s * 2, (float) 0, (float) 0, 256, 256, 256, 256);
+                matrices.blit(RenderType::guiTextured, identifier, iconX, iconY, 0.0F, 0.0F, s * 2, s * 2, 256, 256, 256, 256);
             } else {
                 if (((ClientConfig) EmoteInstance.config).fastMenuEmotes[fastMenuPage][id] != null) {
                     drawCenteredText(matrices, EmoteHolder.getNonNull(((ClientConfig) EmoteInstance.config).fastMenuEmotes[fastMenuPage][id]).name, this.angle);

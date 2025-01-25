@@ -41,6 +41,7 @@ public class ExportMenu extends Screen {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void init() {
         this.layout.addTitleHeader(getTitle(), this.font);
 
@@ -68,6 +69,7 @@ public class ExportMenu extends Screen {
         repositionElements();
     }
 
+    @SuppressWarnings({"deprecation","removal"})
     private void exportEmotesInFormat(AnimationFormat format){
         for(EmoteHolder emoteHolder:EmoteHolder.list){
             KeyframeAnimation emote = emoteHolder.getEmote();
@@ -107,6 +109,7 @@ public class ExportMenu extends Screen {
         EmoteInstance.instance.getLogger().log(Level.FINER, "All emotes are saved in " + format.getExtension() + " format", true);
     }
 
+    @SuppressWarnings({"deprecation","removal"})
     private static Path createFileName(EmoteHolder emote, Path originPath, AnimationFormat format){
         String name = emote.name.getString().replaceAll("[\\\\/]", "#");
         String finalName = null;

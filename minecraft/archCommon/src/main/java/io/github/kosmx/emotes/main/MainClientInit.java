@@ -38,6 +38,7 @@ public class MainClientInit {
     /**
      * play the test emote
      */
+    @SuppressWarnings({"deprecation","removal"})
     public static void playDebugEmote(){
         EmoteInstance.instance.getLogger().log(Level.INFO, "Playing debug emote");
         Path location = null;
@@ -50,7 +51,7 @@ public class MainClientInit {
         if(location == null)return;
         try{
             InputStream reader = Files.newInputStream(location);
-            EmoteHolder emoteHolder = new EmoteHolder(UniversalEmoteSerializer.readData(reader, location.getFileName().toString()).get(0));
+            EmoteHolder emoteHolder = new EmoteHolder(UniversalEmoteSerializer.readData(reader, location.getFileName().toString()).getFirst());
             reader.close();
             if(TmpGetters.getClientMethods().getMainPlayer() != null){
                 emoteHolder.playEmote(TmpGetters.getClientMethods().getMainPlayer());
