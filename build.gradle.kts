@@ -109,7 +109,7 @@ if(keysExists) {
 
     tasks.register("autoPublish") {
         //dependsOn(":forge:build",)
-        //dependsOn(":fabric:build", ":bukkit:build")
+        //dependsOn(":fabric:build", ";paper:build")
         dependsOn("collectArtifacts")
 
         //Configure Modrinth and GitHub with artifacts to release
@@ -125,9 +125,9 @@ if(keysExists) {
         finalizedBy(":executor:publish")
         finalizedBy(":emotesServer:publish")
         finalizedBy(":emotesAssets:publish")
-        finalizedBy(":bukkit:publish")
+        finalizedBy(";paper:publish")
 
-        finalizedBy(":bukkit:modrinth")
+        finalizedBy(";paper:modrinth")
         finalizedBy(":bungee:modrinth")
         finalizedBy(":velocity:modrinth")
     }
@@ -137,7 +137,7 @@ if(keysExists) {
 
 //Build all modules task :D
 tasks.register("buildAll"){
-    dependsOn(":bukkit:build")
+    dependsOn(";paper:build")
     dependsOn(":bungee:build")
     dependsOn(":velocity:build")
     dependsOn(":minecraft:buildAll")
@@ -151,7 +151,7 @@ tasks.register("cleanupArtifacts"){
 
 tasks.register("collectArtifacts"){
     dependsOn("cleanupArtifacts")
-    dependsOn(":bukkit:copyArtifacts")
+    dependsOn(";paper:copyArtifacts")
     dependsOn(":bungee:copyArtifacts")
     dependsOn(":velocity:copyArtifacts")
     dependsOn("minecraft:copyArtifacts")

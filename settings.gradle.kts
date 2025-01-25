@@ -23,8 +23,8 @@ include("minecraft:archCommon")
 include("minecraft:fabric")
 include("minecraft:neoforge")
 
-//Bukkit plugin stuff
-include("bukkit")
+// Paper plugin
+include("paper")
 
 //Velocity plugin stuff
 // include "velocity"
