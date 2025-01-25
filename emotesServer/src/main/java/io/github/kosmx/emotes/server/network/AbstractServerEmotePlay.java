@@ -163,7 +163,7 @@ public abstract class AbstractServerEmotePlay<P> extends ServerEmoteAPI {
      */
     protected void streamEmote(NetData data, P player, boolean isForced, boolean isFromPlayer) {
         getPlayerNetworkInstance(player).getEmoteTracker().setPlayedEmote(data.emoteData, isForced);
-        ServerEmoteEvents.EMOTE_PLAY.invoker().onEmotePlay(data.emoteData, getUUIDFromPlayer(player));
+        ServerEmoteEvents.EMOTE_PLAY.invoker().onEmotePlay(data.emoteData, data.tick, getUUIDFromPlayer(player));
         data.isForced = isForced;
         data.player = getUUIDFromPlayer(player);
         UUID bedrockEmoteID = bedrockEmoteMap.getBeEmote(data.emoteData.getUuid());
