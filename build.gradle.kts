@@ -9,7 +9,7 @@ plugins{
 }
 
 
-allprojects {
+subprojects {
     apply(plugin = "java")
     apply(plugin = "java-library")
 
@@ -40,6 +40,10 @@ allprojects {
 
     repositories {
         mavenCentral()
+    }
+
+    dependencies {
+        this.add("implementation", "org.jetbrains:annotations:24.0.1")
     }
 
     plugins.withId("java") {
@@ -155,7 +159,7 @@ tasks.register("collectArtifacts"){
         releaseArtifacts = project.projectDir.toPath().resolve("artifacts").toFile().listFiles().toList()
     }
 }
-tasks.named("clean") {
-    delete("${project.projectDir}/artifacts")
-}
+//tasks.named("clean") {
+//    delete("${project.projectDir}/artifacts")
+//}
 

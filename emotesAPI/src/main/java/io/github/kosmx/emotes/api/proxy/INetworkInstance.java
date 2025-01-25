@@ -2,7 +2,7 @@ package io.github.kosmx.emotes.api.proxy;
 
 import io.github.kosmx.emotes.common.network.EmotePacket;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.BufferOverflowException;
 import java.nio.BufferUnderflowException;

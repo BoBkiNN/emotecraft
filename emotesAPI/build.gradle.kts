@@ -1,7 +1,7 @@
 plugins {
-    id "java"
-    id "java-library"
-    id "maven-publish"
+    java
+    `java-library`
+    `maven-publish`
 }
 
 version = rootProject.mod_version
@@ -9,33 +9,30 @@ version = rootProject.mod_version
 //sourceCompatibility = JavaVersion.VERSION_1_8
 //targetCompatibility = JavaVersion.VERSION_1_8
 
-
-configurations {
-    dev
-}
+val dev = configurations.register("dev")
 
 dependencies {
-    implementation api("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}")
-    compileOnlyApi "com.google.code.gson:gson:2.11.0"
+    api("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}")
+    compileOnlyApi("com.google.code.gson:gson:2.11.0")
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:5.10.0"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.0"
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
 }
-test {
+tasks.test {
     useJUnitPlatform()
 }
 
-compileJava {
-    options.release.set 21 //Build on JDK 1.8
+tasks.compileJava {
+    options.release.set(21) //Build on JDK 1.8
 }
 
 artifacts {
-    dev(jar)
+    add("dev", tasks.jar.get())
 }
 
 //-------- publishing --------
 
-java{
+java {
     withSourcesJar()
     withJavadocJar()
 }
@@ -44,28 +41,13 @@ java{
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        register<MavenPublication>("mavenJava") {
             // add all the jars that should be included when publishing to maven
-
             artifactId = "emotesAPI"
 
-            artifact(jar)
-            artifact(sourcesJar)
-            artifact(javadocJar)
+            from(components["java"])
 
-
-            pom.withXml {
-                def depsNode = asNode().appendNode("dependencies")
-
-                def animatorNode = depsNode.appendNode("dependency")
-                animatorNode.appendNode("groupId", "dev.kosmx.player-anim")
-                animatorNode.appendNode("artifactId", "anim-core")
-                animatorNode.appendNode("version", rootProject.player_animator_version)
-                animatorNode.appendNode("scope", "compile")
-
-            }
-
-            pom{
+            pom {
                 name = "emotesApi"
                 description = "Minecraft Emotecraft api"
                 url = "https://github.com/KosmX/emotes"
@@ -97,15 +79,13 @@ publishing {
     repositories {
         // uncomment to publish to the local maven
         if (project.keysExists) {
-            maven {
-                url = "https://maven.kosmx.dev/"
+            maven("https://maven.kosmx.dev/") {
                 credentials {
                     username = "kosmx"
-                    password = project.keys.kosmx_maven
+                    password = project.keys["kosmx_maven"]
                 }
             }
-        }
-        else {
+        } else {
             mavenLocal()
         }
     }
