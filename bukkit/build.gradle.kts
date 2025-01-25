@@ -1,8 +1,8 @@
 plugins {
-    id 'java'
+    id "java"
     id "io.papermc.paperweight.userdev" version "2.0.0-beta.12"
     id "xyz.jpenilla.run-paper" version "2.3.1"
-    id 'maven-publish'
+    id "maven-publish"
     id "com.gradleup.shadow"
     id "com.modrinth.minotaur"
 }
@@ -37,14 +37,14 @@ configurations {
 dependencies {
     paperweight.paperDevBundle("${rootProject.minecraft_version}-R0.1-SNAPSHOT")
 
-    compileModule(project(':emotesAPI')) { transitive = false }
-    compileModule(project(':executor')) { transitive = false }
-    compileModule(project(':emotesServer')) { transitive = false }
-    compileModule(project(':emotesAssets')) { transitive = false }
-    compileModule(project(path: ":emotesMc", configuration: "namedElements")) { transitive = false }
+    compileModule(project(":emotesAPI")) { isTransitive = false }
+    compileModule(project(":executor")) { isTransitive = false }
+    compileModule(project(":emotesServer")) { isTransitive = false }
+    compileModule(project(":emotesAssets")) { isTransitive = false }
+    compileModule(project(path: ":emotesMc", configuration: "namedElements")) { isTransitive = false }
 
     compileModule("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}") {
-        transitive false
+        isTransitive false
     }
 }
 
@@ -56,8 +56,8 @@ tasks {
 
 processResources{
 
-    inputs.property "version", project.version
-    inputs.property "description", rootProject.mod_description
+    inputs.property("version", project.version)
+    inputs.property("description", rootProject.mod_description)
 
     filesMatching("paper-plugin.yml"){
         expand version: project.version, description: rootProject.mod_description
@@ -78,7 +78,7 @@ tasks.assemble {
 }
 
 task copyArtifacts{
-    dependsOn('build')
+    dependsOn("build")
     doLast {
         copy{
             from "${project.buildDir}/libs/${project.archives_base_name}-${rootProject.mod_version}-bukkit.jar"
@@ -96,10 +96,10 @@ publishing {
         mavenJava(MavenPublication) {
             // add all the jars that should be included when publishing to maven
 
-            artifactId = 'emotesBukkit'
+            artifactId = "emotesBukkit"
 
             artifact(jar) {
-                classifier ''
+                classifier ""
             }
             artifact(sourcesJar)
 
@@ -107,12 +107,12 @@ publishing {
             pom{
                 name = "emotesBukkit"
                 description = "Minecraft Emotecraft Bukkit plugin"
-                url = 'https://github.com/KosmX/emotes'
+                url = "https://github.com/KosmX/emotes"
                 developers {
                     developer {
-                        id = 'kosmx'
-                        name = 'KosmX'
-                        email = 'kosmx.mc@gmail.com'
+                        id = "kosmx"
+                        name = "KosmX"
+                        email = "kosmx.mc@gmail.com"
                     }
                 }
 
@@ -124,9 +124,9 @@ publishing {
                 }
 
                 scm {
-                    connection = 'scm:git:github.com/kosmx/emotes.git'
-                    developerConnection = 'scm:git:github.com/kosmx/emotes.git'
-                    url = 'https://github.com/KosmX/emotes'
+                    connection = "scm:git:github.com/kosmx/emotes.git"
+                    developerConnection = "scm:git:github.com/kosmx/emotes.git"
+                    url = "https://github.com/KosmX/emotes"
                 }
             }
         }
@@ -138,9 +138,9 @@ publishing {
         if (project.keysExists) {
             repositories {
                 maven {
-                    url = 'https://maven.kosmx.dev/'
+                    url = "https://maven.kosmx.dev/"
                     credentials {
-                        username = 'kosmx'
+                        username = "kosmx"
                         password = project.keys.kosmx_maven
                     }
                 }
