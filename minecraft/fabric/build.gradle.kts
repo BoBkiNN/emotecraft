@@ -91,51 +91,49 @@ components.getByName<AdhocComponentWithVariants>("java") {
 }
 
 
-//// configure the maven publication
-//publishing {
-//    publications {
-//        mavenJava(MavenPublication) {
-//            // add all the jars that should be included when publishing to maven
-//            artifact(jar) {
-//                builtBy remapJar
-//            }
-//            //artifact("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar"){
-//            //	builtBy remapJar
-//            //}
-//            artifact(remapJar) {
-//                builtBy remapJar
-//            }
-//        }
-//    }
-//
-//    // select the repositories you want to publish to
-//    repositories {
-//        // uncomment to publish to the local maven
-//        mavenLocal()
-//    }
-//}
+// configure the maven publication
+publishing {
+    publications {
+        register<MavenPublication>("mavenJava") {
+            // add all the jars that should be included when publishing to maven
+            artifact(tasks.jar) {
+                builtBy(tasks.remapJar)
+            }
+            //artifact("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar"){
+            //	builtBy remapJar
+            //}
+            artifact(tasks.remapJar) {
+                builtBy(tasks.remapJar)
+            }
+        }
+    }
 
-//if (keysExists) {
-//    modrinth {
-//        versionType = project.cfType
-//
-//        uploadFile = remapJar
-//
-//        token = project.keys.modrinth_token
-//        // Get the GitHub Access Token you got from the basics part of this tutorial.
-//        projectId = "pZ2wrerK" // Enter your modrinth mod ID here.
-//        //System.out.println("Enter the version number:");
-//        versionNumber = "${project.mod_version}+${project.minecraft_version}-fabric"
-//        versionName = "${project.mod_version}"
-//
-//        gameVersions = [project.minecraft_version]
-//        changelog = changes
-//        loaders = ["fabric", "quilt"]
-//        failSilently = false
-//
-//        dependencies {
-//            required.project "fabric-api"
-//            embedded.project "playeranimator"
-//        }
-//    }
-//}
+    repositories {
+        mavenLocal()
+    }
+}
+
+if (keysExists) {
+    modrinth {
+        versionType = project.cfType
+
+        uploadFile = tasks.remapJar.get().outputs
+
+        token = project.keys["modrinth_token"]
+        // Get the GitHub Access Token you got from the basics part of this tutorial.
+        projectId = "pZ2wrerK" // Enter your modrinth mod ID here.
+        //System.out.println("Enter the version number:");
+        versionNumber = "${project.mod_version}+${project.minecraft_version}-fabric"
+        versionName = project.mod_version
+
+        gameVersions = listOf(project.minecraft_version)
+        changelog = changes
+        loaders = listOf("fabric", "quilt")
+        failSilently = false
+
+        dependencies {
+            required.project("fabric-api")
+            embedded.project("playeranimator")
+        }
+    }
+}
