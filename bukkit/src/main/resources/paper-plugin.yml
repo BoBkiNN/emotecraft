@@ -2,7 +2,7 @@ name: emotecraft
 description: ${description}
 main: io.github.kosmx.emotes.bukkit.BukkitWrapper
 version: ${version}
-api-version: 1.21
+api-version: 1.21.4
 website: https://github.com/KosmX/emotes
 authors: [KomsX]
 folia-supported: true
