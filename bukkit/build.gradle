@@ -155,7 +155,7 @@ publishing {
 if (keysExists) {
     modrinth {
         versionType = project.cfType
-        uploadFile = jar
+        uploadFile = shadowJar
 
         token = project.keys.modrinth_token
         projectId = "pZ2wrerK"
