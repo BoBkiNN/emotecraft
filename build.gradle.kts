@@ -129,8 +129,7 @@ if(keysExists) {
         finalizedBy(":paper:publish")
 
         finalizedBy(":paper:modrinth")
-        finalizedBy(":bungee:modrinth")
-        finalizedBy(":velocity:modrinth")
+//        finalizedBy(":velocity:modrinth")
     }
 } else {
     println("Keys are not in ENV, publishing is not possible")
@@ -139,8 +138,7 @@ if(keysExists) {
 //Build all modules task :D
 tasks.register("buildAll"){
     dependsOn(":paper:build")
-    dependsOn(":bungee:build")
-    dependsOn(":velocity:build")
+//    dependsOn(":velocity:build")
     dependsOn(":minecraft:buildAll")
 }
 
@@ -153,8 +151,7 @@ tasks.register("cleanupArtifacts"){
 tasks.register("collectArtifacts"){
     dependsOn("cleanupArtifacts")
     dependsOn(":paper:copyArtifacts")
-    dependsOn(":bungee:copyArtifacts")
-    dependsOn(":velocity:copyArtifacts")
+//    dependsOn(":velocity:copyArtifacts")
     dependsOn("minecraft:copyArtifacts")
     doLast {
         releaseArtifacts = project.projectDir.toPath().resolve("artifacts").toFile().listFiles().toList()
