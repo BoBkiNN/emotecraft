@@ -1,8 +1,7 @@
 plugins {
-    id 'java'
-    id 'java-library'
-    id 'maven-publish'
-    id 'signing' //why not if I can?
+    id "java"
+    id "java-library"
+    id "maven-publish"
 }
 
 version = rootProject.mod_version
@@ -19,8 +18,8 @@ dependencies {
     implementation api("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}")
     compileOnlyApi "com.google.code.gson:gson:2.11.0"
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.10.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.0"
 }
 test {
     useJUnitPlatform()
@@ -41,32 +40,14 @@ java{
     withJavadocJar()
 }
 
-ext["signing.keyId"] = ''
-ext["signing.password"] = ''
-ext["signing.secretKeyRingFile"] = ''
 
-File secretPropsFile = project.rootProject.file('keys.properties')
-if (secretPropsFile.exists()) {
-    Properties p = new Properties()
-    new FileInputStream(secretPropsFile).withCloseable { is ->
-        p.load(is)
-    }
-    p.each { name, value ->
-        ext[name] = value
-    }
-}
-signing {
-    if (secretPropsFile.exists()) {
-        sign publishing.publications
-    }
-}
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             // add all the jars that should be included when publishing to maven
 
-            artifactId = 'emotesAPI'
+            artifactId = "emotesAPI"
 
             artifact(jar)
             artifact(sourcesJar)
@@ -87,12 +68,12 @@ publishing {
             pom{
                 name = "emotesApi"
                 description = "Minecraft Emotecraft api"
-                url = 'https://github.com/KosmX/emotes'
+                url = "https://github.com/KosmX/emotes"
                 developers {
                     developer {
-                        id = 'kosmx'
-                        name = 'KosmX'
-                        email = 'kosmx.mc@gmail.com'
+                        id = "kosmx"
+                        name = "KosmX"
+                        email = "kosmx.mc@gmail.com"
                     }
                 }
 
@@ -104,9 +85,9 @@ publishing {
                 }
 
                 scm {
-                    connection = 'scm:git:github.com/kosmx/emotes.git'
-                    developerConnection = 'scm:git:github.com/kosmx/emotes.git'
-                    url = 'https://github.com/KosmX/emotes'
+                    connection = "scm:git:github.com/kosmx/emotes.git"
+                    developerConnection = "scm:git:github.com/kosmx/emotes.git"
+                    url = "https://github.com/KosmX/emotes"
                 }
             }
         }
@@ -116,13 +97,11 @@ publishing {
     repositories {
         // uncomment to publish to the local maven
         if (project.keysExists) {
-            repositories {
-                maven {
-                    url = 'https://maven.kosmx.dev/'
-                    credentials {
-                        username = 'kosmx'
-                        password = project.keys.kosmx_maven
-                    }
+            maven {
+                url = "https://maven.kosmx.dev/"
+                credentials {
+                    username = "kosmx"
+                    password = project.keys.kosmx_maven
                 }
             }
         }
