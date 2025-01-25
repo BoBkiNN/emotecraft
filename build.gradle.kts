@@ -6,6 +6,7 @@ plugins{
     id("com.matthewprenger.cursegradle") version "1.4.0" apply false
     id("com.github.breadmoirai.github-release") version "2.4.1"
     id("com.modrinth.minotaur") version "2.8.4" apply false
+    java
 }
 
 
@@ -159,7 +160,8 @@ tasks.register("collectArtifacts"){
         releaseArtifacts = project.projectDir.toPath().resolve("artifacts").toFile().listFiles().toList()
     }
 }
-//tasks.named("clean") {
-//    delete("${project.projectDir}/artifacts")
-//}
+
+tasks.clean {
+    delete("${project.projectDir}/artifacts")
+}
 
