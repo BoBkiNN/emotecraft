@@ -24,10 +24,6 @@ include 'minecraft:neoforge'
 
 //Bukkit plugin stuff
 include 'bukkit'
-include 'bukkit:debug'
-
-//Bungee plugin stuff
-include 'bungee'
 
 //Velocity plugin stuff
 include 'velocity'

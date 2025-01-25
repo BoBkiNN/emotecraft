@@ -1,6 +1,7 @@
 plugins {
     id 'java'
-    //id "com.github.johnrengelman.shadow" version "6.1.0"
+    id "io.papermc.paperweight.userdev" version "2.0.0-beta.12"
+    id "xyz.jpenilla.run-paper" version "2.3.1"
     id 'maven-publish'
     id "com.modrinth.minotaur"
 }
@@ -13,7 +14,6 @@ version = project.mod_version
 
 repositories {
     mavenCentral()
-
     maven {
         name = "BucketMaven"
         url "https://hub.spigotmc.org/nexus/content/repositories/snapshots"
@@ -34,8 +34,7 @@ configurations {
 }
 
 dependencies {
-    implementation "org.spigotmc:spigot-api:${rootProject.spigot_version}"
-    implementation "com.comphenix.protocol:ProtocolLib:${rootProject.protocollib_version}"
+    paperweight.paperDevBundle("${rootProject.minecraft_version}-R0.1-SNAPSHOT")
 
     compileModule(project(':emotesAPI')) { transitive = false }
     compileModule(project(':executor')) { transitive = false }
@@ -44,6 +43,12 @@ dependencies {
 
     compileModule("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}") {
         transitive false
+    }
+}
+
+tasks {
+    runServer {
+        minecraftVersion rootProject.minecraft_version
     }
 }
 
@@ -150,9 +155,9 @@ if (keysExists) {
         versionNumber = "${project.mod_version}+${project.minecraft_version}-bukkit"
         versionName = "${project.mod_version}"
 
-        gameVersions = ["1.21.1"]
+        gameVersions = [project.minecraft_version]
         changelog = changes
-        loaders = ["bukkit", "folia", "paper", "purpur", "spigot"]
+        loaders = ["folia", "paper"]
         failSilently = false
     }
 }

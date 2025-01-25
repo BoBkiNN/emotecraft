@@ -38,7 +38,6 @@ dependencies {
         exclude group: "net.fabricmc.fabric-api"
     }
 
-    include modImplementation("io.github.kosmx.bendy-lib:bendy-lib-fabric:${rootProject.bendylib_version}")
     include modImplementation("dev.kosmx.player-anim:player-animation-lib-fabric:${rootProject.player_animator_version}")
 
     common(project(path: ":minecraft:archCommon", configuration: "namedElements")) { transitive false }
@@ -126,15 +125,13 @@ if (keysExists) {
         versionNumber = "${project.mod_version}+${project.minecraft_version}-fabric"
         versionName = "${project.mod_version}"
 
-        gameVersions = ["1.21.1"]
+        gameVersions = [project.minecraft_version]
         changelog = changes
         loaders = ["fabric", "quilt"]
         failSilently = false
 
         dependencies {
             required.project "fabric-api"
-            optional.project "modmenu"
-            embedded.project "bendy-lib"
             embedded.project "playeranimator"
         }
     }

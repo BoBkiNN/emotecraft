@@ -5,5 +5,4 @@ version: ${version}
 api-version: 1.21
 website: https://github.com/KosmX/emotes
 authors: [KomsX]
-depend: [ProtocolLib]
 folia-supported: true

@@ -33,7 +33,6 @@ dependencies {
     commonModule(project(':emotesServer')) {transitive false}
     commonModule(project(':emotesAssets')) {transitive false}
 
-    include modImplementation("io.github.kosmx.bendy-lib:bendy-lib-forge:${rootProject.bendylib_version}")
     include modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${rootProject.player_animator_version}")
 
     common(project(path: ":minecraft:archCommon", configuration: "namedElements")) { transitive false }
@@ -121,13 +120,12 @@ if(keysExists) {
         versionNumber = "${project.mod_version}+${project.minecraft_version}-forge"
         versionName = "${project.mod_version}"
 
-        gameVersions = ["1.21.1"]
+        gameVersions = [project.minecraft_version]
         changelog = changes
         loaders = ["neoforge"]
         failSilently = false
 
         dependencies {
-            embedded.project "bendy-lib"
             embedded.project "playeranimator"
         }
     }
