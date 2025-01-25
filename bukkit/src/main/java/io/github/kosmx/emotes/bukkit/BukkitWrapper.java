@@ -1,6 +1,7 @@
 package io.github.kosmx.emotes.bukkit;
 
 import io.github.kosmx.emotes.bukkit.executor.BukkitInstance;
+import io.github.kosmx.emotes.bukkit.fuckery.StreamCodecUtils;
 import io.github.kosmx.emotes.bukkit.network.ServerSideEmotePlay;
 import io.github.kosmx.emotes.common.CommonData;
 import io.github.kosmx.emotes.executor.EmoteInstance;
@@ -8,6 +9,9 @@ import io.github.kosmx.emotes.mc.ServerCommands;
 import io.github.kosmx.emotes.server.config.Serializer;
 import io.github.kosmx.emotes.server.serializer.UniversalEmoteSerializer;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
+import net.minecraft.network.protocol.common.custom.DiscardedPayload;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,6 +31,15 @@ public class BukkitWrapper extends JavaPlugin {
         else {
             CommonData.isLoaded = true;
         }
+
+        try {
+            StreamCodecUtils.replaceFallback(StreamCodecUtils.getThis(ServerboundCustomPayloadPacket.STREAM_CODEC),
+                    (id) -> DiscardedPayload.codec(id, 1048576 /*ClientboundCustomPayloadPacket.MAX_PAYLOAD_SIZE*/)
+            );
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+
         EmoteInstance.instance = new BukkitInstance(this);
         Serializer.INSTANCE = new Serializer(); //it does register itself
         EmoteInstance.config = Serializer.getConfig();

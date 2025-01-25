@@ -46,7 +46,10 @@ public final class NetData {
     //On stop, the server stops it not because invalid but because event stopped it
     public boolean isForced = false;
 
-    public int sizeLimit = Short.MAX_VALUE;
+    /**
+     * net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket#MAX_PAYLOAD_SIZE
+     */
+    public int sizeLimit = 1048576;
 
     HashMap<String, Object> extraData = new HashMap<>();
     KeyframeAnimation.AnimationBuilder emoteBuilder = null;
