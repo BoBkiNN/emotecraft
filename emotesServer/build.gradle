@@ -48,13 +48,6 @@ publishing {
                 animatorNode.appendNode("version", rootProject.player_animator_version)
                 animatorNode.appendNode("scope", "compile")
 
-
-                def apiNode = depsNode.appendNode("dependency")
-                apiNode.appendNode("groupId", project.group)
-                apiNode.appendNode("artifactId", "emotesAPI")
-                apiNode.appendNode("version", project.version)
-                apiNode.appendNode("scope", "compile")
-
                 def executorNode = depsNode.appendNode("dependency")
                 executorNode.appendNode("groupId", project.group)
                 executorNode.appendNode("artifactId", "emotesExecutor")
