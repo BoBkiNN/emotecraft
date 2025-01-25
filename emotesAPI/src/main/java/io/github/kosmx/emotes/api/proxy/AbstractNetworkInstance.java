@@ -23,7 +23,7 @@ public abstract class AbstractNetworkInstance implements INetworkInstance{
     protected boolean disableNBS = false;
     protected boolean doesServerTrackEmotePlay = false;
 
-    protected int animationFormat = 1;
+    protected int animationFormat = 2;
 
     /*
      * You have to implement at least one of these three functions
