@@ -15,8 +15,7 @@ configurations {
 }
 
 dependencies {
-    implementation api(project(':emotesAPI'))
-    implementation api(project(':executor'))
+    api(project(':executor'))
 }
 
 artifacts {

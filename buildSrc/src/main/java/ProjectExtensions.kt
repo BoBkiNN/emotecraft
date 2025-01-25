@@ -4,12 +4,6 @@ import org.gradle.internal.extensions.core.extra
 import java.util.*
 
 
-private fun Properties.asStrMap(): HashMap<String, String?> {
-    val r = HashMap<String, String?>(size)
-    for (e in entries) r[e.key.toString()] = e.value as? String
-    return r
-}
-
 val Project.ext
     get() = rootProject.extra
 
@@ -62,8 +56,3 @@ val Project.mod_description
 var Project.cfType
     get() = rootProject.extra["cfType"]!! as String
     set(v) = rootProject.extra.set("cfType", v)
-
-fun getGitRevision(): String {
-    val p = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--verify", "--short", "HEAD"))
-    return p.inputReader().readText().trim()
-}

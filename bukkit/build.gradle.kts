@@ -1,5 +1,3 @@
-import java.util.*
-
 plugins {
     java
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.12"
@@ -27,21 +25,19 @@ repositories {
 }
 
 val compileModule = configurations.register("compileModule").get()
-configurations.compileClasspath.configure{extendsFrom(compileModule)}
-configurations.runtimeClasspath.configure{extendsFrom(compileModule)}
+configurations.implementation.configure{extendsFrom(compileModule)}
+
+val compileApi = configurations.register("compileApi").get()
+configurations.api.configure{extendsFrom(compileApi)}
 
 dependencies {
     paperweight.paperDevBundle("${rootProject.minecraft_version}-R0.1-SNAPSHOT")
 
-    compileModule(project(":emotesAPI")) { isTransitive = false }
-    compileModule(project(":executor")) { isTransitive = false }
-    compileModule(project(":emotesServer")) { isTransitive = false }
+//    compileModule(project(":emotesAPI")) { isTransitive = false; api(this) }
+//    compileApi(project(":executor")) { isTransitive = true; api(this) }
+    compileApi(project(":emotesServer")) { isTransitive = true; api(this) }
     compileModule(project(":emotesAssets")) { isTransitive = false }
     compileModule(project(path = ":emotesMc", configuration = "namedElements")) { isTransitive = false }
-
-    compileModule("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}") {
-        isTransitive = false
-    }
 }
 
 tasks.runServer {
@@ -92,10 +88,16 @@ publishing {
 
             artifactId = "emotesBukkit"
 
+            // jar only with classes from this module, dependencies will be included in pom
             artifact(tasks.jar) {
                 classifier = ""
             }
-//            artifact(tasks.sourcesJar)
+            artifact(tasks.sourcesJar)
+            pom.withXml {
+                val d = asNode().appendNode("dependencies")
+                addDeps(d, compileApi, "compile")
+                addDeps(d, configurations.implementation.get(), "runtime")
+            }
 
 
             pom {

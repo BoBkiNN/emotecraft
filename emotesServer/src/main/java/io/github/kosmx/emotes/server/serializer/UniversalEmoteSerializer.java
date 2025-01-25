@@ -9,7 +9,7 @@ import io.github.kosmx.emotes.common.CommonData;
 import io.github.kosmx.emotes.executor.EmoteInstance;
 import io.github.kosmx.emotes.server.serializer.type.*;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
