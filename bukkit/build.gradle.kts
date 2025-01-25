@@ -95,7 +95,7 @@ publishing {
             artifact(tasks.jar) {
                 classifier = ""
             }
-            artifact(tasks.sourcesJar)
+//            artifact(tasks.sourcesJar)
 
 
             pom {
@@ -144,7 +144,7 @@ publishing {
 
 if (keysExists) {
     modrinth {
-        versionType = rootProject.extra["cfType"]!! as String
+        versionType = cfType
         uploadFile = tasks.jar.get().outputs
 
         token = project.keys["modrinth_token"]
