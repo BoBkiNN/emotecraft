@@ -23,8 +23,6 @@ public class ServerSideEmotePlay extends AbstractServerEmotePlay<ProxiedPlayer> 
 
     final HashMap<UUID, BungeeNetworkInstance> player_database = new HashMap<>();
 
-    public static ServerSideEmotePlay INSTANCE;
-
     public ServerSideEmotePlay(BungeeWrapper plugin) {
         this.plugin = plugin;
         plugin.getProxy().registerChannel(BungeeWrapper.EmotePacket);

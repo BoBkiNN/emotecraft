@@ -62,4 +62,11 @@ public class BungeeNetworkInstance extends AbstractNetworkInstance implements IS
     public boolean trackPlayState() {
         return false;
     }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void presenceResponse() {
+        super.presenceResponse();
+        ServerSideEmotePlay.getInstance().presenceResponse(this, trackPlayState());
+    }
 }

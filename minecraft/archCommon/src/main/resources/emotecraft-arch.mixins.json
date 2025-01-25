@@ -9,13 +9,13 @@
     "EntityTrackerAccessor",
     "ServerChunkCacheAccessor",
     "ServerCommonPacketListenerAccessor",
-    "ServerPlayerMixin",
     "ServerPlayNetworkMixin",
     "ServerPlayTrackerMixin"
   ],
   "client": [
     "EmotePlayerMixin",
-    "KeyEventMixin"
+    "KeyEventMixin",
+    "PlayerMixin"
   ],
   "server": [],
   "injectors": {

@@ -63,4 +63,10 @@ public class VelocityNetworkInstance extends AbstractNetworkInstance implements 
         return false;
     }
 
+    @Override
+    @SuppressWarnings("deprecation")
+    public void presenceResponse() {
+        super.presenceResponse();
+        ServerSideEmotePlay.getInstance().presenceResponse(this, trackPlayState());
+    }
 }
