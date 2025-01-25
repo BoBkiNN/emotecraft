@@ -136,9 +136,8 @@ public abstract class EmotePlayerMixin extends Player implements IPlayerEntity {
         this.yBodyRot = newYaw;
     }
 
-    @Override
-    public void tick() {
-        super.tick();
+    @Inject(method = "tick", at = @At(value = "TAIL"))
+    public void tick(CallbackInfo ci) {
         this.emoteTick();
     }
 
