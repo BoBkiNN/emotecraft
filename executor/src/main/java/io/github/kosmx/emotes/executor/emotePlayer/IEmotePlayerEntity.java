@@ -47,4 +47,6 @@ public interface IEmotePlayerEntity {
     boolean emotecraft$isForcedEmote();
 
     UUID emotes_getUUID();
+
+    default void emotecraft$playerEntersInvalidPose() {}
 }

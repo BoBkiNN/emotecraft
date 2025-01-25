@@ -94,4 +94,16 @@ public interface IPlayerEntity extends IEmotePlayerEntity {
     }
 
     void emotecraft$voidEmote();
+
+    @Override
+    default void emotecraft$playerEntersInvalidPose() {
+        if (!isPlayingEmote() || emotecraft$isForcedEmote()) {
+            return;
+        }
+
+        EmotePlayer emotePlayer = emotecraft$getEmote();
+        if (emotePlayer != null && ((ClientConfig)EmoteInstance.config).checkPose.get()) {
+            ClientEmotePlay.clientStopLocalEmote(emotePlayer.getData());
+        }
+    }
 }

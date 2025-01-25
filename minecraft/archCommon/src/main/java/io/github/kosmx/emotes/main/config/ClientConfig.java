@@ -15,6 +15,7 @@ public class ClientConfig extends SerializableConfig {
     public final ConfigEntry<Boolean> frontAsTPPerspective = new ConfigEntry<>("default3rdPersonFront", false, false, basics);
     public final ConfigEntry<Boolean> showIcons = new ConfigEntry<>("showicon", "showIcon", true, false, basics);
     public final ConfigEntry<Boolean> enableNSFW = new ConfigEntry<>("enableNSFW", false, true, basics);
+    public final ConfigEntry<Boolean> checkPose = new ConfigEntry<>("checkPose", true, true, expert);
 
     public final ConfigEntry<Boolean> alwaysOpenEmoteScreen = new ConfigEntry<>("alwaysOpenScreen", false, true, basics);
     //expert

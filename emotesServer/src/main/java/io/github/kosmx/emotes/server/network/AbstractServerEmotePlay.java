@@ -194,6 +194,7 @@ public abstract class AbstractServerEmotePlay<P> extends ServerEmoteAPI {
         }
     }
 
+    @Deprecated(forRemoval = true)
     public void playerEntersInvalidPose(P player) {
         if (!getPlayerNetworkInstance(player).getEmoteTracker().isForced()) {
             stopEmote(player, null);
