@@ -22,6 +22,7 @@ import java.util.stream.Stream;
  * Serializing emotes.
  */
 public class EmoteSerializer {
+    @SuppressWarnings({"deprecation", "removal"})
     public static void serializeEmotes(UUIDMap<KeyframeAnimation> emotes, Path externalEmotes) {
         if (!Files.isDirectory(externalEmotes)) {
             return; // Just skip

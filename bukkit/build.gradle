@@ -3,6 +3,7 @@ plugins {
     id "io.papermc.paperweight.userdev" version "2.0.0-beta.12"
     id "xyz.jpenilla.run-paper" version "2.3.1"
     id 'maven-publish'
+    id "com.gradleup.shadow"
     id "com.modrinth.minotaur"
 }
 
@@ -40,6 +41,7 @@ dependencies {
     compileModule(project(':executor')) { transitive = false }
     compileModule(project(':emotesServer')) { transitive = false }
     compileModule(project(':emotesAssets')) { transitive = false }
+    compileModule(project(path: ":emotesMc", configuration: "namedElements")) { transitive = false }
 
     compileModule("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}") {
         transitive false
@@ -57,17 +59,22 @@ processResources{
     inputs.property "version", project.version
     inputs.property "description", rootProject.mod_description
 
-    filesMatching("plugin.yml"){
+    filesMatching("paper-plugin.yml"){
         expand version: project.version, description: rootProject.mod_description
     }
-
 }
 
-jar{
-    from{
-        configurations.compileModule.collect() {it.isDirectory() ? it : zipTree(it)}
-    }
+shadowJar {
+    configurations = [project.configurations.compileModule]
     archiveClassifier.set("bukkit")
+}
+
+jar {
+    archiveClassifier.set("bukkit-dev")
+}
+
+tasks.assemble {
+    dependsOn(tasks.shadowJar)
 }
 
 task copyArtifacts{

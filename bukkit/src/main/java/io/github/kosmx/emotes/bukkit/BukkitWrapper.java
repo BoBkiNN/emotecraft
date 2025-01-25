@@ -4,8 +4,10 @@ import io.github.kosmx.emotes.bukkit.executor.BukkitInstance;
 import io.github.kosmx.emotes.bukkit.network.ServerSideEmotePlay;
 import io.github.kosmx.emotes.common.CommonData;
 import io.github.kosmx.emotes.executor.EmoteInstance;
+import io.github.kosmx.emotes.mc.ServerCommands;
 import io.github.kosmx.emotes.server.config.Serializer;
 import io.github.kosmx.emotes.server.serializer.UniversalEmoteSerializer;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,6 +18,7 @@ public class BukkitWrapper extends JavaPlugin {
     ServerSideEmotePlay networkPlay = null;
 
     @Override
+    @SuppressWarnings("UnstableApiUsage")
     public void onLoad() {
         if(CommonData.isLoaded){
             getLogger().warning("Emotecraft is loaded multiple times, please load it only once!");
@@ -28,6 +31,10 @@ public class BukkitWrapper extends JavaPlugin {
         Serializer.INSTANCE = new Serializer(); //it does register itself
         EmoteInstance.config = Serializer.getConfig();
         UniversalEmoteSerializer.loadEmotes();
+
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event ->
+                ServerCommands.register(event.registrar().getDispatcher(), true)
+        );
     }
 
     @Override

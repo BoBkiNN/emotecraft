@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'java-library'
 }
 
 version = rootProject.mod_version
@@ -14,9 +15,7 @@ configurations {
 }
 
 dependencies {
-    implementation project(':emotesAPI')
-    implementation "dev.kosmx.player-anim:anim-core:${project.rootProject.player_animator_version}"
-    compileOnly "com.google.code.gson:gson:2.8.0"
+    implementation api(project(':emotesAPI'))
 }
 
 artifacts {

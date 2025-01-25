@@ -3,10 +3,10 @@ package io.github.kosmx.emotes.arch.screen.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import dev.kosmx.playerAnim.core.util.MathHelper;
-import io.github.kosmx.emotes.PlatformTools;
 import io.github.kosmx.emotes.executor.EmoteInstance;
 import io.github.kosmx.emotes.main.EmoteHolder;
 import io.github.kosmx.emotes.main.config.ClientConfig;
+import io.github.kosmx.emotes.mc.McUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
@@ -23,7 +23,7 @@ public class LegacyChooseWidget implements IChooseWheel {
     //protected final FastChooseElement[] elements = new FastChooseElement[8];
     protected final ArrayList<FastChooseElement> elements = new ArrayList<>();
     private boolean hovered;
-    private final ResourceLocation TEXTURE = ((ClientConfig) EmoteInstance.config).dark.get() ? PlatformTools.newIdentifier("textures/gui/fastchoose_dark.png") : PlatformTools.newIdentifier("textures/gui/fastchoose_light.png");
+    private final ResourceLocation TEXTURE = ((ClientConfig) EmoteInstance.config).dark.get() ? McUtils.newIdentifier("textures/gui/fastchoose_dark.png") : McUtils.newIdentifier("textures/gui/fastchoose_light.png");
 
     private final AbstractFastChooseWidget widget;
 

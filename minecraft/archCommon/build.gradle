@@ -13,6 +13,7 @@ dependencies {
     implementation project(':emotesAPI')
     implementation project(':executor')
     implementation project(':emotesServer')
+    implementation project(path: ":emotesMc", configuration: "namedElements")
 
     modImplementation "dev.kosmx.player-anim:player-animation-lib:${rootProject.player_animator_version}"
     modImplementation "dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}"

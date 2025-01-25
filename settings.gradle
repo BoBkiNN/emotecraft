@@ -15,6 +15,7 @@ include 'emotesAPI'
 include 'executor'
 include 'emotesServer'
 include 'emotesAssets'
+include 'emotesMc'
 
 //Minecraft 1.20 version
 include 'minecraft'
@@ -26,4 +27,4 @@ include 'minecraft:neoforge'
 include 'bukkit'
 
 //Velocity plugin stuff
-include 'velocity'
+// include 'velocity'

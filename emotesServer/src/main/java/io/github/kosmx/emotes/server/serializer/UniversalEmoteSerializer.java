@@ -71,10 +71,10 @@ public class UniversalEmoteSerializer {
      * @param format target format. See {@link AnimationFormat}
      * @throws EmoteSerializerException this is a dangerous task, can go wrong
      */
+    @SuppressWarnings({"deprecation", "removal"})
     public static void writeKeyframeAnimation(OutputStream stream, KeyframeAnimation emote, AnimationFormat format) throws EmoteSerializerException{
         for(IReader writerCandidate:readers){
-            if(writerCandidate instanceof ISerializer && writerCandidate.getFormatType() == format){
-                ISerializer serializer = (ISerializer) writerCandidate;
+            if(writerCandidate instanceof ISerializer serializer && writerCandidate.getFormatType() == format){
                 serializer.write(emote, stream);
                 return;
             }

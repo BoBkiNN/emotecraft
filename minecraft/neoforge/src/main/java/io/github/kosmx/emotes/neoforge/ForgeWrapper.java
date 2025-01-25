@@ -1,7 +1,7 @@
 package io.github.kosmx.emotes.neoforge;
 
 import io.github.kosmx.emotes.arch.ClientCommands;
-import io.github.kosmx.emotes.arch.ServerCommands;
+import io.github.kosmx.emotes.mc.ServerCommands;
 import io.github.kosmx.emotes.common.CommonData;
 import io.github.kosmx.emotes.executor.EmoteInstance;
 import io.github.kosmx.emotes.neoforge.executor.ForgeEmotesMain;

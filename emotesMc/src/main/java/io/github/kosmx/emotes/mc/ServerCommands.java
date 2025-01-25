@@ -1,8 +1,9 @@
-package io.github.kosmx.emotes.arch;
+package io.github.kosmx.emotes.mc;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
@@ -10,7 +11,6 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
-import io.github.kosmx.emotes.PlatformTools;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteAPI;
 import io.github.kosmx.emotes.server.serializer.UniversalEmoteSerializer;
 import net.minecraft.commands.CommandBuildContext;
@@ -29,8 +29,7 @@ import java.util.concurrent.CompletableFuture;
 import static net.minecraft.commands.Commands.*;
 
 /**
- * Server commands for Emotecraft
- * Fabric+Forge, should be identical to bukkit
+ * Server commands for Emotecraft (Fabric/Neoforge/Paper)
  * <p>
  * /emotes [play/stop]
  * - play [what ID/name] (Player) (forced:false)
@@ -39,8 +38,13 @@ import static net.minecraft.commands.Commands.*;
  */
 public final class ServerCommands {
 
-    public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
-        dispatcher.register(literal("emotes")
+    public static <T> void register(CommandDispatcher<T> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
+        register(dispatcher, environment == CommandSelection.DEDICATED);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> void register(CommandDispatcher<T> dispatcher, boolean isDedicated) {
+        dispatcher.register((LiteralArgumentBuilder<T>) literal("emotes")
                 .then(literal("play")
                         .then(argument("emote", StringArgumentType.string()).suggests(new EmoteArgumentProvider())
                                 .executes(context -> {
@@ -94,7 +98,7 @@ public final class ServerCommands {
                                 })
                         )
                 )
-                .then(literal("reload").requires(ctx -> ctx.hasPermission(4) && environment == CommandSelection.DEDICATED).executes(
+                .then(literal("reload").requires(ctx -> ctx.hasPermission(4) && isDedicated).executes(
                         context -> {
                             UniversalEmoteSerializer.loadEmotes(); //Reload server-side emotes
                             return 0;
@@ -114,7 +118,7 @@ public final class ServerCommands {
             List<String> suggestions = new LinkedList<>();
             for (var emote : emotes.values()) {
                 if (emote.extraData.containsKey("name")) {
-                    String name = PlatformTools.fromJson(emote.extraData.get("name")).getString();
+                    String name = McUtils.fromJson(emote.extraData.get("name")).getString();
                     if (name.contains(" ")) {
                         name = "\"" + name + "\"";
                     }
@@ -143,7 +147,7 @@ public final class ServerCommands {
 
             for (var emote : emotes.values()) {
                 if (emote.extraData.containsKey("name")) {
-                    String name = PlatformTools.fromJson(emote.extraData.get("name")).getString();
+                    String name = McUtils.fromJson(emote.extraData.get("name")).getString();
                     if (name.equals(id)) return emote;
                 }
             }

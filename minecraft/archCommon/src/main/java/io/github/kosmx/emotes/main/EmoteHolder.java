@@ -7,7 +7,6 @@ import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.core.util.MathHelper;
 import dev.kosmx.playerAnim.core.util.UUIDMap;
 import dev.kosmx.playerAnim.core.util.Vec3d;
-import io.github.kosmx.emotes.PlatformTools;
 import io.github.kosmx.emotes.api.proxy.AbstractNetworkInstance;
 import io.github.kosmx.emotes.api.proxy.INetworkInstance;
 import io.github.kosmx.emotes.executor.EmoteInstance;
@@ -17,6 +16,7 @@ import io.github.kosmx.emotes.inline.TmpGetters;
 import io.github.kosmx.emotes.main.config.ClientConfig;
 import io.github.kosmx.emotes.main.network.ClientEmotePlay;
 import io.github.kosmx.emotes.main.network.ClientPacketManager;
+import io.github.kosmx.emotes.mc.McUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
@@ -64,9 +64,9 @@ public class EmoteHolder implements Supplier<UUID> {
      */
     public EmoteHolder(KeyframeAnimation emote) {
         this.emote = emote;
-        this.name = PlatformTools.fromJson(emote.extraData.get("name"));
-        this.description = PlatformTools.fromJson(emote.extraData.get("description"));
-        this.author = PlatformTools.fromJson(emote.extraData.get("author"));
+        this.name = McUtils.fromJson(emote.extraData.get("name"));
+        this.description = McUtils.fromJson(emote.extraData.get("description"));
+        this.author = McUtils.fromJson(emote.extraData.get("author"));
     }
 
 
@@ -126,7 +126,7 @@ public class EmoteHolder implements Supplier<UUID> {
         try {
 
             DynamicTexture nativeImageBackedTexture = new DynamicTexture(NativeImage.read(inputStream));
-            this.iconIdentifier = PlatformTools.newIdentifier("icon" + this.hashCode());
+            this.iconIdentifier = McUtils.newIdentifier("icon" + this.hashCode());
             Minecraft.getInstance().getTextureManager().register(this.iconIdentifier, nativeImageBackedTexture);
             this.nativeIcon = nativeImageBackedTexture;
 
