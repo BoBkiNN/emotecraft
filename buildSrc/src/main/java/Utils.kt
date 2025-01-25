@@ -3,11 +3,14 @@ import org.gradle.api.Project
 import org.gradle.api.XmlProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByName
+import org.gradle.kotlin.dsl.maven
 import java.util.*
 
 fun Properties.asStrMap(): HashMap<String, String?> {
@@ -68,6 +71,18 @@ fun Project.addDeps(dependenciesNode: Node, configuration: Configuration, scope:
             val exclusion = exclusions.appendNode("exclusion")
             exclusion.appendNode("groupId", "*")
             exclusion.appendNode("artifactId", "*")
+        }
+    }
+}
+
+/**
+ * Adds a maven.kosmx.dev repository with username and password set from [project]
+ */
+fun RepositoryHandler.kosmxRepo(project: Project): MavenArtifactRepository {
+    return maven("https://maven.kosmx.dev/") {
+        credentials {
+            username = "kosmx"
+            password = project.keys["kosmx_maven"]
         }
     }
 }

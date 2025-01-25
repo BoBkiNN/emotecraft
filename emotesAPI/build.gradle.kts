@@ -6,9 +6,6 @@ plugins {
 
 version = rootProject.mod_version
 
-//sourceCompatibility = JavaVersion.VERSION_1_8
-//targetCompatibility = JavaVersion.VERSION_1_8
-
 val dev = configurations.register("dev")
 
 dependencies {
@@ -23,6 +20,8 @@ tasks.test {
 }
 
 tasks.compileJava {
+    sourceCompatibility = "21"
+    targetCompatibility = "21"
     options.release.set(21) //Build on JDK 1.8
 }
 
@@ -36,8 +35,6 @@ java {
     withSourcesJar()
     withJavadocJar()
 }
-
-
 
 publishing {
     publications {
@@ -75,16 +72,9 @@ publishing {
         }
     }
 
-    // select the repositories you want to publish to
     repositories {
-        // uncomment to publish to the local maven
         if (project.keysExists) {
-            maven("https://maven.kosmx.dev/") {
-                credentials {
-                    username = "kosmx"
-                    password = project.keys["kosmx_maven"]
-                }
-            }
+            kosmxRepo(project)
         } else {
             mavenLocal()
         }
