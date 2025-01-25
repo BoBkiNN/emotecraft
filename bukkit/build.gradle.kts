@@ -1,38 +1,34 @@
+import java.util.*
+
 plugins {
-    id "java"
-    id "io.papermc.paperweight.userdev" version "2.0.0-beta.12"
-    id "xyz.jpenilla.run-paper" version "2.3.1"
-    id "maven-publish"
-    id "com.gradleup.shadow"
-    id "com.modrinth.minotaur"
+    java
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.12"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
+    `maven-publish`
+    id("com.gradleup.shadow")
+    id("com.modrinth.minotaur")
 }
 
 
-project.archivesBaseName = project.archives_base_name
+
+base.archivesName = properties["archives_base_name"] as String
 //project.version = project.mod_version
 version = project.mod_version
 
 
 repositories {
     mavenCentral()
-    maven {
+    maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots") {
         name = "BucketMaven"
-        url "https://hub.spigotmc.org/nexus/content/repositories/snapshots"
     }
-    maven {
+    maven("https://repo.dmulloy2.net/repository/public/") {
         name = "dmulloy2"
-        url "https://repo.dmulloy2.net/repository/public/"
     }
 }
 
-configurations {
-
-    compileModule
-
-    compileClasspath.extendsFrom compileModule
-    runtimeClasspath.extendsFrom compileModule
-
-}
+val compileModule = configurations.create("compileModule")
+configurations.compileClasspath.configure{extendsFrom(compileModule)}
+configurations.runtimeClasspath.configure{extendsFrom(compileModule)}
 
 dependencies {
     paperweight.paperDevBundle("${rootProject.minecraft_version}-R0.1-SNAPSHOT")
@@ -41,35 +37,33 @@ dependencies {
     compileModule(project(":executor")) { isTransitive = false }
     compileModule(project(":emotesServer")) { isTransitive = false }
     compileModule(project(":emotesAssets")) { isTransitive = false }
-    compileModule(project(path: ":emotesMc", configuration: "namedElements")) { isTransitive = false }
+    compileModule(project(path = ":emotesMc", configuration = "namedElements")) { isTransitive = false }
 
     compileModule("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}") {
-        isTransitive false
+        isTransitive = false
     }
 }
 
-tasks {
-    runServer {
-        minecraftVersion rootProject.minecraft_version
-    }
+tasks.runServer {
+    minecraftVersion(rootProject.minecraft_version)
 }
 
-processResources{
+tasks.processResources {
 
     inputs.property("version", project.version)
     inputs.property("description", rootProject.mod_description)
 
     filesMatching("paper-plugin.yml"){
-        expand version: project.version, description: rootProject.mod_description
+        expand("version" to project.version, "description" to rootProject.mod_description)
     }
 }
 
-shadowJar {
-    configurations = [project.configurations.compileModule]
+tasks.shadowJar {
+    configurations = listOf(compileModule)
     archiveClassifier.set("bukkit")
 }
 
-jar {
+tasks.jar {
     archiveClassifier.set("bukkit-dev")
 }
 
@@ -77,12 +71,12 @@ tasks.assemble {
     dependsOn(tasks.shadowJar)
 }
 
-task copyArtifacts{
+tasks.register("copyArtifacts") {
     dependsOn("build")
     doLast {
         copy{
-            from "${project.buildDir}/libs/${project.archives_base_name}-${rootProject.mod_version}-bukkit.jar"
-            into "${rootProject.projectDir}/artifacts"
+            from("${project.layout.buildDirectory}/libs/${base.archivesName}-${rootProject.mod_version}-bukkit.jar")
+            into ("${rootProject.projectDir}/artifacts")
         }
     }
 }
@@ -93,18 +87,18 @@ java {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        register<MavenPublication>("mavenJava") {
             // add all the jars that should be included when publishing to maven
 
             artifactId = "emotesBukkit"
 
-            artifact(jar) {
-                classifier ""
+            artifact(tasks.jar) {
+                classifier = ""
             }
-            artifact(sourcesJar)
+            artifact(tasks.sourcesJar)
 
 
-            pom{
+            pom {
                 name = "emotesBukkit"
                 description = "Minecraft Emotecraft Bukkit plugin"
                 url = "https://github.com/KosmX/emotes"
@@ -116,7 +110,7 @@ publishing {
                     }
                 }
 
-                licenses{
+                licenses {
                     license{
                         name = "CC-BY-4.0 License"
                         url = "https://creativecommons.org/licenses/by/4.0/legalcode"
@@ -136,17 +130,13 @@ publishing {
     repositories {
         // uncomment to publish to the local maven
         if (project.keysExists) {
-            repositories {
-                maven {
-                    url = "https://maven.kosmx.dev/"
-                    credentials {
-                        username = "kosmx"
-                        password = project.keys.kosmx_maven
-                    }
+            maven("https://maven.kosmx.dev/") {
+                credentials {
+                    username = "kosmx"
+                    password = project.keys["kosmx_maven"]
                 }
             }
-        }
-        else {
+        } else {
             mavenLocal()
         }
     }
@@ -154,17 +144,17 @@ publishing {
 
 if (keysExists) {
     modrinth {
-        versionType = project.cfType
-        uploadFile = jar
+        versionType = rootProject.extra["cfType"]!! as String
+        uploadFile = tasks.jar.get().outputs
 
-        token = project.keys.modrinth_token
+        token = project.keys["modrinth_token"]
         projectId = "pZ2wrerK"
         versionNumber = "${project.mod_version}+${project.minecraft_version}-bukkit"
-        versionName = "${project.mod_version}"
+        versionName = project.mod_version
 
-        gameVersions = [project.minecraft_version]
+        gameVersions = listOf(project.minecraft_version)
         changelog = changes
-        loaders = ["folia", "paper"]
+        loaders = listOf("folia", "paper")
         failSilently = false
     }
 }
