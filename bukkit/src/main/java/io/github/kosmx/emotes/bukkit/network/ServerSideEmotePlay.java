@@ -7,6 +7,7 @@ import io.github.kosmx.emotes.common.network.objects.NetData;
 import io.github.kosmx.emotes.executor.EmoteInstance;
 import io.github.kosmx.emotes.server.network.AbstractServerEmotePlay;
 import io.github.kosmx.emotes.server.network.IServerNetworkInstance;
+import io.papermc.paper.event.player.PlayerTrackEntityEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -148,5 +149,12 @@ public class ServerSideEmotePlay extends AbstractServerEmotePlay<Player> impleme
 
         BukkitNetworkInstance instance = this.player_database.remove(player.getUniqueId());
         if(instance != null)instance.closeConnection();
+    }
+
+    @EventHandler
+    public void onPlayerTrackEntity(PlayerTrackEntityEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            playerStartTracking(player, event.getPlayer());
+        }
     }
 }
