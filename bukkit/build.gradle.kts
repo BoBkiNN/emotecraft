@@ -26,7 +26,7 @@ repositories {
     }
 }
 
-val compileModule = configurations.create("compileModule")
+val compileModule = configurations.register("compileModule").get()
 configurations.compileClasspath.configure{extendsFrom(compileModule)}
 configurations.runtimeClasspath.configure{extendsFrom(compileModule)}
 
