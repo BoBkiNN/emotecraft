@@ -33,9 +33,11 @@ configurations.api.configure{extendsFrom(compileApi)}
 dependencies {
     paperweight.paperDevBundle("${rootProject.minecraft_version}-R0.1-SNAPSHOT")
 
-//    compileModule(project(":emotesAPI")) { isTransitive = false; api(this) }
-//    compileApi(project(":executor")) { isTransitive = true; api(this) }
-    compileApi(project(":emotesServer")) { isTransitive = true; api(this) }
+    compileApi(project(":emotesServer")) {
+        isTransitive = true
+        api(this)
+        exclude(group="org.jetbrains", module="annotations")
+    }
     compileModule(project(":emotesAssets")) { isTransitive = false }
     compileModule(project(path = ":emotesMc", configuration = "namedElements")) { isTransitive = false }
 }
@@ -55,8 +57,14 @@ tasks.processResources {
 }
 
 tasks.shadowJar {
-    configurations = listOf(compileModule)
+    configurations = listOf(compileModule, compileApi)
     archiveClassifier.set("bukkit")
+
+    dependencies {
+        exclude {
+            return@exclude it.moduleGroup.startsWith("com.google")
+        }
+    }
 }
 
 tasks.jar {
@@ -128,16 +136,9 @@ publishing {
         }
     }
 
-    // select the repositories you want to publish to
     repositories {
-        // uncomment to publish to the local maven
         if (project.keysExists) {
-            maven("https://maven.kosmx.dev/") {
-                credentials {
-                    username = "kosmx"
-                    password = project.keys["kosmx_maven"]
-                }
-            }
+            kosmxRepo(project)
         } else {
             mavenLocal()
         }
