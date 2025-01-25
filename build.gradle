@@ -137,8 +137,7 @@ if(keysExists) {
         finalizedBy(':bukkit:publish')
 
         finalizedBy(":bukkit:modrinth")
-        finalizedBy(":bungee:modrinth")
-        finalizedBy(":velocity:modrinth")
+        // finalizedBy(":velocity:modrinth")
     }
 }
 else {
@@ -148,8 +147,7 @@ else {
 //Build all modules task :D
 task buildAll{
     dependsOn(':bukkit:build')
-    dependsOn(':bungee:build')
-    dependsOn(':velocity:build')
+    // dependsOn(':velocity:build')
     dependsOn(':minecraft:buildAll')
 }
 
@@ -162,8 +160,7 @@ task cleanupArtifacts{
 task collectArtifacts{
     dependsOn('cleanupArtifacts')
     dependsOn(':bukkit:copyArtifacts')
-    dependsOn(':bungee:copyArtifacts')
-    dependsOn(':velocity:copyArtifacts')
+    // dependsOn(':velocity:copyArtifacts')
     dependsOn('minecraft:copyArtifacts')
     doLast {
         releaseArtifacts = project.getProjectDir().toPath().resolve("artifacts").toFile().listFiles()

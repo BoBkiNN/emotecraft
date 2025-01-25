@@ -142,7 +142,7 @@ public interface INetworkInstance {
     /**
      * Maximum size of the data what the instance can send
      * <p>
-     * {@link AbstractNetworkInstance#maxDataSize()} defaults to {@link net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket#MAX_PAYLOAD_SIZE}
+     * {@link AbstractNetworkInstance#maxDataSize()} defaults to ClientboundCustomPayloadPacket#MAX_PAYLOAD_SIZE
      * @return max size of bytes[]
      */
     int maxDataSize();
