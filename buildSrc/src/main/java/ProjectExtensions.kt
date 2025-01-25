@@ -53,6 +53,15 @@ val Project.player_animator_version
 val Project.mod_description
     get() = properties["mod_description"] as String
 
+val Project.loader_version
+    get() = properties["loader_version"] as String
+
+val Project.fabric_api_version
+    get() = properties["fabric_api_version"] as String
+
+val Project.modmenu_version
+    get() = properties["modmenu_version"] as String
+
 var Project.cfType
     get() = rootProject.extra["cfType"]!! as String
     set(v) = rootProject.extra.set("cfType", v)
