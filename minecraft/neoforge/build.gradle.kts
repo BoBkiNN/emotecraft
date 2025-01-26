@@ -101,6 +101,9 @@ tasks.build {
 publishing {
     publications {
         register<MavenPublication>("mavenJava") {
+
+            artifactId = "emotesNeo"
+
             // add all the jars that should be included when publishing to maven
             artifact(tasks.named("devJar"))
 

@@ -111,6 +111,9 @@ publishing {
     publications {
         register<MavenPublication>("mavenJava") {
             // add all the jars that should be included when publishing to maven
+
+            artifactId = "emotesFabric"
+
             artifact(tasks.named("devJar"))
 
             artifact(tasks.remapJar) {
