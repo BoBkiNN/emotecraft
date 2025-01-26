@@ -91,7 +91,6 @@ components.getByName<AdhocComponentWithVariants>("java") {
 }
 
 
-// configure the maven publication
 publishing {
     publications {
         register<MavenPublication>("mavenJava") {
@@ -109,7 +108,11 @@ publishing {
     }
 
     repositories {
-        mavenLocal()
+        if (project.keysExists) {
+            kosmxRepo(project)
+        } else {
+            mavenLocal()
+        }
     }
 }
 
