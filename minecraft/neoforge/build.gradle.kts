@@ -69,18 +69,18 @@ java {
 
 tasks.shadowJar {
     configurations = listOf(compileModule)
-    archiveClassifier.set("")
+    archiveClassifier.set("neoforge")
 }
 
 tasks.remapJar {
     atAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
 
     inputFile.set(tasks.shadowJar.get().archiveFile)
-    archiveClassifier.set("")
+    archiveClassifier.set("neoforge")
 }
 
 tasks.jar {
-    archiveClassifier.set("")
+    archiveClassifier.set("neoforge")
 }
 
 components.getByName<AdhocComponentWithVariants>("java") {
@@ -91,7 +91,7 @@ components.getByName<AdhocComponentWithVariants>("java") {
 
 tasks.register<Jar>("devJar") {
     from(sourceSets["main"].output)
-    archiveClassifier.set("dev")
+    archiveClassifier.set("neoforge-dev")
 }
 
 tasks.build {
