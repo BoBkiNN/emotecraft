@@ -69,3 +69,6 @@ val Project.neoforge_version
 var Project.cfType
     get() = rootProject.extra["cfType"]!! as String
     set(v) = rootProject.extra.set("cfType", v)
+
+val Project.archives_base_name
+    get() = properties["archives_base_name"] as String
