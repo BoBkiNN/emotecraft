@@ -1,4 +1,5 @@
 import groovy.util.Node
+import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.XmlProvider
 import org.gradle.api.artifacts.Configuration
@@ -71,6 +72,10 @@ fun Element.addNode(name: String, content: (Element.() -> Unit)) {
     val node = ownerDocument.createElement(name)
     node.content()
     appendChild(node)
+}
+
+fun MavenPublication.addDeps(project: Project, configuration: NamedDomainObjectProvider<Configuration>, scope: String) {
+    addDeps(project, configuration.get(), scope)
 }
 
 fun MavenPublication.addDeps(project: Project, configuration: Configuration, scope: String) {

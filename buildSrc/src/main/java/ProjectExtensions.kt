@@ -63,6 +63,9 @@ val Project.fabric_api_version
 val Project.modmenu_version
     get() = properties["modmenu_version"] as String
 
+val Project.neoforge_version
+    get() = properties["neoforge_version"] as String
+
 var Project.cfType
     get() = rootProject.extra["cfType"]!! as String
     set(v) = rootProject.extra.set("cfType", v)
