@@ -7,11 +7,6 @@ on: [pull_request, workflow_dispatch]
 
 jobs:
   build:
-    strategy:
-      matrix:
-        java: [21]
-        os: [ubuntu-latest, windows-latest]
-        
     runs-on: ${{ matrix.os }}
     steps:
     - name: checkout repository
@@ -19,28 +14,17 @@ jobs:
     - name: configure gradle
       uses: gradle/wrapper-validation-action@v1
       with:
-        java-version: ${{matrix.java}}
+        java-version: 21
 
     - name: Setup Java JDK
       uses: actions/setup-java@v4
       with:
         distribution: 'microsoft'
-        java-version: ${{matrix.java}}
+        java-version: 21
     - name: Grant execute permission for gradlew
       if: ${{ runner.os != 'Windows' }}
       run: chmod +x gradlew
-    - name: Test Gradle buildscript  #Test the full gradle buildscript before use it. Useful to catch publish errors.
+    - name: Build All
       uses: gradle/gradle-build-action@v3
       with:
-        arguments: autoPublish --dry-run
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@v3
-      with:
-        arguments: collectArtifacts
-    - name: capture build artifacts
-      if: ${{ runner.os == 'Linux' && matrix.java == '17' }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: artifacts
-        path: |
-          artifacts
+        arguments: buildAll
