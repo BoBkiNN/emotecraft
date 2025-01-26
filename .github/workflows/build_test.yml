@@ -34,7 +34,4 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: Build Results
-        path: |
-          paper/build/libs/*.jar
-          minecraft/fabric/build/libs/*.jar
-          minecraft/neoforge/build/libs/*.jar
+        path: artifacts/*.jar
