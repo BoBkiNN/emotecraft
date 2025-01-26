@@ -18,6 +18,8 @@ architectury {
 subprojects {
     apply(plugin = "dev.architectury.loom")
 
+    base.archivesName = "${archives_base_name}-${name}-for-MC${minecraft_version}"
+
     val loom = extensions.getByType(LoomGradleExtensionAPI::class)
 
     loom.silentMojangMappingsLicense()
@@ -44,7 +46,6 @@ allprojects {
     apply(plugin = "architectury-plugin")
     apply(plugin = "maven-publish")
 
-    base.archivesName = "${project.archives_base_name}-for-MC${project.minecraft_version}"
     version = rootProject.mod_version
 }
 
