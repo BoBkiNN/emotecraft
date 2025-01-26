@@ -19,8 +19,9 @@ var Project.changes: String
     set(v) = ext.set("changes", v)
 
 @Suppress("UNCHECKED_CAST")
-val ExtraPropertiesExtension.keys: MutableMap<String, String>
+var ExtraPropertiesExtension.keys: MutableMap<String, String>
     get() = get("keys") as MutableMap<String, String>
+    set(v: MutableMap<String, String>) = set("keys", v)
 
 val Project.maven_group
     get() = properties["maven_group"] as String

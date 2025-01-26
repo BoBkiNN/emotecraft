@@ -15,6 +15,8 @@ loom {
 val compileModule = configurations.register("compileModule").get()
 val common = configurations.register("common").get()
 val commonModule = configurations.register("commonModule").get()
+val pomCompile = configurations.register("pomDep").get()
+
 
 configurations.apply {
 
@@ -30,9 +32,9 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${rootProject.loader_version}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}")
 
-    commonModule(project(":executor")) {isTransitive = false}
-    commonModule(project(":emotesAPI")) {isTransitive = false}
-    commonModule(project(":emotesServer")) {isTransitive = false}
+    commonModule(project(":executor")) {isTransitive = false; pomCompile(this)}
+    commonModule(project(":emotesAPI")) {isTransitive = false; pomCompile(this)}
+    commonModule(project(":emotesServer")) {isTransitive = false; pomCompile(this)}
     commonModule(project(":emotesAssets")) {isTransitive = false}
     commonModule(project(path=":emotesMc", configuration="namedElements")) { isTransitive = false }
 
@@ -42,9 +44,10 @@ dependencies {
 
     modImplementation("dev.kosmx.player-anim:player-animation-lib-fabric:${rootProject.player_animator_version}") {
         include(this)
+        pomCompile(this)
     }
 
-    common(project(path=":minecraft:archCommon", configuration="namedElements")) { isTransitive = false }
+    common(project(path=":minecraft:archCommon", configuration="namedElements")) { isTransitive = false; pomCompile(this) }
     compileModule(project(path=":minecraft:archCommon", configuration="transformProductionFabric")) { isTransitive = false }
 }
 
@@ -61,8 +64,12 @@ tasks.processResources {
 // ensure that the encoding is set to UTF-8, no matter what the system default is
 // this fixes some edge cases with special characters not displaying correctly
 // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType<JavaCompile>() {
+tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
+}
+
+java {
+    withSourcesJar()
 }
 
 // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
@@ -71,17 +78,17 @@ tasks.withType<JavaCompile>() {
 
 tasks.shadowJar {
     configurations = listOf(compileModule)
-    archiveClassifier.set("fabric-dev")
+    archiveClassifier.set("")
 }
 
 tasks.remapJar {
     injectAccessWidener = true
     inputFile.set(tasks.shadowJar.get().archiveFile)
-    archiveClassifier.set("fabric")
+    archiveClassifier.set("")
 }
 
 tasks.jar {
-    archiveClassifier.set("dev")
+    archiveClassifier.set("")
 }
 
 components.getByName<AdhocComponentWithVariants>("java") {
@@ -90,20 +97,29 @@ components.getByName<AdhocComponentWithVariants>("java") {
     }
 }
 
+tasks.register<Jar>("devJar") {
+    from(sourceSets["main"].output)
+    archiveClassifier.set("dev")
+}
+
+tasks.build {
+    dependsOn("devJar")
+}
 
 publishing {
     publications {
         register<MavenPublication>("mavenJava") {
             // add all the jars that should be included when publishing to maven
-            artifact(tasks.jar) {
-                builtBy(tasks.remapJar)
-            }
-            //artifact("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar"){
-            //	builtBy remapJar
-            //}
+            artifact(tasks.named("devJar"))
+
             artifact(tasks.remapJar) {
                 builtBy(tasks.remapJar)
+                classifier = ""
             }
+
+            artifact(tasks.sourcesJar)
+
+            addDeps(project, pomCompile, "compile")
         }
     }
 

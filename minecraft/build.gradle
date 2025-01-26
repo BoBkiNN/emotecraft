@@ -40,7 +40,7 @@ task copyArtifacts{
     dependsOn("buildAll")
     doLast {
         copy{
-            from "${project.projectDir}/fabric/build/libs/${project.archivesBaseName}-${project.version}-fabric.jar"
+            from "${project.projectDir}/fabric/build/libs/${project.archivesBaseName}-${project.version}.jar"
             into "${rootProject.projectDir}/artifacts"
         }
 

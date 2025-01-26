@@ -101,11 +101,8 @@ publishing {
                 classifier = ""
             }
             artifact(tasks.sourcesJar)
-            pom.withXml {
-                val d = asNode().appendNode("dependencies")
-                addDeps(d, compileApi, "compile")
-                addDeps(d, configurations.implementation.get(), "runtime")
-            }
+            addDeps(project, compileApi, "compile")
+            addDeps(project, configurations.implementation.get(), "runtime")
             withCustomPom("emotesBukkit", "Minecraft Emotecraft Paper plugin")
         }
     }

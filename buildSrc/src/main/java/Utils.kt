@@ -7,11 +7,11 @@ import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.assign
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.maven
+import org.w3c.dom.Element
 import java.util.*
 
 fun Properties.asStrMap(): HashMap<String, String?> {
@@ -45,35 +45,68 @@ fun XmlProvider.removeDependencies(artifactIds: List<String>) {
     dependenciesToRemove.forEach { it.parentNode.removeChild(it) }
 }
 
-fun Project.addDeps(dependenciesNode: Node, configuration: Configuration, scope: String) {
-    val set = configuration.dependencies
-    for (dep in set) {
-        var group = dep.group
-        var artifactId = dep.name
-        if (dep is DefaultProjectDependency) {
-            val project = project(dep.path)
-            val publishing = project.extensions.findByType(PublishingExtension::class.java)
-            if (publishing == null) continue
-            for (pub in publishing.publications) {
-                if (pub !is MavenPublication) continue
-                group = pub.groupId
-                artifactId = pub.artifactId
-                break
+fun Element.getOrCreateChild(tagName: String): Element {
+    val existingNodes = this.getElementsByTagName(tagName)
+    if (existingNodes.length > 0) {
+        return existingNodes.item(0) as Element
+    }
+
+    // Create a new child element and append it
+    val newChild = ownerDocument.createElement(tagName)
+    this.appendChild(newChild)
+
+    // Return the updated NodeList
+    return this.getElementsByTagName(tagName).item(0) as Element
+}
+
+fun Element.appendChild(name: String, text: String?) {
+    val el = ownerDocument.createElement(name)
+    el.textContent = text ?: ""
+    appendChild(el)
+}
+
+fun Element.addNode(name: String, content: (Element.() -> Unit)) {
+    val node = ownerDocument.createElement(name)
+    node.content()
+    appendChild(node)
+}
+
+fun MavenPublication.addDeps(project: Project, configuration: Configuration, scope: String) {
+    pom.withXml {
+        val dependenciesNode = asElement().getOrCreateChild("dependencies")
+
+        val set = configuration.dependencies
+        for (dep in set) {
+            var group = dep.group
+            var artifactId = dep.name
+            if (dep is DefaultProjectDependency) {
+                val p = project.project(dep.path)
+                val publishing = p.extensions.findByType(PublishingExtension::class.java)
+                if (publishing == null) continue
+                for (pub in publishing.publications) {
+                    if (pub !is MavenPublication) continue
+                    group = pub.groupId
+                    artifactId = pub.artifactId
+                    break
+                }
+            }
+            dependenciesNode.addNode("dependency") {
+                appendChild("groupId", group)
+                appendChild("artifactId", artifactId)
+                appendChild("version", dep.version)
+                appendChild("scope", scope)
+                val exclude = dep is ModuleDependency && !dep.isTransitive
+                if (!exclude) return@addNode
+                addNode("exclusions") {
+                    addNode("exclusion") {
+                        appendChild("groupId", "*")
+                        appendChild("artifactId", "*")
+                    }
+                }
             }
         }
-        val node = dependenciesNode.appendNode("dependency")
-        node.appendNode("groupId", group)
-        node.appendNode("artifactId", artifactId)
-        node.appendNode("version", dep.version)
-        node.appendNode("scope", scope)
-        val exclude = dep is ModuleDependency && !dep.isTransitive
-        if (exclude) {
-            val exclusions = node.appendNode("exclusions")
-            val exclusion = exclusions.appendNode("exclusion")
-            exclusion.appendNode("groupId", "*")
-            exclusion.appendNode("artifactId", "*")
-        }
     }
+
 }
 
 /**
