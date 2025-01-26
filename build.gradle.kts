@@ -153,23 +153,3 @@ tasks.register("buildAll"){
     dependsOn(":minecraft:buildAll")
 }
 
-tasks.register("cleanupArtifacts"){
-    doLast {
-        delete("${project.projectDir}/artifacts")
-    }
-}
-
-tasks.register("collectArtifacts"){
-    dependsOn("cleanupArtifacts")
-    dependsOn(":paper:copyArtifacts")
-//    dependsOn(":velocity:copyArtifacts")
-    dependsOn("minecraft:copyArtifacts")
-    doLast {
-        releaseArtifacts = project.projectDir.toPath().resolve("artifacts").toFile().listFiles().toList()
-    }
-}
-
-tasks.clean {
-    delete("${project.projectDir}/artifacts")
-}
-

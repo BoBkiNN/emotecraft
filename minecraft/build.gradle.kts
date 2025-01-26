@@ -54,20 +54,6 @@ tasks.register("buildAll"){
     dependsOn(":minecraft:neoforge:build")
 }
 
-tasks.register("copyArtifacts"){
-    dependsOn("buildAll")
-    doLast {
-        copy{
-            from("${project.projectDir}/fabric/build/libs/${base.archivesName}-${project.version}.jar")
-            into("${rootProject.projectDir}/artifacts")
-        }
-
-        copy{
-            from("${project.projectDir}/neoforge/build/libs/${base.archivesName}-${project.version}.jar")
-            into("${rootProject.projectDir}/artifacts")
-        }
-    }
-}
 
 tasks.register("publishMod") {
     dependsOn(":minecraft:archCommon:publish")
