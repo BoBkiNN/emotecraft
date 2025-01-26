@@ -25,24 +25,26 @@ fun getGitRevision(): String {
     return p.inputReader().readText().trim()
 }
 
-fun XmlProvider.removeDependencies(artifactIds: List<String>) {
-    val dependenciesNode = asElement().getElementsByTagName("dependency")
-    val dependenciesToRemove = mutableListOf<org.w3c.dom.Node>()
+fun MavenPublication.removeDependencies(artifactIds: List<String>) {
+    pom.withXml {
+        val dependenciesNode = asElement().getElementsByTagName("dependency")
+        val dependenciesToRemove = mutableListOf<org.w3c.dom.Node>()
 
-    for (i in 0 until dependenciesNode.length) {
-        val dependency = dependenciesNode.item(i)
-        val artifactIdNode = dependency.childNodes.let { nodes ->
-            (0 until nodes.length)
-                .map { nodes.item(it) }
-                .find { it.nodeName == "artifactId" }
+        for (i in 0 until dependenciesNode.length) {
+            val dependency = dependenciesNode.item(i)
+            val artifactIdNode = dependency.childNodes.let { nodes ->
+                (0 until nodes.length)
+                    .map { nodes.item(it) }
+                    .find { it.nodeName == "artifactId" }
+            }
+
+            if (artifactIdNode != null && artifactIdNode.textContent in artifactIds) {
+                dependenciesToRemove.add(dependency)
+            }
         }
 
-        if (artifactIdNode != null && artifactIdNode.textContent in artifactIds) {
-            dependenciesToRemove.add(dependency)
-        }
+        dependenciesToRemove.forEach { it.parentNode.removeChild(it) }
     }
-
-    dependenciesToRemove.forEach { it.parentNode.removeChild(it) }
 }
 
 fun Element.getOrCreateChild(tagName: String): Element {

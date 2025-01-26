@@ -51,12 +51,19 @@ task copyArtifacts{
     }
 }
 
-if(keysExists) {
-    task publishMod {
+tasks.register("publishMod") {
+    dependsOn(":minecraft:archCommon:publish")
+    dependsOn(":minecraft:fabric:publish")
+    dependsOn(":minecraft:neoforge:publish")
+
+    if (keysExists) {
         finalizedBy(":minecraft:fabric:modrinth")
         finalizedBy(":minecraft:neoforge:modrinth")
         finalizedBy(":minecraft:publishToCF")
     }
+}
+
+if(keysExists) {
 
     curseforge {
         apiKey = project.keys.curseforge_key

@@ -10,7 +10,7 @@ val dev = configurations.register("dev")
 
 dependencies {
     api("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}")
-    api("com.google.code.gson:gson:2.11.0") // gson for MC 1.21.4
+    implementation("com.google.code.gson:gson:2.11.0") // gson for MC 1.21.4
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")

@@ -17,7 +17,9 @@ dependencies {
         parchment("org.parchmentmc.data:parchment-${rootProject.minecraft_version}:${rootProject.parchment_version}@zip")
     })
 
-    api(project(":emotesServer"))
+    api(project(":emotesServer")) {
+        exclude(module = "gson")
+    }
 }
 
 tasks.remapJar {

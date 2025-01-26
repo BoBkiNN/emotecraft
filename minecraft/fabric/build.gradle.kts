@@ -32,10 +32,6 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${rootProject.loader_version}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}")
 
-    commonModule(project(":executor")) {isTransitive = false; pomCompile(this)}
-    commonModule(project(":emotesAPI")) {isTransitive = false; pomCompile(this)}
-    commonModule(project(":emotesServer")) {isTransitive = false; pomCompile(this)}
-    commonModule(project(":emotesAssets")) {isTransitive = false}
     commonModule(project(path=":emotesMc", configuration="namedElements")) { isTransitive = false }
 
     modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}") {
@@ -47,8 +43,13 @@ dependencies {
         pomCompile(this)
     }
 
-    common(project(path=":minecraft:archCommon", configuration="namedElements")) { isTransitive = false; pomCompile(this) }
-    compileModule(project(path=":minecraft:archCommon", configuration="transformProductionFabric")) { isTransitive = false }
+    common(project(path=":minecraft:archCommon", configuration="namedElements")) {
+        isTransitive = true
+        pomCompile(this)
+    }
+    compileModule(project(path=":minecraft:archCommon", configuration="transformProductionFabric")) {
+        isTransitive = true
+    }
 }
 
 
