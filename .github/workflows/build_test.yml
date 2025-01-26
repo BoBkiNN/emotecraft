@@ -24,6 +24,13 @@ jobs:
       run: chmod +x gradlew
     - name: Build All
       run: ./gradlew buildAll
+
+    - name: Copy artifacts
+      run: |
+        mkdir -p artifacts
+        cp paper/build/libs/*.jar artifacts/
+        cp minecraft/fabric/build/libs/*.jar artifacts/
+        cp minecraft/neoforge/build/libs/*.jar artifacts/
     - uses: actions/upload-artifact@v4
       with:
         name: Build Results
