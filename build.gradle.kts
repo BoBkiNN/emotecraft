@@ -136,6 +136,16 @@ if(keysExists) {
     println("Keys are not in ENV, publishing is not possible")
 }
 
+tasks.register("publishAll") {
+    finalizedBy(":minecraft:publishMod")
+
+    finalizedBy(":emotesAPI:publish")
+    finalizedBy(":executor:publish")
+    finalizedBy(":emotesServer:publish")
+    finalizedBy(":emotesAssets:publish")
+    finalizedBy(":paper:publish")
+}
+
 //Build all modules task :D
 tasks.register("buildAll"){
     dependsOn(":paper:build")
