@@ -39,36 +39,11 @@ java {
 publishing {
     publications {
         register<MavenPublication>("mavenJava") {
-            // add all the jars that should be included when publishing to maven
             artifactId = "emotesAPI"
 
-            from(components["java"])
+            from(components["java"]) // jar, sourcesJar, javdocJar
 
-            pom {
-                name = "emotesApi"
-                description = "Minecraft Emotecraft api"
-                url = "https://github.com/KosmX/emotes"
-                developers {
-                    developer {
-                        id = "kosmx"
-                        name = "KosmX"
-                        email = "kosmx.mc@gmail.com"
-                    }
-                }
-
-                licenses{
-                    license{
-                        name = "CC-BY-4.0 License"
-                        url = "https://creativecommons.org/licenses/by/4.0/legalcode"
-                    }
-                }
-
-                scm {
-                    connection = "scm:git:github.com/kosmx/emotes.git"
-                    developerConnection = "scm:git:github.com/kosmx/emotes.git"
-                    url = "https://github.com/KosmX/emotes"
-                }
-            }
+            withCustomPom("emotesApi", "Minecraft Emotecraft API")
         }
     }
 

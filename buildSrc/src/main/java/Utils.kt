@@ -8,6 +8,7 @@ import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.getByName
 import org.gradle.kotlin.dsl.maven
@@ -83,6 +84,34 @@ fun RepositoryHandler.kosmxRepo(project: Project): MavenArtifactRepository {
         credentials {
             username = "kosmx"
             password = project.keys["kosmx_maven"]
+        }
+    }
+}
+
+fun MavenPublication.withCustomPom(name: String, desc: String) {
+    pom {
+        this.name = name
+        description = desc
+        url = "https://github.com/KosmX/emotes"
+        developers {
+            developer {
+                id = "kosmx"
+                this.name = "KosmX"
+                email = "kosmx.mc@gmail.com"
+            }
+        }
+
+        licenses {
+            license{
+                this.name = "CC-BY-4.0 License"
+                url = "https://creativecommons.org/licenses/by/4.0/legalcode"
+            }
+        }
+
+        scm {
+            connection = "scm:git:github.com/kosmx/emotes.git"
+            developerConnection = "scm:git:github.com/kosmx/emotes.git"
+            url = "https://github.com/KosmX/emotes"
         }
     }
 }
