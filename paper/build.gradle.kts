@@ -9,7 +9,7 @@ plugins {
 
 
 
-base.archivesName = properties["archives_base_name"] as String
+base.archivesName = "$archives_base_name-paper"
 //project.version = project.mod_version
 version = project.mod_version
 
@@ -58,7 +58,7 @@ tasks.processResources {
 
 tasks.shadowJar {
     configurations = listOf(compileModule, compileApi)
-    archiveClassifier.set("bukkit")
+    archiveClassifier.set("")
 
     dependencies {
         exclude {
@@ -68,7 +68,7 @@ tasks.shadowJar {
 }
 
 tasks.jar {
-    archiveClassifier.set("bukkit-dev")
+    archiveClassifier.set("dev")
 }
 
 tasks.assemble {
@@ -79,7 +79,7 @@ tasks.register("copyArtifacts") {
     dependsOn("build")
     doLast {
         copy{
-            from("${project.layout.buildDirectory}/libs/${base.archivesName}-${rootProject.mod_version}-bukkit.jar")
+            from("${project.layout.buildDirectory}/libs/${base.archivesName}-${rootProject.mod_version}-paper.jar")
             into ("${rootProject.projectDir}/artifacts")
         }
     }
@@ -102,7 +102,7 @@ publishing {
                 classifier = ""
             }
             artifact(tasks.sourcesJar)
-            artifact(tasks.javadoc)
+            artifact(tasks.getByName("javadocJar"))
             addDeps(project, compileApi, "compile")
             addDeps(project, configurations.implementation.get(), "runtime")
             withCustomPom("emotesBukkit", "Minecraft Emotecraft Paper plugin")
