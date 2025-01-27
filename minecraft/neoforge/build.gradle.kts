@@ -154,7 +154,9 @@ if (keysExists) {
 publishMods {
     modLoaders.add("neoforge")
     github {
-        accessToken = providers.environmentVariable("GH_TOKEN")
+        val token = providers.environmentVariable("GH_TOKEN").orNull
+        dryRun = token == null
+        accessToken = token
         file.set(tasks.remapJar.get().archiveFile)
         parent(rootProject.tasks.named("publishGithub"))
     }
