@@ -31,15 +31,6 @@ subprojects {
             parchment("org.parchmentmc.data:parchment-${rootProject.minecraft_version}:${rootProject.parchment_version}@zip")
         })
     }
-
-    tasks.register("copyArtifacts") {
-        doLast {
-            copy {
-                from("${layout.buildDirectory}/${base.archivesName}-${version}.jar")
-                into("${rootProject.projectDir}/artifacts")
-            }
-        }
-    }
 }
 
 allprojects {
