@@ -154,11 +154,20 @@ if (keysExists) {
 
 publishMods {
     modLoaders.add("neoforge")
+    file.set(tasks.remapJar.get().archiveFile)
+
     github {
-        val token = providers.environmentVariable("GH_TOKEN").orNull
+        val token = ENV["GH_TOKEN"]
         dryRun = token == null
         accessToken = token
-        file.set(tasks.remapJar.get().archiveFile)
         parent(rootProject.tasks.named("publishGithub"))
+    }
+
+    modrinth {
+        val token = ENV["MODRINTH_TOKEN"]
+        dryRun = token == null
+        accessToken = token
+        projectId = providers.gradleProperty("modrinth_id")
+        minecraftVersions.add(minecraft_version)
     }
 }

@@ -137,10 +137,25 @@ if (keysExists) {
     }
 }
 
-publishMods.github {
+publishMods {
     modLoaders.add("paper")
     modLoaders.add("purpur")
-    accessToken = providers.environmentVariable("GH_TOKEN")
     file.set(tasks.shadowJar.get().archiveFile)
-    parent(rootProject.tasks.named("publishGithub"))
+
+    changelog = changes
+
+    github {
+        val token = ENV["GH_TOKEN"]
+        dryRun = token == null
+        accessToken = token
+        parent(rootProject.tasks.named("publishGithub"))
+    }
+
+    modrinth {
+        val token = ENV["MODRINTH_TOKEN"]
+        dryRun = token == null
+        accessToken = token
+        projectId = providers.gradleProperty("modrinth_id")
+        minecraftVersions.add(minecraft_version)
+    }
 }
