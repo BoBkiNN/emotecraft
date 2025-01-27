@@ -177,4 +177,14 @@ publishMods {
 
         embeds("playeranimator")
     }
+
+    curseforge {
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        projectId = providers.gradleProperty("curseforge_id_forge")
+        changelogType = "markdown"
+        displayName = base.archivesName.get() + "-$mod_version"
+        minecraftVersions.add(minecraft_version)
+
+        embeds("playeranimator")
+    }
 }
