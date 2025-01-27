@@ -50,7 +50,7 @@ public final class ClientPacketManager extends EmotesProxyManager {
                         try {
                             EmotePacket.Builder builder = packetBuilder.copy();
                             if (!network.sendPlayerID()) builder.removePlayerID();
-                            builder.setSizeLimit(network.maxDataSize());
+                            builder.setSizeLimit(network.maxDataSize(), false);
                             builder.setVersion(network.getRemoteVersions());
                             network.sendMessage(builder, target);    //everything is happening on the heap, there won't be any memory leak
                         } catch(IOException exception) {
@@ -66,7 +66,7 @@ public final class ClientPacketManager extends EmotesProxyManager {
         if(defaultNetwork.isActive() && (target == null || !defaultNetwork.isServerTrackingPlayState())){
             if(!defaultNetwork.sendPlayerID())packetBuilder.removePlayerID();
             try {
-                packetBuilder.setSizeLimit(defaultNetwork.maxDataSize());
+                packetBuilder.setSizeLimit(defaultNetwork.maxDataSize(), false);
                 packetBuilder.setVersion(defaultNetwork.getRemoteVersions());
                 defaultNetwork.sendMessage(packetBuilder, target);
             }

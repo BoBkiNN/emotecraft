@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 /**
  * This will be used for modded servers
@@ -140,7 +141,7 @@ public abstract class AbstractServerEmotePlay<P> extends ServerEmoteAPI {
         if (!data.valid && doValidate()) {
             EventResult result = ServerEmoteEvents.EMOTE_VERIFICATION.invoker().verify(data.emoteData, getUUIDFromPlayer(player));
             if (result != EventResult.FAIL) {
-                EmotePacket.Builder stopMSG = new EmotePacket.Builder().configureToSendStop(data.emoteData.getUuid()).configureTarget(getUUIDFromPlayer(player)).setSizeLimit(0x100000);
+                EmotePacket.Builder stopMSG = new EmotePacket.Builder().configureToSendStop(data.emoteData.getUuid()).configureTarget(getUUIDFromPlayer(player)).setSizeLimit(0x100000, true);
                 if(instance != null)instance.sendMessage(stopMSG, null);
                 return;
             }
@@ -237,7 +238,7 @@ public abstract class AbstractServerEmotePlay<P> extends ServerEmoteAPI {
 
             return UniversalEmoteSerializer.serverEmotes.values().stream().map(emote -> {
                 try {
-                    return new EmotePacket.Builder().configureToSaveEmote(emote).setVersion(compatibilityMap).setSizeLimit(0x100000).build().write(); //1 MB
+                    return new EmotePacket.Builder().configureToSaveEmote(emote).setVersion(compatibilityMap).setSizeLimit(0x100000, true).build().write(); //1 MB
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }

@@ -20,7 +20,7 @@ public class BinaryFormat implements ISerializer{
     @Override
     public List<KeyframeAnimation> read(InputStream stream, String filename) throws EmoteSerializerException {
         try {
-            NetData data = new EmotePacket.Builder().build().read(MathHelper.readFromIStream(stream));
+            NetData data = new EmotePacket.Builder().strictSizeLimit(false).build().read(MathHelper.readFromIStream(stream));
             if(data.purpose != PacketTask.FILE) throw new EmoteSerializerException("Binary emote is invalid", getFormatExtension());
             List<KeyframeAnimation> list = new ArrayList<>(1);
             assert data.emoteData != null;
@@ -34,7 +34,7 @@ public class BinaryFormat implements ISerializer{
     @Override
     public void write(KeyframeAnimation emote, OutputStream stream) throws EmoteSerializerException {
         try{
-            ByteBuffer byteBuffer = new EmotePacket.Builder().configureToSaveEmote(emote).build().write();
+            ByteBuffer byteBuffer = new EmotePacket.Builder().strictSizeLimit(false).configureToSaveEmote(emote).build().write();
             stream.write(Objects.requireNonNull(AbstractNetworkInstance.safeGetBytesFromBuffer(byteBuffer)));
         }catch (Exception e){
             throw new EmoteSerializerException("Something went wrong", getFormatExtension(), e);

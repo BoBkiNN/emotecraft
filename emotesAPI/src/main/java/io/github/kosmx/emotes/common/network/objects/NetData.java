@@ -50,6 +50,7 @@ public final class NetData {
      * net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket#MAX_PAYLOAD_SIZE
      */
     public int sizeLimit = 1048576;
+    public boolean strictSizeLimit = true;
 
     HashMap<String, Object> extraData = new HashMap<>();
     KeyframeAnimation.AnimationBuilder emoteBuilder = null;
