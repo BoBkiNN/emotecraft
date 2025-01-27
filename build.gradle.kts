@@ -104,11 +104,7 @@ if(keysExists) {
         apiEndpoint = "https://api.github.com" // should only change for github enterprise users
     }
 
-
     tasks.register("autoPublish") {
-        //dependsOn(":forge:build",)
-        //dependsOn(":fabric:build", ":paper:build")
-        dependsOn("collectArtifacts")
 
         //Configure Modrinth and GitHub with artifacts to release
         doFirst {
@@ -128,24 +124,9 @@ if(keysExists) {
         finalizedBy(":paper:modrinth")
 //        finalizedBy(":velocity:modrinth")
     }
+
 } else {
     println("Keys are not in ENV, publishing is not possible")
 }
 
-tasks.register("publishAll") {
-    finalizedBy(":minecraft:publishMod")
-
-    finalizedBy(":emotesAPI:publish")
-    finalizedBy(":executor:publish")
-    finalizedBy(":emotesServer:publish")
-    finalizedBy(":emotesAssets:publish")
-    finalizedBy(":paper:publish")
-}
-
-//Build all modules task :D
-tasks.register("buildAll"){
-    dependsOn(":paper:build")
-//    dependsOn(":velocity:build")
-    dependsOn(":minecraft:buildAll")
-}
-
+tasks

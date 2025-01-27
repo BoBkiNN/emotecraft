@@ -49,13 +49,8 @@ allprojects {
     version = rootProject.mod_version
 }
 
-tasks.register("buildAll"){
-    dependsOn(":minecraft:fabric:build")
-    dependsOn(":minecraft:neoforge:build")
-}
 
-
-tasks.register("publishMod") {
+tasks.register("publish") {
     dependsOn(":minecraft:archCommon:publish")
     dependsOn(":minecraft:fabric:publish")
     dependsOn(":minecraft:neoforge:publish")
