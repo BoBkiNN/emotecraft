@@ -113,7 +113,7 @@ if(keysExists) {
 
         finalizedBy(tasks.githubRelease)
 
-        finalizedBy(":minecraft:publishMod")
+        finalizedBy(":minecraft:publish")
 
         finalizedBy(":emotesAPI:publish")
         finalizedBy(":executor:publish")
