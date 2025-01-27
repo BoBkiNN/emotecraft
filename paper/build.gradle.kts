@@ -139,7 +139,7 @@ if (keysExists) {
 
 publishMods {
     modLoaders.add("paper")
-    modLoaders.add("purpur")
+    modLoaders.add("folia")
     file.set(tasks.shadowJar.get().archiveFile)
 
     dryRun = providers.environmentVariable("DRY_PUBLISH").isPresent
@@ -153,5 +153,7 @@ publishMods {
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         projectId = providers.gradleProperty("modrinth_id")
         minecraftVersions.add(minecraft_version)
+        displayName = mod_version
+        version = "${project.mod_version}+${project.minecraft_version}-paper"
     }
 }
