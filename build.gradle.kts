@@ -144,7 +144,6 @@ publishMods {
     github {
         val token = providers.environmentVariable("GH_TOKEN").orNull
         dryRun = token == null
-        version.set(project.version.toString())
         tagName = project.mod_version
         commitish = getGitRevision()
         repository = getGitRepository()
