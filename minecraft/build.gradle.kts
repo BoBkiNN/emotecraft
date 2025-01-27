@@ -9,6 +9,7 @@ import net.fabricmc.loom.api.LoomGradleExtensionAPI
 plugins {
     id("architectury-plugin")
     id("com.matthewprenger.cursegradle")
+    id("me.modmuss50.mod-publish-plugin") version "0.8.3" apply false
 }
 
 architectury {
@@ -17,6 +18,7 @@ architectury {
 
 subprojects {
     apply(plugin = "dev.architectury.loom")
+    apply(plugin = "me.modmuss50.mod-publish-plugin")
 
     base.archivesName = "${archives_base_name}-${name}-for-MC${minecraft_version}"
 

@@ -150,3 +150,12 @@ if (keysExists) {
         }
     }
 }
+
+publishMods {
+    modLoaders.add("neoforge")
+    github {
+        accessToken = providers.environmentVariable("GH_TOKEN")
+        file.set(tasks.remapJar.get().archiveFile)
+        parent(rootProject.tasks.named("publishGithub"))
+    }
+}
