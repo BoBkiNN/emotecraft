@@ -35,10 +35,9 @@ dependencies {
 
     compileApi(project(":emotesServer")) {
         isTransitive = true
-        api(this)
         exclude(group="org.jetbrains", module="annotations")
     }
-    compileModule(project(":emotesAssets")) { isTransitive = false }
+    compileApi(project(":emotesAssets"))
     compileModule(project(path = ":emotesMc", configuration = "namedElements")) { isTransitive = false }
 }
 
