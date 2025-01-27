@@ -167,6 +167,7 @@ public abstract class AbstractServerEmotePlay<P> extends ServerEmoteAPI {
         ServerEmoteEvents.EMOTE_PLAY.invoker().onEmotePlay(data.emoteData, data.tick, getUUIDFromPlayer(player));
         data.isForced = isForced;
         data.player = getUUIDFromPlayer(player);
+        data.strictSizeLimit = false;
         UUID bedrockEmoteID = bedrockEmoteMap.getBeEmote(data.emoteData.getUuid());
         GeyserEmotePacket geyserEmotePacket = null;
         if(bedrockEmoteID != null){
