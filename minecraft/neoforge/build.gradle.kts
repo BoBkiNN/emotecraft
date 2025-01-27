@@ -37,6 +37,7 @@ dependencies {
         include(this)
         pomCompile(this)
     }
+    compileModule(project(":emotesAssets"))
     common(project(path = ":minecraft:archCommon", configuration = "namedElements")) {
         isTransitive = true
         pomCompile(this)
