@@ -142,6 +142,9 @@ publishMods {
     modLoaders.add("folia")
     file.set(tasks.shadowJar.get().archiveFile)
 
+    type = ReleaseType.of(if (cfType == "release") "stable" else cfType )
+    changelog = changes
+
     dryRun = providers.environmentVariable("DRY_PUBLISH").isPresent
 
     github {
