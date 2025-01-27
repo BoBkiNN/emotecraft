@@ -1,3 +1,5 @@
+import me.modmuss50.mpp.ReleaseType
+
 plugins{
     id("dev.architectury.loom") version "1.9-SNAPSHOT" apply false
     id("architectury-plugin") version "3.4-SNAPSHOT" apply true
@@ -6,6 +8,7 @@ plugins{
     id("com.matthewprenger.cursegradle") version "1.4.0" apply false
     id("com.github.breadmoirai.github-release") version "2.4.1"
     id("com.modrinth.minotaur") version "2.8.4" apply false
+    id("me.modmuss50.mod-publish-plugin") version "0.8.3"
     java
 }
 
@@ -58,13 +61,15 @@ changes = ENV["CHANGELOG"]?.replace("\\\\n", "\n") ?: ""
 mod_version = project.version_base
 
 if(!isRelease){
-    mod_version = "${project.version_base}-${cfType[0]}.${ ENV["BUILD_NUMBER"]?.let { "build.$it" } ?: getGitRevision()}"
+    mod_version = "${project.version_base}-${cfType[0]}.${ ENV["BUILD_NUMBER"]?.let { "build.$it" } ?: getGitShortRevision()}"
 }
+version = mod_version
 
 
 lateinit var releaseArtifacts: List<File>
 
 keysExists = ENV["GH_TOKEN"] != null || project.gradle.startParameter.isDryRun
+keysExists = false
 ext.keys = HashMap()
 
 if(keysExists) {
@@ -85,7 +90,9 @@ if(keysExists) {
 
 
     githubRelease {
-        token(project.keys["github_token"]) // This is your personal access token with Repo permissions
+        token {
+            project.keys["github_token"]
+        }
         // You get this from your user settings > developer settings > Personal Access Tokens
         owner = "KosmX"
         // default is the last part of your group. Eg group: "com.github.breadmoirai" => owner: "breadmoirai"
@@ -129,4 +136,18 @@ if(keysExists) {
     println("Keys are not in ENV, publishing is not possible")
 }
 
-tasks
+publishMods {
+    changelog = changes
+    type = ReleaseType.of(if (cfType == "release") "stable" else cfType )
+    dryRun = gradle.startParameter.isDryRun
+
+    github {
+        tagName = project.mod_version
+        commitish = getGitRevision()
+        repository = getGitRepository()
+        accessToken = providers.environmentVariable("GH_TOKEN")
+        displayName = "Emotecraft-${project.mod_version}"
+        allowEmptyFiles = true
+    }
+
+}

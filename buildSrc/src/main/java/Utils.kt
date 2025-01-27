@@ -1,14 +1,11 @@
-import groovy.util.Node
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
-import org.gradle.api.XmlProvider
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.maven
@@ -21,9 +18,45 @@ fun Properties.asStrMap(): HashMap<String, String?> {
     return r
 }
 
+private fun runCommand(cmd: String): Pair<Int, String> {
+    val p = Runtime.getRuntime().exec(cmd.split(" ").toTypedArray())
+    return p.waitFor() to p.inputReader().readText().trim()
+}
+
+fun getGitShortRevision(): String {
+    return runCommand("git rev-parse --verify --short HEAD").second
+}
+
 fun getGitRevision(): String {
-    val p = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--verify", "--short", "HEAD"))
-    return p.inputReader().readText().trim()
+    return runCommand("git rev-parse --verify HEAD").second
+}
+
+fun getGitBranch(): String? {
+    val p = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--abbrev-ref", "HEAD"))
+    return if (p.waitFor() == 0) p.inputReader().readText().trim() else null
+}
+
+fun getRemoteUrlForCurrentBranch(): String? {
+    val currentBranch = getGitBranch() ?: return null
+
+    // Get the remote name for the current branch
+    val (ex, remoteName) = runCommand("git config --get branch.$currentBranch.remote")
+    if (ex != 0 || remoteName.isEmpty()) return null
+
+    val (ex2, remoteUrl) = runCommand("git config --get remote.$remoteName.url")
+    return if (ex2 == 0) remoteUrl else null
+}
+
+fun getGitRepository(): String {
+    val remoteUrl = getRemoteUrlForCurrentBranch()
+        ?.removeSuffix(".git")?.removeSuffix("/")?.let { "$it.git" }
+        ?: throw IllegalStateException("Failed to get current branch URL")
+    val regex = Regex("(?:git@|https://)github\\.com[:/](.+?)/(.+)\\.git")
+    val match = regex.find(remoteUrl)
+        ?: throw IllegalStateException("Failed to parse repository from branch URL")
+    val owner = match.groupValues[1]
+    val repo = match.groupValues[2]
+    return "$owner/$repo"
 }
 
 fun MavenPublication.removeDependencies(artifactIds: List<String>) {

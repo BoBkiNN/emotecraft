@@ -1,3 +1,5 @@
+import me.modmuss50.mpp.ReleaseType
+
 plugins {
     java
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.12"
@@ -5,6 +7,7 @@ plugins {
     `maven-publish`
     id("com.gradleup.shadow")
     id("com.modrinth.minotaur")
+    id("me.modmuss50.mod-publish-plugin") version "0.8.3"
 }
 
 
@@ -132,4 +135,12 @@ if (keysExists) {
         loaders = listOf("folia", "paper")
         failSilently = false
     }
+}
+
+publishMods.github {
+    modLoaders.add("paper")
+    modLoaders.add("purpur")
+    accessToken = providers.environmentVariable("GH_TOKEN")
+    file.set(tasks.shadowJar.get().archiveFile)
+    parent(rootProject.tasks.named("publishGithub"))
 }
