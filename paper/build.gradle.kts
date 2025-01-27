@@ -142,19 +142,18 @@ publishMods {
     modLoaders.add("purpur")
     file.set(tasks.shadowJar.get().archiveFile)
 
+    type = ReleaseType.of(if (cfType == "release") "stable" else cfType )
     changelog = changes
 
+    dryRun = providers.environmentVariable("DRY_PUBLISH").isPresent
+
     github {
-        val token = ENV["GH_TOKEN"]
-        dryRun = token == null
-        accessToken = token
+        accessToken = providers.environmentVariable("GH_TOKEN")
         parent(rootProject.tasks.named("publishGithub"))
     }
 
     modrinth {
-        val token = ENV["MODRINTH_TOKEN"]
-        dryRun = token == null
-        accessToken = token
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         projectId = providers.gradleProperty("modrinth_id")
         minecraftVersions.add(minecraft_version)
     }
