@@ -160,3 +160,15 @@ if (keysExists) {
         }
     }
 }
+
+publishMods {
+    modLoaders.add("fabric")
+    modLoaders.add("quilt")
+    github {
+        val token = providers.environmentVariable("GH_TOKEN").orNull
+        dryRun = token == null
+        accessToken = token
+        file.set(tasks.remapJar.get().archiveFile)
+        parent(rootProject.tasks.named("publishGithub"))
+    }
+}
