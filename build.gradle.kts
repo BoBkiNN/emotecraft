@@ -43,10 +43,6 @@ subprojects {
         mavenCentral()
     }
 
-    dependencies {
-        this.add("implementation", "org.jetbrains:annotations:24.0.1")
-    }
-
     plugins.withId("java") {
         extensions.configure<JavaPluginExtension> {
             withSourcesJar()

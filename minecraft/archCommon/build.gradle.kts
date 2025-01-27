@@ -8,7 +8,7 @@ loom {
 
 dependencies {
     modImplementation("net.fabricmc:fabric-loader:${rootProject.loader_version}")
-    implementation(project(":emotesAssets")) {isTransitive = false}
+    implementation(project(":emotesAssets"))
     implementation(project(path = ":emotesMc", configuration = "namedElements")) {isTransitive = false}
     compileOnly(project(":emotesServer"))
     api(project(":emotesServer"))
