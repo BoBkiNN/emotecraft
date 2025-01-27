@@ -49,12 +49,7 @@ allprojects {
     version = rootProject.mod_version
 }
 
-
-tasks.register("publish") {
-    dependsOn(":minecraft:archCommon:publish")
-    dependsOn(":minecraft:fabric:publish")
-    dependsOn(":minecraft:neoforge:publish")
-
+tasks.named("publish") {
     if (keysExists) {
         finalizedBy(":minecraft:fabric:modrinth")
         finalizedBy(":minecraft:neoforge:modrinth")
