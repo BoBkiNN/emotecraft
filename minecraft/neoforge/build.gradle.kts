@@ -2,7 +2,6 @@ import me.modmuss50.mpp.ReleaseType
 
 plugins {
     id("com.gradleup.shadow")
-    id("com.modrinth.minotaur")
 }
 
 architectury {
@@ -126,30 +125,6 @@ publishing {
             kosmxRepo(project)
         } else {
             mavenLocal()
-        }
-    }
-}
-
-if (keysExists) {
-    modrinth {
-        versionType = project.cfType
-
-        uploadFile = tasks.remapJar.get().outputs
-
-        token = project.keys["modrinth_token"]
-        // Get the GitHub Access Token you got from the basics part of this tutorial.
-        projectId = "pZ2wrerK" // Enter your modrinth mod ID here.
-        //System.out.println("Enter the version number:");
-        versionNumber = "${project.mod_version}+${project.minecraft_version}-forge"
-        versionName = project.mod_version
-
-        gameVersions = listOf(project.minecraft_version)
-        changelog = changes
-        loaders = listOf("neoforge")
-        failSilently = false
-
-        dependencies {
-            embedded.project("playeranimator")
         }
     }
 }
