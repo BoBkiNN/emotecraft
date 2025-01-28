@@ -19,6 +19,7 @@ val pomCompile = configurations.register("pomDep").get()
 
 
 configurations.apply {
+    common.extendsFrom(shadowCommon)
     compileClasspath.configure {extendsFrom(common)}
     runtimeClasspath.configure {extendsFrom(common)}
     named("developmentNeoForge").configure {extendsFrom(common)}
@@ -27,20 +28,22 @@ configurations.apply {
 dependencies {
     neoForge("net.neoforged:neoforge:${rootProject.neoforge_version}")
 
+    shadowCommon(project(":executor")) {isTransitive = false}
+    shadowCommon(project(":emotesAPI")) {isTransitive = false}
+    shadowCommon(project(":emotesServer")) {isTransitive = false}
+    shadowCommon(project(":emotesAssets")) {isTransitive = false}
     shadowCommon(project(path = ":emotesMc", configuration = "namedElements")) { isTransitive = false }
 
     modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${rootProject.player_animator_version}") {
         include(this)
         pomCompile(this)
     }
-    shadowCommon(project(":emotesAssets"))
-    common(project(path = ":minecraft:archCommon", configuration = "namedElements")) {
-        isTransitive = true
-        pomCompile(this)
-    }
-    shadowCommon(project(path = ":minecraft:archCommon", configuration = "transformProductionNeoForge")) {
-        isTransitive = true
-    }
+
+    pomCompile(project(":emotesAssets"))
+    pomCompile(project(":minecraft:archCommon"))
+
+    common(project(path = ":minecraft:archCommon", configuration = "namedElements")) { isTransitive = false }
+    shadowCommon(project(path = ":minecraft:archCommon", configuration = "transformProductionNeoForge")) { isTransitive = false }
 }
 
 tasks.processResources {

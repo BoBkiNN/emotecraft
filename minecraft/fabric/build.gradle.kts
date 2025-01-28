@@ -31,8 +31,8 @@ dependencies {
 
     shadowCommon(project(":executor")) {isTransitive = false}
     shadowCommon(project(":emotesAPI")) {isTransitive = false}
-    shadowCommon(project(":emotesServer")) {isTransitive = false; pomCompile(this)}
-    shadowCommon(project(":emotesAssets")) {isTransitive = false; pomCompile(this)}
+    shadowCommon(project(":emotesServer")) {isTransitive = false}
+    shadowCommon(project(":emotesAssets")) {isTransitive = false}
     shadowCommon(project(path = ":emotesMc", configuration = "namedElements")) { isTransitive = false }
 
     modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}") {
@@ -43,7 +43,10 @@ dependencies {
         include(this)
         pomCompile(this)
     }
-    
+
+    pomCompile(project(":emotesAssets"))
+    pomCompile(project(":minecraft:archCommon"))
+
     common(project(path = ":minecraft:archCommon", configuration = "namedElements")) { isTransitive = false }
     shadowCommon(project(path = ":minecraft:archCommon", configuration = "transformProductionFabric")) { isTransitive = false }
 }
