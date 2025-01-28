@@ -39,7 +39,7 @@ publishing {
     }
 
     repositories {
-        if (project.keysExists) {
+        if (project.shouldPublishMaven) {
             kosmxRepo(project)
         } else {
             mavenLocal()

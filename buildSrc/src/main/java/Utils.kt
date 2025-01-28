@@ -157,7 +157,7 @@ fun RepositoryHandler.kosmxRepo(project: Project): MavenArtifactRepository {
     return maven("https://maven.kosmx.dev/") {
         credentials {
             username = "kosmx"
-            password = project.keys["kosmx_maven"]
+            password = project.providers.environmentVariable("KOSMX_TOKEN").get()
         }
     }
 }

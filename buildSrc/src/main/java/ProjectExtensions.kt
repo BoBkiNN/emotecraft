@@ -18,22 +18,15 @@ var Project.changes: String
     get() = ext.get("changes") as String
     set(v) = ext.set("changes", v)
 
-@Suppress("UNCHECKED_CAST")
-var ExtraPropertiesExtension.keys: MutableMap<String, String>
-    get() = get("keys") as MutableMap<String, String>
-    set(v: MutableMap<String, String>) = set("keys", v)
-
 val Project.maven_group
     get() = properties["maven_group"] as String
 
 val Project.java_version
     get() = properties["java_version"] as String
 
-val Project.keys: Map<String, String?>
-    get() = (rootProject.extra.get("keys")!! as Properties).asStrMap()
-var Project.keysExists: Boolean
-    get() = rootProject.extra.get("keysExists")!! as Boolean
-    set(v) = rootProject.extra.set("keysExists", v)
+var Project.shouldPublishMaven: Boolean
+    get() = rootProject.extra.get("shouldPublishMaven")!! as Boolean
+    set(v) = rootProject.extra.set("shouldPublishMaven", v)
 
 var Project.mod_version
     get() = rootProject.extra.get("mod_version").toString()

@@ -64,23 +64,7 @@ if(releaseType != "stable"){
 }
 version = mod_version
 
-keysExists = ENV["GH_TOKEN"] != null || project.gradle.startParameter.isDryRun
-ext.keys = HashMap()
-
-if(keysExists) {
-    if (project.gradle.startParameter.isDryRun) {
-        println("Dry run, loading publish scripts")
-        //All of these are fake, don"t waste your time with it. (Copied from API docs and random generated)
-        project.ext.keys["kosmx_maven"] = "V2h5IGRpZCB5b3UgZGVjb2RlIGl0PyAg"
-    } else {
-        println("Keys loaded, loading publish scripts")
-        project.ext.keys["kosmx_maven"] = providers.environmentVariable("KOSMX_TOKEN")
-            .orElse("V2h5IGRpZCB5b3UgZGVjb2RlIGl0PyAg").get()
-    }
-
-} else {
-    println("Keys are not in ENV, publishing is not possible")
-}
+shouldPublishMaven = providers.environmentVariable("KOSMX_TOKEN").isPresent
 
 publishMods {
     changelog = changes
