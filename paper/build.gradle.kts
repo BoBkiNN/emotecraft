@@ -89,7 +89,6 @@ tasks.register("copyArtifacts") {
 
 java {
     withSourcesJar()
-    withJavadocJar()
 }
 
 publishing {
@@ -104,7 +103,6 @@ publishing {
                 classifier = ""
             }
             artifact(tasks.sourcesJar)
-            artifact(tasks.getByName("javadocJar"))
             addDeps(project, compileApi, "compile")
             addDeps(project, configurations.implementation.get(), "runtime")
             withCustomPom("emotesBukkit", "Minecraft Emotecraft Paper plugin")
