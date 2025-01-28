@@ -13,17 +13,12 @@ loom {
     accessWidenerPath = project(":minecraft:archCommon").loom.accessWidenerPath
 }
 
-val compileModule = configurations.register("compileModule").get()
 val common = configurations.register("common").get()
-val commonModule = configurations.register("commonModule").get()
+val shadowCommon = configurations.register("shadowCommon").get()
 val pomCompile = configurations.register("pomDep").get()
 
 
 configurations.apply {
-
-    named("common").configure {extendsFrom(commonModule)}
-    named("compileModule").configure {extendsFrom(commonModule)}
-
     compileClasspath.configure {extendsFrom(common)}
     runtimeClasspath.configure {extendsFrom(common)}
     named("developmentFabric").configure {extendsFrom(common)}
@@ -33,7 +28,7 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${rootProject.loader_version}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}")
 
-    commonModule(project(path=":emotesMc", configuration="namedElements")) { isTransitive = false }
+    shadowCommon(project(path=":emotesMc", configuration="namedElements")) { isTransitive = false }
 
     modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}") {
         exclude(group="net.fabricmc.fabric-api")
@@ -44,13 +39,13 @@ dependencies {
         pomCompile(this)
     }
 
-    compileModule(project(":emotesAssets"))
+    shadowCommon(project(":emotesAssets"))
 
     common(project(path=":minecraft:archCommon", configuration="namedElements")) {
         isTransitive = true
         pomCompile(this)
     }
-    compileModule(project(path=":minecraft:archCommon", configuration="transformProductionFabric")) {
+    shadowCommon(project(path=":minecraft:archCommon", configuration="transformProductionFabric")) {
         isTransitive = true
     }
 }
@@ -81,7 +76,7 @@ java {
 // If you remove this task, sources will not be generated.
 
 tasks.shadowJar {
-    configurations = listOf(compileModule)
+    configurations = listOf(shadowCommon)
     archiveClassifier.set("")
 }
 

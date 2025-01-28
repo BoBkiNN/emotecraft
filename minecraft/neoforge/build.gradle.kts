@@ -13,17 +13,12 @@ loom {
     accessWidenerPath = project(":minecraft:archCommon").loom.accessWidenerPath
 }
 
-val compileModule = configurations.register("compileModule").get()
 val common = configurations.register("common").get()
-val commonModule = configurations.register("commonModule").get()
+val shadowCommon = configurations.register("shadowCommon").get()
 val pomCompile = configurations.register("pomDep").get()
 
 
 configurations.apply {
-
-    named("common").configure {extendsFrom(commonModule)}
-    named("compileModule").configure {extendsFrom(commonModule)}
-
     compileClasspath.configure {extendsFrom(common)}
     runtimeClasspath.configure {extendsFrom(common)}
     named("developmentNeoForge").configure {extendsFrom(common)}
@@ -32,18 +27,18 @@ configurations.apply {
 dependencies {
     neoForge("net.neoforged:neoforge:${rootProject.neoforge_version}")
 
-    commonModule(project(path = ":emotesMc", configuration = "namedElements")) { isTransitive = false }
+    shadowCommon(project(path = ":emotesMc", configuration = "namedElements")) { isTransitive = false }
 
     modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${rootProject.player_animator_version}") {
         include(this)
         pomCompile(this)
     }
-    compileModule(project(":emotesAssets"))
+    shadowCommon(project(":emotesAssets"))
     common(project(path = ":minecraft:archCommon", configuration = "namedElements")) {
         isTransitive = true
         pomCompile(this)
     }
-    compileModule(project(path = ":minecraft:archCommon", configuration = "transformProductionNeoForge")) {
+    shadowCommon(project(path = ":minecraft:archCommon", configuration = "transformProductionNeoForge")) {
         isTransitive = true
     }
 }
@@ -70,7 +65,7 @@ java {
 }
 
 tasks.shadowJar {
-    configurations = listOf(compileModule)
+    configurations = listOf(shadowCommon)
     archiveClassifier.set("")
 }
 
