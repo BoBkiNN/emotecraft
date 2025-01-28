@@ -18,10 +18,6 @@ dependencies {
     modImplementation("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}")
 }
 
-tasks.jar {
-    from(rootProject.file("LICENSE"))
-}
-
 java {
     withSourcesJar()
 }
