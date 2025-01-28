@@ -6,13 +6,11 @@ plugins {
     id("xyz.jpenilla.run-paper") version "2.3.1"
     `maven-publish`
     id("com.gradleup.shadow")
-    id("com.modrinth.minotaur")
     id("me.modmuss50.mod-publish-plugin") version "0.8.3"
 }
 
 
-
-base.archivesName = "$archives_base_name-paper"
+base.archivesName = "${archives_base_name}-${name}-for-MC${minecraft_version}"
 //project.version = project.mod_version
 version = project.mod_version
 
@@ -118,32 +116,13 @@ publishing {
     }
 }
 
-if (keysExists) {
-    modrinth {
-        versionType = cfType
-        uploadFile = tasks.shadowJar.get().outputs
-
-        token = project.keys["modrinth_token"]
-        projectId = "pZ2wrerK"
-        versionNumber = "${project.mod_version}+${project.minecraft_version}-bukkit"
-        versionName = project.mod_version
-
-        gameVersions = listOf(project.minecraft_version)
-        changelog = changes
-        loaders = listOf("folia", "paper")
-        failSilently = false
-    }
-}
-
 publishMods {
     modLoaders.add("paper")
     modLoaders.add("folia")
     file.set(tasks.shadowJar.get().archiveFile)
-
-    type = ReleaseType.of(if (cfType == "release") "stable" else cfType )
+    type = ReleaseType.of(if (releaseType == "release") "stable" else releaseType )
     changelog = changes
-
-    dryRun = providers.environmentVariable("DRY_PUBLISH").isPresent
+    dryRun = gradle.startParameter.isDryRun
 
     github {
         accessToken = providers.environmentVariable("GH_TOKEN")

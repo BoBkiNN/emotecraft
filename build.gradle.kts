@@ -55,13 +55,12 @@ subprojects {
 
 //---------------- Publishing ----------------
 
-cfType = ENV["RELEASE_TYPE"] ?: "alpha"
-isRelease = cfType == "release"
+releaseType = ENV["RELEASE_TYPE"] ?: "alpha"
 changes = ENV["CHANGELOG"]?.replace("\\\\n", "\n") ?: ""
 mod_version = project.version_base
 
-if(!isRelease){
-    mod_version = "${project.version_base}-${cfType[0]}.${ ENV["BUILD_NUMBER"]?.let { "build.$it" } ?: getGitShortRevision()}"
+if(releaseType != "stable"){
+    mod_version = "${project.version_base}-${releaseType[0]}.${ ENV["BUILD_NUMBER"]?.let { "build.$it" } ?: getGitShortRevision()}"
 }
 version = mod_version
 
@@ -84,16 +83,14 @@ if(keysExists) {
 
 publishMods {
     changelog = changes
-    type = ReleaseType.of(if (cfType == "release") "stable" else cfType )
+    type = ReleaseType.of(releaseType)
     dryRun = gradle.startParameter.isDryRun
 
     github {
-        val token = providers.environmentVariable("GH_TOKEN").orNull
-        dryRun = token == null
         tagName = project.mod_version
         commitish = getGitRevision()
         repository = getGitRepository()
-        accessToken = token
+        accessToken = providers.environmentVariable("GH_TOKEN")
         displayName = "Emotecraft-${project.mod_version}"
         allowEmptyFiles = true
     }

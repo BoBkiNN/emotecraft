@@ -130,11 +130,9 @@ publishing {
 publishMods {
     modLoaders.add("neoforge")
     file.set(tasks.remapJar.get().archiveFile)
-
-    type = ReleaseType.of(if (cfType == "release") "stable" else cfType )
+    type = ReleaseType.of(releaseType)
     changelog = changes
-
-    dryRun = providers.environmentVariable("DRY_PUBLISH").isPresent
+    dryRun = gradle.startParameter.isDryRun
 
     github {
         accessToken = providers.environmentVariable("GH_TOKEN")

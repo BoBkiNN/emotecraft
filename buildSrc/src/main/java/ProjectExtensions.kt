@@ -66,9 +66,9 @@ val Project.modmenu_version
 val Project.neoforge_version
     get() = properties["neoforge_version"] as String
 
-var Project.cfType
-    get() = rootProject.extra["cfType"]!! as String
-    set(v) = rootProject.extra.set("cfType", v)
+var Project.releaseType
+    get() = rootProject.extra["releaseType"]!! as String
+    set(v) = rootProject.extra.set("releaseType", v)
 
 val Project.archives_base_name
     get() = properties["archives_base_name"] as String
