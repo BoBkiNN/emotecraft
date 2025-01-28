@@ -177,8 +177,8 @@ fun MavenPublication.withCustomPom(name: String, desc: String) {
 
         licenses {
             license{
-                this.name = "CC-BY-4.0 License"
-                url = "https://creativecommons.org/licenses/by/4.0/legalcode"
+                this.name = "GPL3"
+                url = "https://github.com/KosmX/emotes/blob/HEAD/LICENSE"
             }
         }
 
