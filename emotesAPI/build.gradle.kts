@@ -42,7 +42,7 @@ publishing {
         register<MavenPublication>("mavenJava") {
             artifactId = "emotesAPI"
 
-            from(components["java"]) // jar, sourcesJar, javdocJar
+            from(components["java"]) // jar, sourcesJar, javadocJar
 
             withCustomPom("emotesApi", "Minecraft Emotecraft API")
         }
