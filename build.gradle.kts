@@ -74,7 +74,8 @@ if(keysExists) {
         project.ext.keys["kosmx_maven"] = "V2h5IGRpZCB5b3UgZGVjb2RlIGl0PyAg"
     } else {
         println("Keys loaded, loading publish scripts")
-        project.ext.keys["kosmx_maven"] = ENV["KOSMX_TOKEN"] as String
+        project.ext.keys["kosmx_maven"] = providers.environmentVariable("KOSMX_TOKEN")
+            .orElse("V2h5IGRpZCB5b3UgZGVjb2RlIGl0PyAg").get()
     }
 
 } else {
