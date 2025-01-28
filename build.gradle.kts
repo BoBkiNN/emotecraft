@@ -65,11 +65,7 @@ if(!isRelease){
 }
 version = mod_version
 
-
-lateinit var releaseArtifacts: List<File>
-
 keysExists = ENV["GH_TOKEN"] != null || project.gradle.startParameter.isDryRun
-keysExists = false
 ext.keys = HashMap()
 
 if(keysExists) {
