@@ -69,8 +69,8 @@ publishing {
 
                 licenses{
                     license{
-                        name = "CC-BY-4.0 License"
-                        url = "https://creativecommons.org/licenses/by/4.0/legalcode"
+                        name = "GPL3"
+                        url = "https://github.com/KosmX/emotes/blob/HEAD/LICENSE"
                     }
                 }
 

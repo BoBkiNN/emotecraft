@@ -18,7 +18,3 @@ dependencies {
     modImplementation "dev.kosmx.player-anim:player-animation-lib:${rootProject.player_animator_version}"
     modImplementation "dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}"
 }
-
-jar {
-    from rootProject.file("LICENSE")
-}

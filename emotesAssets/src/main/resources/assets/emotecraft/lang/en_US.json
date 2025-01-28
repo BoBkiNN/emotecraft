@@ -31,7 +31,7 @@
   "emotecraft.otherconfig.enableNSFW": "Allow NSFW Emotes",
   "emotecraft.otherconfig.enableNSFW.tooltip": "(Not Safe For Work)\n\nAllows for potentially inappropriate content.\n\nMay contain nudity, intense sexuality, violence or other potentially disturbing subject matter.",
   "emotecraft.otherconfig.checkPose": "Check pose",
-  "emotecraft.otherconfig.checkPose.tooltip": "Emotecraft will stop the emote if you get into the wrong pose (disabling it may break the emote stopping when you switch)",
+  "emotecraft.otherconfig.checkPose.tooltip": "Emotecraft will stop the emote if you get into the wrong pose (disabling this may break the emote stopping when you shifting)",
   "emotecraft.otherconfig.alwaysValidateEmote": "Always Validate Received Emotes",
   "emotecraft.otherconfig.alwaysValidateEmote.tooltip": "Client side option; won't affect internal server.\n\nBy default, client-side validation only happens when receiving an emote from an untrusted proxy.\nUse this to always do client-side validation.",
   "emotecraft.otherconfig.default3rdPersonFront": "Use Front View for 3rd Person",

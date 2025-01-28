@@ -5,7 +5,8 @@
   "name": "Emotecraft",
   "description": "${description}",
   "authors": [
-    "KosmX"
+    "KosmX",
+    "dima_dencep"
   ],
   "contributors": [
     "Kale Ko"
@@ -14,7 +15,7 @@
     "issues": "https://github.com/KosmX/emotes/issues",
     "homepage": "https://kosmx.gitbook.io/emotecraft/"
   },
-  "license": "CC-BY-4.0 License",
+  "license": "GPL3",
   "icon": "emotecraft_mod_logo.png",
   "environment": "*",
   "entrypoints": {
@@ -30,7 +31,6 @@
     ]
   },
   "mixins": [
-    "emotecraft.mixins.json",
     "emotecraft-arch.mixins.json"
   ],
   "depends": {
