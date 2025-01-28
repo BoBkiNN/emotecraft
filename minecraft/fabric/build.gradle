@@ -13,12 +13,8 @@ loom {
 }
 
 configurations {
-    compileModule
     common
-    commonModule
-
-    common.extendsFrom commonModule
-    compileModule.extendsFrom commonModule
+    shadowCommon
 
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
@@ -29,11 +25,11 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 
-    commonModule(project(':executor')) {transitive false}
-    commonModule(project(':emotesAPI')) {transitive false}
-    commonModule(project(':emotesServer')) {transitive false}
-    commonModule(project(':emotesAssets')) {transitive false}
-    commonModule(project(path: ":emotesMc", configuration: "namedElements")) { transitive false }
+    shadowCommon(project(':executor')) {transitive false}
+    shadowCommon(project(':emotesAPI')) {transitive false}
+    shadowCommon(project(':emotesServer')) {transitive false}
+    shadowCommon(project(':emotesAssets')) {transitive false}
+    shadowCommon(project(path: ":emotesMc", configuration: "namedElements")) { transitive false }
 
     modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}") {
         exclude group: "net.fabricmc.fabric-api"
@@ -42,7 +38,7 @@ dependencies {
     include modImplementation("dev.kosmx.player-anim:player-animation-lib-fabric:${rootProject.player_animator_version}")
 
     common(project(path: ":minecraft:archCommon", configuration: "namedElements")) { transitive false }
-    compileModule(project(path: ":minecraft:archCommon", configuration: "transformProductionFabric")) { transitive false }
+    shadowCommon(project(path: ":minecraft:archCommon", configuration: "transformProductionFabric")) { transitive false }
 }
 
 
@@ -68,7 +64,7 @@ tasks.withType(JavaCompile) {
 // If you remove this task, sources will not be generated.
 
 shadowJar{
-    configurations = [project.configurations.compileModule]
+    configurations = [project.configurations.shadowCommon]
     archiveClassifier.set("fabric-dev")
 }
 
@@ -80,6 +76,12 @@ remapJar{
 
 jar {
     archiveClassifier.set("dev")
+}
+
+sourcesJar {
+    def commonSources = project(":minecraft:archCommon").sourcesJar
+    dependsOn commonSources
+    from commonSources.archiveFile.map { zipTree(it) }
 }
 
 components.java {

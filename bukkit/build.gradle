@@ -26,12 +26,10 @@ repositories {
 }
 
 configurations {
-
     compileModule
 
     compileClasspath.extendsFrom compileModule
     runtimeClasspath.extendsFrom compileModule
-
 }
 
 dependencies {
