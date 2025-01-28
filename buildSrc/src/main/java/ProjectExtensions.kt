@@ -66,6 +66,9 @@ val Project.modmenu_version
 val Project.neoforge_version
     get() = properties["neoforge_version"] as String
 
+/**
+ * Can be `stable`, `beta`, `alpha`
+ */
 var Project.releaseType
     get() = rootProject.extra["releaseType"]!! as String
     set(v) = rootProject.extra.set("releaseType", v)
