@@ -91,14 +91,15 @@ publishMods {
     type = ReleaseType.of(if (cfType == "release") "stable" else cfType )
     dryRun = gradle.startParameter.isDryRun
 
-    providers.environmentVariable("GH_TOKEN").orNull?.let { token ->
-        github {
-            tagName = project.mod_version
-            commitish = getGitRevision()
-            repository = getGitRepository()
-            accessToken = token
-            displayName = "Emotecraft-${project.mod_version}"
-            allowEmptyFiles = true
-        }
+    github {
+        val token = providers.environmentVariable("GH_TOKEN").orNull
+        dryRun = token == null
+        tagName = project.mod_version
+        commitish = getGitRevision()
+        repository = getGitRepository()
+        accessToken = token
+        displayName = "Emotecraft-${project.mod_version}"
+        allowEmptyFiles = true
     }
+
 }
