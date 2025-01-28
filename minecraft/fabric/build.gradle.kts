@@ -19,6 +19,7 @@ val pomCompile = configurations.register("pomDep").get()
 
 
 configurations.apply {
+    common.extendsFrom(shadowCommon)
     compileClasspath.configure {extendsFrom(common)}
     runtimeClasspath.configure {extendsFrom(common)}
     named("developmentFabric").configure {extendsFrom(common)}
@@ -28,7 +29,11 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${rootProject.loader_version}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}")
 
-    shadowCommon(project(path=":emotesMc", configuration="namedElements")) { isTransitive = false }
+    shadowCommon(project(":executor")) {isTransitive = false}
+    shadowCommon(project(":emotesAPI")) {isTransitive = false}
+    shadowCommon(project(":emotesServer")) {isTransitive = false; pomCompile(this)}
+    shadowCommon(project(":emotesAssets")) {isTransitive = false; pomCompile(this)}
+    shadowCommon(project(path = ":emotesMc", configuration = "namedElements")) { isTransitive = false }
 
     modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}") {
         exclude(group="net.fabricmc.fabric-api")
@@ -38,16 +43,9 @@ dependencies {
         include(this)
         pomCompile(this)
     }
-
-    shadowCommon(project(":emotesAssets"))
-
-    common(project(path=":minecraft:archCommon", configuration="namedElements")) {
-        isTransitive = true
-        pomCompile(this)
-    }
-    shadowCommon(project(path=":minecraft:archCommon", configuration="transformProductionFabric")) {
-        isTransitive = true
-    }
+    
+    common(project(path = ":minecraft:archCommon", configuration = "namedElements")) { isTransitive = false }
+    shadowCommon(project(path = ":minecraft:archCommon", configuration = "transformProductionFabric")) { isTransitive = false }
 }
 
 
