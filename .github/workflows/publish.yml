@@ -26,6 +26,8 @@ jobs:
           then
           return -1
           fi
+      - name: checkout repository
+        uses: actions/checkout@v4
       - name: Setup JDK 21
         uses: actions/setup-java@v4
         with:
