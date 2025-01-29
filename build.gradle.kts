@@ -64,7 +64,7 @@ if(releaseType != "stable"){
 }
 version = mod_version
 
-shouldPublishMaven = providers.environmentVariable("KOSMX_TOKEN").isPresent
+shouldPublishMaven = providers.environmentVariable("KOSMX_TOKEN").getOrElse("").isNotBlank()
 
 publishMods {
     changelog = changes
