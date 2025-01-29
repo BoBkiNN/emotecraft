@@ -29,9 +29,6 @@ subprojects {
     }
 
     tasks.withType(JavaCompile::class).configureEach {
-
-        //apply plugin: "architectury-plugin"
-
         val targetVersion = project.java_version
         sourceCompatibility = targetVersion
         targetCompatibility = targetVersion
