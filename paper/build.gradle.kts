@@ -75,16 +75,6 @@ tasks.assemble {
     dependsOn(tasks.shadowJar)
 }
 
-tasks.register("copyArtifacts") {
-    dependsOn("build")
-    doLast {
-        copy{
-            from("${project.layout.buildDirectory}/libs/${base.archivesName}-${rootProject.mod_version}-paper.jar")
-            into ("${rootProject.projectDir}/artifacts")
-        }
-    }
-}
-
 java {
     withSourcesJar()
 }

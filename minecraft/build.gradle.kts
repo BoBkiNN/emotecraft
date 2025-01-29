@@ -11,11 +11,16 @@ architectury {
     minecraft = rootProject.minecraft_version
 }
 
+version = rootProject.mod_version
+
 subprojects {
     apply(plugin = "dev.architectury.loom")
+    apply(plugin = "architectury-plugin")
+    apply(plugin = "maven-publish")
     apply(plugin = "me.modmuss50.mod-publish-plugin")
 
     base.archivesName = "${archives_base_name}-${name}-for-MC${minecraft_version}"
+    version = rootProject.mod_version
 
     val loom = extensions.getByType(LoomGradleExtensionAPI::class)
 
@@ -29,11 +34,3 @@ subprojects {
         })
     }
 }
-
-allprojects {
-    apply(plugin = "architectury-plugin")
-    apply(plugin = "maven-publish")
-
-    version = rootProject.mod_version
-}
-

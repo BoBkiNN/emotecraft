@@ -42,10 +42,8 @@ subprojects {
         mavenCentral()
     }
 
-    plugins.withId("java") {
-        extensions.configure<JavaPluginExtension> {
-            withSourcesJar()
-        }
+    extensions.configure<JavaPluginExtension> {
+        withSourcesJar()
     }
 }
 
