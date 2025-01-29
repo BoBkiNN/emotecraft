@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       type:
-        description: 'alpha/beta/release'
+        description: 'alpha/beta/stable'
         required: false
         default: 'alpha'
       changelog:
