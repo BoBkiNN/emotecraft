@@ -1,23 +1,13 @@
 plugins {
     java
-    `maven-publish`
     `java-library`
+    `maven-publish`
 }
 
 version = rootProject.mod_version
 
-repositories {
-    mavenCentral()
-}
-
-configurations.register("dev")
-
 dependencies {
     api(project(":emotesAPI"))
-}
-
-artifacts {
-    add("dev", tasks.jar)
 }
 
 java {

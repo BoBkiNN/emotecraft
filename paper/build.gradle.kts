@@ -26,17 +26,17 @@ repositories {
 }
 
 val compileModule = configurations.register("compileModule").get()
-configurations.implementation.configure{extendsFrom(compileModule)}
+configurations.implementation.configure { extendsFrom(compileModule) }
 
 val compileApi = configurations.register("compileApi").get()
-configurations.api.configure{extendsFrom(compileApi)}
+configurations.api.configure { extendsFrom(compileApi) }
 
 dependencies {
     paperweight.paperDevBundle("${rootProject.minecraft_version}-R0.1-SNAPSHOT")
 
     compileApi(project(":emotesServer")) {
         isTransitive = true
-        exclude(group="org.jetbrains", module="annotations")
+        exclude(group = "org.jetbrains", module = "annotations")
     }
     compileApi(project(":emotesAssets"))
     compileApi(project(path = ":emotesMc", configuration = "namedElements")) { isTransitive = false }
@@ -51,7 +51,7 @@ tasks.processResources {
     inputs.property("version", project.version)
     inputs.property("description", rootProject.mod_description)
 
-    filesMatching("paper-plugin.yml"){
+    filesMatching("paper-plugin.yml") {
         expand("version" to project.version, "description" to rootProject.mod_description)
     }
 }
@@ -110,7 +110,7 @@ publishMods {
     modLoaders.add("paper")
     modLoaders.add("folia")
     file.set(tasks.shadowJar.get().archiveFile)
-    type = ReleaseType.of(if (releaseType == "release") "stable" else releaseType )
+    type = ReleaseType.of(if (releaseType == "release") "stable" else releaseType)
     changelog = changes
     dryRun = gradle.startParameter.isDryRun
 

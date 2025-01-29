@@ -16,7 +16,7 @@ subprojects {
     apply(plugin = "java")
     apply(plugin = "java-library")
 
-    group = rootProject.maven_group
+    group = properties["maven_group"] as String
 
     repositories {
         maven("https://maven.terraformersmc.com/") {
@@ -28,7 +28,7 @@ subprojects {
     }
 
     tasks.withType(JavaCompile::class).configureEach {
-        val targetVersion = project.java_version
+        val targetVersion = properties["java_version"] as String
         sourceCompatibility = targetVersion
         targetCompatibility = targetVersion
 

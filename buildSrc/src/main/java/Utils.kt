@@ -10,13 +10,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.maven
 import org.w3c.dom.Element
-import java.util.*
 
-fun Properties.asStrMap(): HashMap<String, String?> {
-    val r = HashMap<String, String?>(size)
-    for (e in entries) r[e.key.toString()] = e.value as? String
-    return r
-}
 
 private fun runCommand(cmd: String): Pair<Int, String> {
     val p = Runtime.getRuntime().exec(cmd.split(" ").toTypedArray())
@@ -32,8 +26,7 @@ fun getGitRevision(): String {
 }
 
 fun getGitBranch(): String? {
-    val p = Runtime.getRuntime().exec(arrayOf("git", "rev-parse", "--abbrev-ref", "HEAD"))
-    return if (p.waitFor() == 0) p.inputReader().readText().trim() else null
+    return runCommand("git rev-parse --abbrev-ref HEAD").second
 }
 
 fun getRemoteUrlForCurrentBranch(): String? {
@@ -118,7 +111,7 @@ fun MavenPublication.addDeps(project: Project, configuration: Configuration, sco
         val dependenciesNode = asElement().getOrCreateChild("dependencies")
 
         val set = configuration.dependencies.toMutableSet()
-        configuration.extendsFrom.forEach {set.addAll(configuration.dependencies.toSet())}
+        configuration.extendsFrom.forEach { set.addAll(configuration.dependencies.toSet()) }
         for (dep in set) {
             var group = dep.group
             var artifactId = dep.name
@@ -178,7 +171,7 @@ fun MavenPublication.withCustomPom(name: String, desc: String) {
         }
 
         licenses {
-            license{
+            license {
                 this.name = "GPL3"
                 url = "https://github.com/KosmX/emotes/blob/HEAD/LICENSE"
             }

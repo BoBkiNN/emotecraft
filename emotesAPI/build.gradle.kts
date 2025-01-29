@@ -6,8 +6,6 @@ plugins {
 
 version = rootProject.mod_version
 
-val dev = configurations.register("dev")
-
 dependencies {
     api("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}")
     implementation("com.google.code.gson:gson:2.11.0") // gson for MC 1.21.4
@@ -24,10 +22,6 @@ tasks.compileJava {
     sourceCompatibility = "21"
     targetCompatibility = "21"
     options.release.set(21) //Build on JDK 1.8
-}
-
-artifacts {
-    add("dev", tasks.jar.get())
 }
 
 //-------- publishing --------

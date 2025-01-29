@@ -1,27 +1,16 @@
 import org.gradle.api.Project
-import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.internal.extensions.core.extra
-import java.util.*
 
-
-val Project.ext
-    get() = rootProject.extra
 
 val ENV: Map<String, String> by lazy { System.getenv() }
 
 var Project.isRelease: Boolean
-    get() = ext.get("isRelease") as Boolean
-    set(v) = ext.set("isRelease", v)
+    get() = rootProject.extra.get("isRelease") as Boolean
+    set(v) = rootProject.extra.set("isRelease", v)
 
 var Project.changes: String
-    get() = ext.get("changes") as String
-    set(v) = ext.set("changes", v)
-
-val Project.maven_group
-    get() = properties["maven_group"] as String
-
-val Project.java_version
-    get() = properties["java_version"] as String
+    get() = rootProject.extra.get("changes") as String
+    set(v) = rootProject.extra.set("changes", v)
 
 var Project.shouldPublishMaven: Boolean
     get() = rootProject.extra.get("shouldPublishMaven")!! as Boolean
@@ -29,7 +18,7 @@ var Project.shouldPublishMaven: Boolean
 
 var Project.mod_version
     get() = rootProject.extra.get("mod_version").toString()
-    set(v) {rootProject.extra.set("mod_version", v)}
+    set(v) = rootProject.extra.set("mod_version", v)
 
 val Project.version_base
     get() = properties["version_base"] as String

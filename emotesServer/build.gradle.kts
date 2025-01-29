@@ -6,26 +6,14 @@ plugins {
 
 version = rootProject.mod_version
 
-repositories {
-    mavenCentral()
-}
-
-
-configurations.register("dev")
-
 dependencies {
     api(project(":executor"))
     implementation("com.google.code.gson:gson:2.11.0")
 }
 
-artifacts {
-    add("dev", tasks.jar)
-}
-
 java {
     withSourcesJar()
 }
-
 
 publishing {
     publications {

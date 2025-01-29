@@ -22,23 +22,23 @@ val pomCompile = configurations.register("pomDep").get()
 configurations.apply {
     common.extendsFrom(commonModule)
     shadowCommon.extendsFrom(commonModule)
-    compileClasspath.configure {extendsFrom(common)}
-    runtimeClasspath.configure {extendsFrom(common)}
-    named("developmentFabric").configure {extendsFrom(common)}
+    compileClasspath.configure { extendsFrom(common) }
+    runtimeClasspath.configure { extendsFrom(common) }
+    named("developmentFabric").configure { extendsFrom(common) }
 }
 
 dependencies {
     modImplementation("net.fabricmc:fabric-loader:${rootProject.loader_version}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}")
 
-    commonModule(project(":executor")) {isTransitive = false}
-    commonModule(project(":emotesAPI")) {isTransitive = false}
-    commonModule(project(":emotesServer")) {isTransitive = false}
-    commonModule(project(":emotesAssets")) {isTransitive = false}
+    commonModule(project(":executor")) { isTransitive = false }
+    commonModule(project(":emotesAPI")) { isTransitive = false }
+    commonModule(project(":emotesServer")) { isTransitive = false }
+    commonModule(project(":emotesAssets")) { isTransitive = false }
     commonModule(project(path = ":emotesMc", configuration = "namedElements")) { isTransitive = false }
 
     modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}") {
-        exclude(group="net.fabricmc.fabric-api")
+        exclude(group = "net.fabricmc.fabric-api")
     }
 
     modImplementation("dev.kosmx.player-anim:player-animation-lib-fabric:${rootProject.player_animator_version}") {
@@ -50,7 +50,9 @@ dependencies {
     pomCompile(project(":minecraft:archCommon"))
 
     common(project(path = ":minecraft:archCommon", configuration = "namedElements")) { isTransitive = false }
-    shadowCommon(project(path = ":minecraft:archCommon", configuration = "transformProductionFabric")) { isTransitive = false }
+    shadowCommon(project(path = ":minecraft:archCommon", configuration = "transformProductionFabric")) {
+        isTransitive = false
+    }
 }
 
 
