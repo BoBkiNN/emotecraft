@@ -47,7 +47,7 @@ fun getRemoteUrlForCurrentBranch(): String? {
     return if (ex2 == 0) remoteUrl else null
 }
 
-fun getGitRepository(): String {
+fun Project.getGitRepository(): String {
     val githubRepo = providers.environmentVariable("GITHUB_REPOSITORY").orNull
     if (githubRepo != null) return githubRepo
     val remoteUrl = getRemoteUrlForCurrentBranch()
