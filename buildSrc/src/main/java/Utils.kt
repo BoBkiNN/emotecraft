@@ -48,6 +48,8 @@ fun getRemoteUrlForCurrentBranch(): String? {
 }
 
 fun getGitRepository(): String {
+    val githubRepo = providers.environmentVariable("GITHUB_REPOSITORY").orNull
+    if (githubRepo != null) return githubRepo
     val remoteUrl = getRemoteUrlForCurrentBranch()
         ?.removeSuffix(".git")?.removeSuffix("/")?.let { "$it.git" }
         ?: throw IllegalStateException("Failed to get current branch URL")
