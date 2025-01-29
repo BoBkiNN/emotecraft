@@ -7,8 +7,7 @@ import java.util.*
 val Project.ext
     get() = rootProject.extra
 
-val ENV: Map<String, String>
-    get() = System.getenv()
+val ENV: Map<String, String> by lazy { System.getenv() }
 
 var Project.isRelease: Boolean
     get() = ext.get("isRelease") as Boolean
