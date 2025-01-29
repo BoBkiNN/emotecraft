@@ -4,7 +4,7 @@ import net.fabricmc.loom.api.LoomGradleExtensionAPI
 
 plugins {
     id("architectury-plugin")
-    id("me.modmuss50.mod-publish-plugin") version "0.8.3" apply false
+    id("me.modmuss50.mod-publish-plugin") version "0.8.4" apply false
 }
 
 architectury {

@@ -6,7 +6,7 @@ plugins {
     id("xyz.jpenilla.run-paper") version "2.3.1"
     `maven-publish`
     id("com.gradleup.shadow")
-    id("me.modmuss50.mod-publish-plugin") version "0.8.3"
+    id("me.modmuss50.mod-publish-plugin") version "0.8.4"
 }
 
 
