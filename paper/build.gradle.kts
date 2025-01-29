@@ -39,7 +39,7 @@ dependencies {
         exclude(group="org.jetbrains", module="annotations")
     }
     compileApi(project(":emotesAssets"))
-    compileModule(project(path = ":emotesMc", configuration = "namedElements")) { isTransitive = false }
+    compileApi(project(path = ":emotesMc", configuration = "namedElements")) { isTransitive = false }
 }
 
 tasks.runServer {

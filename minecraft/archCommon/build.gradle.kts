@@ -12,8 +12,8 @@ dependencies {
     implementation(project(":emotesAssets"))
     implementation(project(":emotesAPI"))
     implementation(project(":executor"))
-    implementation(project(":emotesServer")) {api(this)}
-    implementation(project(path = ":emotesMc", configuration = "namedElements"))
+    implementation(project(":emotesServer"))
+    api(project(path = ":emotesMc", configuration = "namedElements"))
 
     modApi("dev.kosmx.player-anim:player-animation-lib:${rootProject.player_animator_version}")
     modImplementation("dev.kosmx.player-anim:anim-core:${rootProject.player_animator_version}")
