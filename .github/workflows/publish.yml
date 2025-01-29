@@ -22,7 +22,7 @@ jobs:
     steps:
       - name: Check for valid input
         run: |
-          if ! ( [ "${{github.event.inputs.type}}" = "alpha" ] || [ "${{github.event.inputs.type}}" = "beta" ] || [ "${{github.event.inputs.type}}" = "release" ] )
+          if ! ( [ "${{github.event.inputs.type}}" = "alpha" ] || [ "${{github.event.inputs.type}}" = "beta" ] || [ "${{github.event.inputs.type}}" = "stable" ] )
           then
           return -1
           fi
