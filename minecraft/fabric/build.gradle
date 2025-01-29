@@ -15,6 +15,10 @@ loom {
 configurations {
     common
     shadowCommon
+    commonModule
+
+    common.extendsFrom commonModule
+    shadowCommon.extendsFrom commonModule
 
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
@@ -25,11 +29,11 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${rootProject.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
 
-    shadowCommon(project(':executor')) {transitive false}
-    shadowCommon(project(':emotesAPI')) {transitive false}
-    shadowCommon(project(':emotesServer')) {transitive false}
-    shadowCommon(project(':emotesAssets')) {transitive false}
-    shadowCommon(project(path: ":emotesMc", configuration: "namedElements")) { transitive false }
+    commonModule(project(':executor')) {transitive false}
+    commonModule(project(':emotesAPI')) {transitive false}
+    commonModule(project(':emotesServer')) {transitive false}
+    commonModule(project(':emotesAssets')) {transitive false}
+    commonModule(project(path: ":emotesMc", configuration: "namedElements")) { transitive false }
 
     modImplementation("com.terraformersmc:modmenu:${rootProject.modmenu_version}") {
         exclude group: "net.fabricmc.fabric-api"

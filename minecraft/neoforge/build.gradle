@@ -15,6 +15,10 @@ loom {
 configurations {
     common
     shadowCommon
+    commonModule
+
+    common.extendsFrom commonModule
+    shadowCommon.extendsFrom commonModule
 
     compileClasspath.extendsFrom common
     runtimeClasspath.extendsFrom common
@@ -24,11 +28,11 @@ configurations {
 dependencies {
     neoForge "net.neoforged:neoforge:${rootProject.neoforge_version}"
 
-    shadowCommon(project(':executor')) {transitive false}
-    shadowCommon(project(':emotesAPI')) {transitive false}
-    shadowCommon(project(':emotesServer')) {transitive false}
-    shadowCommon(project(':emotesAssets')) {transitive false}
-    shadowCommon(project(path: ":emotesMc", configuration: "namedElements")) { transitive false }
+    commonModule(project(':executor')) {transitive false}
+    commonModule(project(':emotesAPI')) {transitive false}
+    commonModule(project(':emotesServer')) {transitive false}
+    commonModule(project(':emotesAssets')) {transitive false}
+    commonModule(project(path: ":emotesMc", configuration: "namedElements")) { transitive false }
 
     include modImplementation("dev.kosmx.player-anim:player-animation-lib-forge:${rootProject.player_animator_version}")
 
