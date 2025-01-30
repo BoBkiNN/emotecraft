@@ -3,7 +3,7 @@ package io.github.kosmx.emotes.executor.emotePlayer;
 import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
 import dev.kosmx.playerAnim.core.util.Vec3d;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 //Every player will be IEmotePlayer

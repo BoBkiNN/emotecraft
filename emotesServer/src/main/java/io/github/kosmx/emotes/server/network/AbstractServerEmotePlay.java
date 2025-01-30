@@ -20,7 +20,7 @@ import io.github.kosmx.emotes.server.config.Serializer;
 import io.github.kosmx.emotes.server.geyser.EmoteMappings;
 import io.github.kosmx.emotes.server.serializer.UniversalEmoteSerializer;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;

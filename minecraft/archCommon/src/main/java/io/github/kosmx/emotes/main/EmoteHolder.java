@@ -22,8 +22,8 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -272,7 +272,7 @@ public class EmoteHolder implements Supplier<UUID> {
     }
 
 
-    public static EmoteHolder getNonNull(@Nonnull UUID emote){
+    public static EmoteHolder getNonNull(@NotNull UUID emote){
         EmoteHolder emoteHolder = list.get(emote);
         if(emoteHolder == null)return new Empty(emote);
         return emoteHolder;

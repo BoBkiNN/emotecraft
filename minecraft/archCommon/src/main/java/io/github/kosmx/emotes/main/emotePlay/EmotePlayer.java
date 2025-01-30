@@ -7,7 +7,7 @@ import dev.kosmx.playerAnim.core.data.opennbs.SoundPlayer;
 import dev.kosmx.playerAnim.core.data.opennbs.format.Layer;
 import io.github.kosmx.emotes.executor.emotePlayer.IEmotePlayer;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 // modified keyframe animation player to play songs with animations
