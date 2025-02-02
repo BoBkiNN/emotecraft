@@ -81,9 +81,12 @@ publishMods {
         }
 
         webhookUrl = providers.environmentVariable("DISCORD_WEBHOOK")
-        username = "Emotecraft Updates"
-        avatarUrl = "https://cdn.modrinth.com/data/pZ2wrerK/eed7e2c9851392e5879c7d7cb763f142f124e6d2_96.webp"
-        content = "# Emotecraft $mod_version for $minecraft_version is out!\n$changes"
+        username = ""
+        content = """
+            # Emotecraft $mod_version for Minecraft $minecraft_version is out!
+            ### Changes:
+            $changes
+        """.trimIndent()
         publishResults.setFrom(
             project(":minecraft").publishResult("modrinthNeoForge"),
             project(":minecraft").publishResult("modrinthFabric"),
