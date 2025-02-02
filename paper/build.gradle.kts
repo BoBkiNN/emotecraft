@@ -1,3 +1,4 @@
+import io.papermc.hangarpublishplugin.model.Platforms
 import me.modmuss50.mpp.ReleaseType
 
 plugins {
@@ -7,6 +8,7 @@ plugins {
     `maven-publish`
     id("com.gradleup.shadow")
     id("me.modmuss50.mod-publish-plugin") version "0.8.4"
+    id("io.papermc.hangar-publish-plugin") version "0.1.2"
 }
 
 
@@ -79,7 +81,7 @@ publishMods {
     modLoaders.add("paper")
     modLoaders.add("folia")
     file.set(tasks.shadowJar.get().archiveFile)
-    type = ReleaseType.of(if (releaseType == "release") "stable" else releaseType)
+    type = ReleaseType.of(releaseType)
     changelog = changes
     dryRun = gradle.startParameter.isDryRun
 
@@ -97,3 +99,21 @@ publishMods {
         version = "${mod_version}+${minecraft_version}-paper"
     }
 }
+
+tasks.getByName("publishMods").dependsOn("publishPluginPublicationToHangar")
+
+hangarPublish.publications.register("plugin") {
+    version = "${mod_version}+${minecraft_version}-paper"
+    channel = when (releaseType) {
+        "stable" -> "Release"
+        "beta" -> "Beta"
+        else -> "Alpha"
+    }
+    id = providers.gradleProperty("hangar_id")
+    apiKey = providers.environmentVariable("HANGAR_TOKEN")
+    platforms.register(Platforms.PAPER) {
+        jar = tasks.shadowJar.flatMap { it.archiveFile }
+        platformVersions = listOf(minecraft_version)
+    }
+}
+
