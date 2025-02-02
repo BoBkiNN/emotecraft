@@ -78,7 +78,7 @@ publishMods {
         style {
             look = "MODERN"
             color = "#${Random.nextInt(0x0, 0xffffff).toHexString()}"
-            link = "INLINE"
+            link = "BUTTON"
         }
 
         webhookUrl = providers.environmentVariable("DISCORD_WEBHOOK")
