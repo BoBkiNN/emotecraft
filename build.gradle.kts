@@ -1,4 +1,7 @@
+import me.modmuss50.mpp.PublishModTask
 import me.modmuss50.mpp.ReleaseType
+import okhttp3.internal.toHexString
+import kotlin.random.Random
 
 plugins {
     id("dev.architectury.loom") version "1.9-SNAPSHOT" apply false
@@ -71,4 +74,28 @@ publishMods {
         allowEmptyFiles = true
     }
 
+    discord {
+        style {
+            look = "MODERN"
+            color = "#${Random.nextInt(0x0, 0xffffff).toHexString()}"
+            link = "INLINE"
+        }
+
+        webhookUrl = providers.environmentVariable("DISCORD_WEBHOOK")
+        username = "Emotecraft Updates"
+        avatarUrl = "https://cdn.modrinth.com/data/pZ2wrerK/eed7e2c9851392e5879c7d7cb763f142f124e6d2_96.webp"
+        content = "# Emotecraft $mod_version for $minecraft_version is out!\n$changes"
+        publishResults.setFrom(
+            project(":minecraft").publishResult("modrinthNeoForge"),
+            project(":minecraft").publishResult("modrinthFabric"),
+            project(":minecraft").publishResult("curseforgeNeoForge"),
+            project(":minecraft").publishResult("curseforgeFabric"),
+            project(":paper").publishResult("modrinth"))
+    }
+
+}
+
+@Suppress("UnstableApiUsage")
+fun Project.publishResult(platformName: String): RegularFileProperty {
+    return tasks.withType(PublishModTask::class.java).first { it.platform.name == platformName }.result
 }

@@ -1,5 +1,3 @@
-import me.modmuss50.mpp.ReleaseType
-
 plugins {
     id("com.gradleup.shadow")
 }
@@ -128,38 +126,5 @@ publishing {
         } else {
             mavenLocal()
         }
-    }
-}
-
-publishMods {
-    modLoaders.add("neoforge")
-    file.set(tasks.remapJar.get().archiveFile)
-    type = ReleaseType.of(releaseType)
-    changelog = changes
-    dryRun = gradle.startParameter.isDryRun
-
-    github {
-        accessToken = providers.environmentVariable("GH_TOKEN")
-        parent(rootProject.tasks.named("publishGithub"))
-    }
-
-    modrinth {
-        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
-        projectId = providers.gradleProperty("modrinth_id")
-        minecraftVersions.add(minecraft_version)
-        displayName = mod_version
-        version = "${mod_version}+${minecraft_version}-forge"
-
-        embeds("playeranimator")
-    }
-
-    curseforge {
-        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-        projectId = providers.gradleProperty("curseforge_id_forge")
-        changelogType = "markdown"
-        displayName = base.archivesName.get() + "-$mod_version"
-        minecraftVersions.add(minecraft_version)
-
-        embeds("playeranimator")
     }
 }
