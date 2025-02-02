@@ -42,13 +42,13 @@ publishMods {
 
     val fabric = project("fabric")
     val neoforge = project("neoforge")
-    val fj = file(fabric.tasks.getByName<AbstractArchiveTask>("remapJar").archiveFile)
-    val nj = file(neoforge.tasks.getByName<AbstractArchiveTask>("remapJar").archiveFile)
+    val fabricJar = file(fabric.tasks.getByName<AbstractArchiveTask>("remapJar").archiveFile)
+    val neoforgeJar = file(neoforge.tasks.getByName<AbstractArchiveTask>("remapJar").archiveFile)
 
     github {
         accessToken = providers.environmentVariable("GH_TOKEN")
         parent(rootProject.tasks.named("publishGithub"))
-        additionalFiles.from(fj, nj)
+        additionalFiles.from(fabricJar, neoforgeJar)
     }
 
     val modrinthOptions = modrinthOptions {
@@ -63,7 +63,7 @@ publishMods {
         modLoaders.add("neoforge")
         displayName = mod_version
         version = "${mod_version}+${minecraft_version}-forge"
-        file = nj
+        file = neoforgeJar
 
         embeds("playeranimator")
     }
@@ -75,7 +75,7 @@ publishMods {
         modLoaders.add("quilt")
         displayName = mod_version
         version = "${mod_version}+${minecraft_version}-fabric"
-        file = fj
+        file = fabricJar
 
         requires("fabric-api")
         embeds("playeranimator")
@@ -94,7 +94,7 @@ publishMods {
         projectId = providers.gradleProperty("curseforge_id_forge")
         projectSlug = providers.gradleProperty("curseforge_slug_forge")
         displayName = neoforge.base.archivesName.get() + "-$mod_version"
-        file = nj
+        file = neoforgeJar
 
         embeds("playeranimator")
     }
@@ -107,7 +107,7 @@ publishMods {
         projectId = providers.gradleProperty("curseforge_id_fabric")
         projectSlug = providers.gradleProperty("curseforge_slug_fabric")
         displayName = fabric.base.archivesName.get() + "-$mod_version"
-        file = fj
+        file = fabricJar
 
         requires("fabric-api")
         embeds("playeranimator")
