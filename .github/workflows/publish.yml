@@ -52,3 +52,4 @@ jobs:
           GH_TOKEN: ${{secrets.GITHUB_TOKEN}}
           KOSMX_TOKEN: ${{secrets.KOSMX_TOKEN}}
           DISCORD_WEBHOOK: ${{secrets.DISCORD_WEBHOOK}}
+          HANGAR_TOKEN: ${{secrets.HANGAR_TOKEN}}
