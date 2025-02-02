@@ -1,6 +1,5 @@
 import me.modmuss50.mpp.PublishModTask
 import me.modmuss50.mpp.ReleaseType
-import okhttp3.internal.toHexString
 import kotlin.random.Random
 
 plugins {
@@ -77,7 +76,7 @@ publishMods {
     discord {
         style {
             look = "MODERN"
-            color = "#${Random.nextInt(0x0, 0xffffff).toHexString()}"
+            color = "#%06X".format(Random.nextInt(0x000000, 0x1000000))
             link = "BUTTON"
         }
 
