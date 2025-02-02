@@ -111,6 +111,7 @@ hangarPublish.publications.register("plugin") {
     }
     id = providers.gradleProperty("hangar_id")
     apiKey = providers.environmentVariable("HANGAR_TOKEN")
+    changelog = changes
     platforms.register(Platforms.PAPER) {
         jar = tasks.shadowJar.flatMap { it.archiveFile }
         platformVersions = listOf(minecraft_version)
