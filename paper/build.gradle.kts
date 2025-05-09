@@ -8,7 +8,7 @@ plugins {
     `maven-publish`
     id("com.gradleup.shadow")
     id("me.modmuss50.mod-publish-plugin") version "0.8.4"
-    id("io.papermc.hangar-publish-plugin") version "0.1.2"
+    id("io.papermc.hangar-publish-plugin") version "0.1.3"
 }
 
 
